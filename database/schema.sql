@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS experience (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
     server_id INTEGER NOT NULL,
+    last_experience DATETIME,
     amount INTEGER
 );
 CREATE TABLE IF NOT EXISTS raffles_and_polls (
