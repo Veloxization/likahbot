@@ -15,7 +15,7 @@ class UsernamesDAO:
         self.db_connection = DBConnection(db_address)
 
     def find_username(self, username: str):
-        """Find a given username within the database
+        """Find the instances of a given username within the database
         Args:
             username: The username to find in the database
         Returns: The database entries with that username if found, an empty list otherwise"""
