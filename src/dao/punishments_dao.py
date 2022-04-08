@@ -5,7 +5,7 @@ from db_connection.db_connector import DBConnection
 class PunishmentsDAO:
     """A data access object for punishments
     Attributes:
-        db_address: The address for the database file where the punishments table resides"""
+        db_connection: An object that handles database connections"""
 
     def __init__(self, db_address):
         """Create a new data access object for punishments

@@ -5,7 +5,7 @@ from db_connection.db_connector import DBConnection
 class UsernamesDAO:
     """A data access object for usernames
     Attributes:
-        db_address: The address for the database file where the usernames table resides"""
+        db_connection: An object that handles database connections"""
 
     def __init__(self, db_address):
         """Create a new data access object for usernames
