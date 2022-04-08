@@ -26,11 +26,6 @@ CREATE TABLE IF NOT EXISTS passphrases (
     server_id INTEGER NOT NULL,
     content TEXT NOT NULL
 );
-CREATE TABLE IF NOT EXISTS passphrase_channels (
-    id INTEGER PRIMARY KEY,
-    server_id INTEGER NOT NULL,
-    channel_id INTEGER NOT NULL
-)
 CREATE TABLE IF NOT EXISTS experience (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
@@ -51,8 +46,8 @@ CREATE TABLE IF NOT EXISTS reminders (
     id INTEGER PRIMARY KEY,
     content TEXT,
     reminder_date DATETIME NOT NULL,
-    public BOOLEAN NOT NULL,
-    interval_ms INTEGER,
+    public BOOLEAN NOT NULL, /*Anyone can add themselves to a public reminder*/
+    interval INTEGER, /*The reminder interval in milliseconds*/
     repeats_left INTEGER,
     next_reminder TEXT
 );
@@ -138,5 +133,5 @@ CREATE TABLE IF NOT EXISTS default_channels (
     id INTEGER PRIMARY KEY,
     channel_id INTEGER NOT NULL,
     server_id INTEGER NOT NULL,
-    channel_purpose /*LOG, RULES*/
+    channel_purpose /*LOG, RULES, PASSPHRASE*/
 );
