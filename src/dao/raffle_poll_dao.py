@@ -1,0 +1,108 @@
+"""The classes and functions handling data access objects for the raffles_and_polls table"""
+from datetime import datetime
+from db_connection.db_connector import DBConnection
+from time_handler.time import TimeStringConverter
+
+class RafflesAndPollsDAO:
+    """A data access object for raffles_and_polls
+    Attributes:
+        db_connection: An object that handles database connections
+        time_convert: An object that handles conversion between datetime and string"""
+
+    def __init__(self, db_address, time_string_format="%Y-%m-%d %H:%M:%S"):
+        """Create a new data access object for raffles_and_polls
+        Args:
+            db_address: The address for the database file where the raffles_and_polls table
+                        resides
+            time_string_format: The format to convert datetime to string and vice versa"""
+
+        self.db_connection = DBConnection(db_address)
+        self.time_convert = TimeStringConverter(time_string_format)
+
+    def get_raffles(self):
+        """Get all raffles
+        Returns: A list of Rows containing the raffle information"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "SELECT * FROM raffles_and_polls WHERE type='RAFFLE' ORDER BY end_date ASC"
+        cursor.execute(sql)
+        raffles = cursor.fetchall()
+        self.db_connection.close_connection(connection)
+        return raffles
+
+    def get_polls(self):
+        """Get all polls
+        Returns: A list of Rows containing the poll information"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "SELECT * FROM raffles_and_polls WHERE type='POLL' ORDER BY end_date ASC"
+        cursor.execute(sql)
+        raffles = cursor.fetchall()
+        self.db_connection.close_connection(connection)
+        return raffles
+
+    def find_raffle_or_poll(self, channel_id: int, message_id: int):
+        """Find a raffle or poll by channel and message IDs
+        Args:
+            channel_id: The ID of the channel where the raffle or poll is held
+            message_id: The ID of the message that contains the raffle or poll information
+        Returns: A Row object containing the found raffle, None if none are found"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "SELECT * FROM raffles_and_polls WHERE channel_id=? AND message_id=?"
+        cursor.execute(sql, (channel_id, message_id))
+        raffle = cursor.fetchone()
+        self.db_connection.close_connection(connection)
+        return raffle
+
+    def add_raffle(self, organizer_id: int, channel_id: int, message_id: int, server_id: int,
+                   name: str, end_date: datetime, description: str = None):
+        """Create a new raffle
+        Args:
+            organizer_id: The Discord ID of the organizer of this raffle
+            channel_id: The ID of the channel where this raffle is posted
+            message_id: The ID of the message containing the raffle information
+            server_id: The ID of the guild where the raffle is being held
+            name: The title of the raffle
+            end_date: The date and time this raffle ends
+            description: The description for this raffle"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        end_date = self.time_convert.datetime_to_string(end_date)
+        sql = "INSERT INTO raffles_and_polls " \
+              "(organizer_id, channel_id, message_id, server_id, type, name, description, end_date) " \
+              "VALUES (?, ?, ?, ?, 'RAFFLE', ?, ?, ?)"
+        cursor.execute(sql, (organizer_id, channel_id, message_id, server_id,
+                             name, description, end_date))
+        self.db_connection.commit_and_close(connection)
+
+    def add_poll(self, organizer_id: int, channel_id: int, message_id: int, server_id: int,
+                 name: str, end_date: datetime, description: str = None):
+        """Create a new poll
+        Args:
+            organizer_id: The Discord ID of the organizer of this poll
+            channel_id: The ID of the channel where this poll is posted
+            message_id: The ID of the message containing the poll information
+            server_id: The ID of the guild where the poll is being held
+            name: The title of the poll
+            end_date: The date and time this poll ends
+            description: The description for this poll"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        end_date = self.time_convert.datetime_to_string(end_date)
+        sql = "INSERT INTO raffles_and_polls " \
+              "(organizer_id, channel_id, message_id, server_id, type, name, description, end_date) " \
+              "VALUES (?, ?, ?, ?, 'POLL', ?, ?, ?)"
+        cursor.execute(sql, (organizer_id, channel_id, message_id, server_id,
+                             name, description, end_date))
+        self.db_connection.commit_and_close(connection)
+
+    def remove_raffle_or_poll(self, raffle_poll_id: int):
+        """Remove the selected raffle or poll
+        Args:
+            raffle_poll_id: The database ID of the raffle or poll to delete"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM raffles_and_polls WHERE id=?"
+        cursor.execute(sql, (raffle_poll_id,))
+        self.db_connection.commit_and_close(connection)

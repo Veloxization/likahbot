@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS raffles_and_polls (
     channel_id INTEGER NOT NULL,
     message_id INTEGER NOT NULL,
     server_id INTEGER NOT NULL,
+    type TEXT NOT NULL, /*RAFFLE or POLL*/
     name TEXT NOT NULL,
     description TEXT,
     end_date DATETIME NOT NULL
