@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS raffles_and_polls (
 );
 CREATE TABLE IF NOT EXISTS reminders (
     id INTEGER PRIMARY KEY,
-    content TEXT,
+    content TEXT NOT NULL,
     reminder_date DATETIME NOT NULL,
     public BOOLEAN NOT NULL, /*Anyone can add themselves to a public reminder*/
     interval INTEGER, /*The reminder interval in milliseconds*/
