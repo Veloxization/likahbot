@@ -92,3 +92,4 @@ class ExperienceDAO:
         connection, cursor = self.db_connection.connect_to_db()
         sql = "DELETE FROM experience WHERE user_id=? AND server_id=?"
         cursor.execute(sql, (user_id, server_id))
+        self.db_connection.commit_and_close(connection)
