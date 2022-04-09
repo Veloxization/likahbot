@@ -1,18 +1,22 @@
 """The classes and functions handling data access objects for the nicknames table"""
 from datetime import datetime
 from db_connection.db_connector import DBConnection
+from time_handler.time import TimeStringConverter
 
 class NicknamesDAO:
     """A data access object for nicknames
     Attributes:
-        db_connection: An object that handles database connections"""
+        db_connection: An object that handles database connections
+        time_convert: An object that handles conversion between datetime and string"""
 
-    def __init__(self, db_address):
+    def __init__(self, db_address, time_string_format="%Y-%m-%d %H:%M:%S"):
         """Create a new data access object for nicknames
         Args:
-            db_address: The address for the database file where the nicknames table resides"""
+            db_address: The address for the database file where the nicknames table resides
+            time_string_format: The format to convert datetime to string and vice versa"""
 
         self.db_connection = DBConnection(db_address)
+        self.time_convert = TimeStringConverter(time_string_format)
 
     def find_nickname(self, nickname: str):
         """Find the instances of a given nickname within the database
@@ -57,6 +61,7 @@ class NicknamesDAO:
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO nicknames (user_id, nickname, server_id, time) VALUES (?, ?, ?, ?)"
+        time = self
         cursor.execute(sql, (user_id, nickname, server_id, time))
         self.db_connection.commit_and_close(connection)
 

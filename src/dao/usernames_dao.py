@@ -1,18 +1,22 @@
 """The classes and functions handling data access objects for the usernames table"""
 from datetime import datetime
 from db_connection.db_connector import DBConnection
+from time_handler.time import TimeStringConverter
 
 class UsernamesDAO:
     """A data access object for usernames
     Attributes:
-        db_connection: An object that handles database connections"""
+        db_connection: An object that handles database connections
+        time_convert: An object that handles conversion between datetime and string"""
 
-    def __init__(self, db_address):
+    def __init__(self, db_address, time_string_format="%Y-%m-%d %H:%M:%S"):
         """Create a new data access object for usernames
         Args:
-            db_address: The address for the database file where the usernames table resides"""
+            db_address: The address for the database file where the usernames table resides
+            time_string_format: The format to convert datetime to string and vice versa"""
 
         self.db_connection = DBConnection(db_address)
+        self.time_convert = TimeStringConverter(time_string_format)
 
     def find_username(self, username: str):
         """Find the instances of a given username within the database
@@ -55,6 +59,7 @@ class UsernamesDAO:
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO usernames (user_id, username, time) VALUES (?, ?, ?)"
+        time = self.time_convert.datetime_to_string(time)
         cursor.execute(sql, (user_id, username, time))
         self.db_connection.commit_and_close(connection)
 
