@@ -9,7 +9,7 @@ class ExperienceDAO:
         db_connection: An object that handles database connections
         time_convert: An object that handles conversion between datetime and string"""
 
-    def __init__(self, db_address, time_string_format):
+    def __init__(self, db_address, time_string_format="%Y-%m-%d %H:%M:%S"):
         """Create a new data access object for experience
         Args:
             db_address: The address for the database file where the experience table resides
@@ -82,3 +82,13 @@ class ExperienceDAO:
         sql = "UPDATE experience SET amount=0, last_experience=NULL WHERE user_id=? AND server_id=?"
         cursor.execute(sql, (user_id, server_id))
         self.db_connection.commit_and_close(connection)
+
+    def delete_user_experience(self, user_id: int, server_id: int):
+        """Delete the database entry for a user's experience
+        Args:
+            user_id: The Discord ID of the user whose experience to delete
+            server_id: The ID of the guild from which to delete"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM experience WHERE user_id=? AND server_id=?"
+        cursor.execute(sql, (user_id, server_id))
