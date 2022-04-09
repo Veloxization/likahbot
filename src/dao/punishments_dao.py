@@ -23,10 +23,10 @@ class PunishmentsDAO:
                  an empty list if none are found"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM punishments WHERE user_id=? \
-               AND server_id=? \
-               AND deleted=FALSE \
-               ORDER BY time ASC"
+        sql = "SELECT * FROM punishments WHERE user_id=? " \
+               "AND server_id=? " \
+               "AND deleted=FALSE " \
+               "ORDER BY time ASC"
         cursor.execute(sql, (user_id, server_id))
         punishments = cursor.fetchall()
         self.db_connection.close_connection(connection)
@@ -41,8 +41,8 @@ class PunishmentsDAO:
                  an empty list if none are found"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM punishments WHERE user_id=? AND server_id=? \
-               ORDER BY time ASC, deleted DESC"
+        sql = "SELECT * FROM punishments WHERE user_id=? AND server_id=? " \
+               "ORDER BY time ASC, deleted DESC"
         cursor.execute(sql, (user_id, server_id))
         punishments = cursor.fetchall()
         self.db_connection.close_connection(connection)
@@ -62,10 +62,10 @@ class PunishmentsDAO:
             deleted: Whether the punishment is deleted"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "INSERT INTO punishments \
-                    (user_id, issuer_id, server_id, type, reason, time, deleted) \
-               VALUES \
-                    (?, ?, ?, ?, ?, ?, ?)"
+        sql = "INSERT INTO punishments " \
+                    "(user_id, issuer_id, server_id, type, reason, time, deleted) " \
+               "VALUES " \
+                    "(?, ?, ?, ?, ?, ?, ?)"
         cursor.execute(sql, (user_id, issuer_id, server_id, punishment_type, reason, time, deleted))
         self.db_connection.commit_and_close(connection)
 

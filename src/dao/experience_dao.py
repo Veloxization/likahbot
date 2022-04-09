@@ -61,8 +61,8 @@ class ExperienceDAO:
         experience = self.get_user_experience(user_id, server_id)
         connection, cursor = self.db_connection.connect_to_db()
         if not experience:
-            sql = "INSERT INTO experience (user_id, server_id, last_experience, amount) \
-                   VALUES (?, ?, ?, ?)"
+            sql = "INSERT INTO experience (user_id, server_id, last_experience, amount) " \
+                   "VALUES (?, ?, ?, ?)"
             cursor.execute(sql, (user_id, server_id, time, amount))
         else:
             last_experience = self.time_convert.string_to_datetime(experience["last_experience"])
