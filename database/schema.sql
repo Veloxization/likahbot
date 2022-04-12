@@ -137,3 +137,37 @@ CREATE TABLE IF NOT EXISTS default_channels (
     server_id INTEGER NOT NULL,
     channel_purpose /*LOG, RULES, PASSPHRASE*/
 );
+CREATE TABLE IF NOT EXISTS currencies (
+    id INTEGER PRIMARY KEY,
+    server_id INTEGER NOT NULL,
+    currency_name TEXT,
+    currency_abbreviation TEXT
+);
+CREATE TABLE IF NOT EXISTS user_currencies (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    currency_id INTEGER NOT NULL,
+    amount INTEGER,
+    FOREIGN KEY (currency_id) REFERENCES currencies (id)
+);
+CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY,
+    server_id INTEGER NOT NULL,
+    product_name TEXT NOT NULL,
+    product_data TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS store_products (
+    id INTEGER PRIMARY KEY,
+    server_id INTEGER NOT NULL,
+    product_id INTEGER NOT NULL,
+    price_currency_id INTEGER NOT NULL,
+    price INTEGER,
+    FOREIGN KEY (price_currency_id) REFERENCES currencies (id),
+    FOREIGN KEY (product_id) REFERENCES products (id)
+);
+CREATE TABLE IF NOT EXISTS user_products (
+    id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    product_id INTEGER NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products (id)
+);
