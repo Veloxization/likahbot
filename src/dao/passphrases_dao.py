@@ -13,27 +13,27 @@ class PassphrasesDAO:
 
         self.db_connection = DBConnection(db_address)
 
-    def get_all_passphrases(self, server_id: int):
-        """Get all the passphrases a server uses
+    def get_all_guild_passphrases(self, guild_id: int):
+        """Get all the passphrases a guild uses
         Args:
-            server_id: The ID of the Guild these passphrases belong to
+            guild_id: The ID of the Guild these passphrases belong to
         Returns: A list of Rows containing the passphrases of the Guild"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM passphrases WHERE server_id=?"
-        cursor.execute(sql, (server_id,))
+        sql = "SELECT * FROM passphrases WHERE guild_id=?"
+        cursor.execute(sql, (guild_id,))
         passphrases = cursor.fetchall()
         self.db_connection.close_connection(connection)
         return passphrases
 
-    def add_passphrase(self, server_id: int, content: str):
-        """Add a new verification passphrase to be used on a server
+    def add_passphrase(self, guild_id: int, content: str):
+        """Add a new verification passphrase to be used on a guild
         Args:
-            server_id: The ID of the Guild the passphrase is associated with
+            guild_id: The ID of the Guild the passphrase is associated with
             content: The passphrase itself"""
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "INSERT INTO passphrases (server_id, content) VALUES (?, ?)"
-        cursor.execute(sql, (server_id, content))
+        sql = "INSERT INTO passphrases (guild_id, content) VALUES (?, ?)"
+        cursor.execute(sql, (guild_id, content))
         self.db_connection.commit_and_close(connection)
 
     def delete_passphrase(self, passphrase_id: int):
