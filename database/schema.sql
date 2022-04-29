@@ -171,3 +171,15 @@ CREATE TABLE IF NOT EXISTS user_products (
     product_id INTEGER NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products (id)
 );
+CREATE TABLE IF NOT EXISTS settings (
+    id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    default_status TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS guild_settings (
+    id INTEGER NOT NULL,
+    guild_id INTEGER NOT NULL,
+    setting_id INTEGER NOT NULL,
+    setting_status TEXT,
+    FOREIGN KEY (setting_id) REFERENCES settings (id)
+);
