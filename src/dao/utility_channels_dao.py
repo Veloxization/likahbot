@@ -1,7 +1,7 @@
 """The classes and functions handling data access objects for the utility_channels table"""
 from db_connection.db_connector import DBConnection
 
-class DefaultChannelsDAO:
+class UtilityChannelsDAO:
     """A data access object for utility channels
     Attributes:
         db_connection: An object that handles database connections"""
