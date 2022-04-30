@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS log_rules (
     target_type TEXT NOT NULL, /*MEMBER, ROLE, CHANNEL*/
     mode TEXT NOT NULL /*BLACKLIST or WHITELIST*/
 );
-CREATE TABLE IF NOT EXISTS default_channels (
+CREATE TABLE IF NOT EXISTS utility_channels (
     id INTEGER PRIMARY KEY,
     channel_id INTEGER NOT NULL,
     guild_id INTEGER NOT NULL,
