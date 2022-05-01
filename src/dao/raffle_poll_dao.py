@@ -9,15 +9,14 @@ class RafflesAndPollsDAO:
         db_connection: An object that handles database connections
         time_convert: An object that handles conversion between datetime and string"""
 
-    def __init__(self, db_address, time_string_format="%Y-%m-%d %H:%M:%S"):
+    def __init__(self, db_address):
         """Create a new data access object for raffles_and_polls
         Args:
             db_address: The address for the database file where the raffles_and_polls table
-                        resides
-            time_string_format: The format to convert datetime to string and vice versa"""
+                        resides"""
 
         self.db_connection = DBConnection(db_address)
-        self.time_convert = TimeStringConverter(time_string_format)
+        self.time_convert = TimeStringConverter()
 
     def get_raffles(self):
         """Get all raffles

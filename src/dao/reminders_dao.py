@@ -9,14 +9,13 @@ class RemindersDAO:
         db_connection: An object that handles database connections
         time_convert: An object that handles conversion between datetime and string"""
 
-    def __init__(self, db_address, time_string_format="%Y-%m-%d %H:%M:%S"):
+    def __init__(self, db_address):
         """Create a new data access object for reminders
         Args:
-            db_address: The address for the database file where the reminders table resides
-            time_string_format: The format to convert datetime to string and vice versa"""
+            db_address: The address for the database file where the reminders table resides"""
 
         self.db_connection = DBConnection(db_address)
-        self.time_convert = TimeStringConverter(time_string_format)
+        self.time_convert = TimeStringConverter()
 
     def get_all_reminders(self):
         """Get all the reminders
@@ -57,12 +56,10 @@ class RemindersDAO:
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO reminders" \
               "(content, reminder_date, public, interval, repeats_left, next_reminder) " \
-              "VALUES (?, ?, ?, ?, ?, ?)"
+              "VALUES (?, ?, ?, ?, ?, ?) RETURNING id"
         reminder_date = self.time_convert.datetime_to_string(reminder_date)
         cursor.execute(sql, (content, reminder_date, public, interval, repeats, next_reminder))
-        sql = "SELECT last_insert_rowid()"
-        cursor.execute(sql)
-        reminder_id = cursor.fetchone()
+        reminder_id = cursor.fetchone()["id"]
         self.db_connection.commit_and_close(connection)
         return self.get_reminder(reminder_id)
 

@@ -1,22 +1,17 @@
 """The classes and functions handling data access objects for the nicknames table"""
-from datetime import datetime
 from db_connection.db_connector import DBConnection
-from time_handler.time import TimeStringConverter
 
 class NicknamesDAO:
     """A data access object for nicknames
     Attributes:
-        db_connection: An object that handles database connections
-        time_convert: An object that handles conversion between datetime and string"""
+        db_connection: An object that handles database connections"""
 
-    def __init__(self, db_address, time_string_format="%Y-%m-%d %H:%M:%S"):
+    def __init__(self, db_address):
         """Create a new data access object for nicknames
         Args:
-            db_address: The address for the database file where the nicknames table resides
-            time_string_format: The format to convert datetime to string and vice versa"""
+            db_address: The address for the database file where the nicknames table resides"""
 
         self.db_connection = DBConnection(db_address)
-        self.time_convert = TimeStringConverter(time_string_format)
 
     def find_nickname(self, nickname: str):
         """Find the instances of a given nickname within the database
@@ -45,13 +40,12 @@ class NicknamesDAO:
         self.db_connection.close_connection(connection)
         return nicknames
 
-    def add_nickname(self, nickname: str, user_id: int, guild_id: int, time: datetime, nickname_limit: int = 5):
+    def add_nickname(self, nickname: str, user_id: int, guild_id: int, nickname_limit: int = 5):
         """Add a new nickname to the database. If five names exist already, the oldest is deleted.
         Args:
             nickname: The nickname to add
             user_id: The Discord ID of the user this nickname is associated with
             guild_id: The ID of the Discord Guild the nickname is associated with
-            time: The current date
             nickname_limit: How many nicknames for one user are allowed in the database at a time"""
 
         previous_nicknames = self.find_user_nicknames(user_id, guild_id)
@@ -60,9 +54,8 @@ class NicknamesDAO:
             self.delete_nickname(nickname["id"])
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "INSERT INTO nicknames (user_id, nickname, guild_id, time) VALUES (?, ?, ?, ?)"
-        time = self
-        cursor.execute(sql, (user_id, nickname, guild_id, time))
+        sql = "INSERT INTO nicknames (user_id, nickname, guild_id, time) VALUES (?, ?, ?, datetime())"
+        cursor.execute(sql, (user_id, nickname, guild_id))
         self.db_connection.commit_and_close(connection)
 
     def delete_nickname(self, nickname_id: int):

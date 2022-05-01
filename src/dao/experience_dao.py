@@ -9,14 +9,13 @@ class ExperienceDAO:
         db_connection: An object that handles database connections
         time_convert: An object that handles conversion between datetime and string"""
 
-    def __init__(self, db_address, time_string_format="%Y-%m-%d %H:%M:%S"):
+    def __init__(self, db_address):
         """Create a new data access object for experience
         Args:
-            db_address: The address for the database file where the experience table resides
-            time_string_format: The format to convert datetime to string and vice versa"""
+            db_address: The address for the database file where the experience table resides"""
 
         self.db_connection = DBConnection(db_address)
-        self.time_convert = TimeStringConverter(time_string_format)
+        self.time_convert = TimeStringConverter()
 
     def get_guild_leaderboard(self, guild_id: int):
         """Get all experience in a Guild
@@ -45,8 +44,7 @@ class ExperienceDAO:
         self.db_connection.close_connection(connection)
         return experience
 
-    def add_user_experience(self, user_id: int, guild_id: int, amount: int,
-                            time: datetime, interval: int):
+    def add_user_experience(self, user_id: int, guild_id: int, amount: int, interval: int):
         """Give the user of a specific guild a specific amount of experience.
         Experience will not be awarded if time to last_experience is less than the specified
         interval.
@@ -54,21 +52,20 @@ class ExperienceDAO:
             user_id: The Discord ID of the user who gets the experience
             guild_id: The ID of the Guild on which the experience is awarded
             amount: The amount of experience to award
-            time: The current time
-            interval: The interval, in milliseconds, after which the user is eligible for more
+            interval: The interval, in seconds, after which the user is eligible for more
                       experience"""
 
         experience = self.get_user_experience(user_id, guild_id)
         connection, cursor = self.db_connection.connect_to_db()
         if not experience:
             sql = "INSERT INTO experience (user_id, guild_id, last_experience, amount) " \
-                   "VALUES (?, ?, ?, ?)"
-            cursor.execute(sql, (user_id, guild_id, time, amount))
+                   "VALUES (?, ?, datetime(), ?)"
+            cursor.execute(sql, (user_id, guild_id, amount))
         else:
             last_experience = self.time_convert.string_to_datetime(experience["last_experience"])
-            time_difference = TimeDifference().time_difference_ms(time, last_experience)
+            time_difference = TimeDifference().time_difference(last_experience, datetime.utcnow())
             if time_difference > interval:
-                sql = "UPDATE experience SET amount=amount+? WHERE user_id=? AND guild_id=?"
+                sql = "UPDATE experience SET amount=amount+?, last_experience=datetime() WHERE user_id=? AND guild_id=?"
                 cursor.execute(sql, (amount, user_id, guild_id))
         self.db_connection.commit_and_close(connection)
 
@@ -79,7 +76,7 @@ class ExperienceDAO:
             guild_id: The ID of the guild in which the experience is reset"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "UPDATE experience SET amount=0, last_experience=NULL WHERE user_id=? AND guild_id=?"
+        sql = "UPDATE experience SET amount=0, last_experience=datetime() WHERE user_id=? AND guild_id=?"
         cursor.execute(sql, (user_id, guild_id))
         self.db_connection.commit_and_close(connection)
 

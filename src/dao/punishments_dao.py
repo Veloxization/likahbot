@@ -1,5 +1,4 @@
 """The classes and functions handling data access objects for the punishments table"""
-from datetime import datetime
 from db_connection.db_connector import DBConnection
 
 class PunishmentsDAO:
@@ -49,8 +48,7 @@ class PunishmentsDAO:
         return punishments
 
     def add_punishment(self, user_id: int, issuer_id: int, guild_id: int,
-                       punishment_type: str = None, reason: str = None,
-                       time: datetime = None, deleted: bool = False):
+                       punishment_type: str = None, reason: str = None, deleted: bool = False):
         """Add a new punishment for a guild member
         Args:
             user_id: The Discord ID of the member the punishment is associated with
@@ -58,15 +56,14 @@ class PunishmentsDAO:
             guild_id: The Discord Guild ID of the guild where the punishment was issued
             punishment_type: The type of the punishment, e.g. BAN, KICK, TIMEOUT
             reason: The reason for the punishment
-            time: When the punishment was issued
             deleted: Whether the punishment is deleted"""
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO punishments " \
                     "(user_id, issuer_id, guild_id, type, reason, time, deleted) " \
                "VALUES " \
-                    "(?, ?, ?, ?, ?, ?, ?)"
-        cursor.execute(sql, (user_id, issuer_id, guild_id, punishment_type, reason, time, deleted))
+                    "(?, ?, ?, ?, ?, datetime(), ?)"
+        cursor.execute(sql, (user_id, issuer_id, guild_id, punishment_type, reason, deleted))
         self.db_connection.commit_and_close(connection)
 
     def mark_deleted(self, punishment_id: int):
