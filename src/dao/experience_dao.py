@@ -90,3 +90,13 @@ class ExperienceDAO:
         sql = "DELETE FROM experience WHERE user_id=? AND guild_id=?"
         cursor.execute(sql, (user_id, guild_id))
         self.db_connection.commit_and_close(connection)
+
+    def delete_guild_experience(self, guild_id: int):
+        """Delete all experience records for a given guild
+        Args:
+            guild_id: The Discord ID of the guild whose experience records to delete"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM experience WHERE guild_id=?"
+        cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)

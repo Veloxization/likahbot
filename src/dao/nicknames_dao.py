@@ -78,3 +78,13 @@ class NicknamesDAO:
         sql = "DELETE FROM nicknames WHERE user_id=? AND guild_id=?"
         cursor.execute(sql, (user_id, guild_id))
         self.db_connection.commit_and_close(connection)
+
+    def delete_guild_nicknames(self, guild_id: int):
+        """Delete the entire nickname record of a given guild
+        Args:
+            guild_id: The Discord ID of the guild whose nickname records to delete"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM nicknames WHERE guild_id=?"
+        cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)

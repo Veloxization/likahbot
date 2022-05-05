@@ -45,3 +45,13 @@ class PassphrasesDAO:
         sql = "DELETE FROM passphrases WHERE id=?"
         cursor.execute(sql, (passphrase_id,))
         self.db_connection.commit_and_close(connection)
+
+    def delete_guild_passphrases(self, guild_id: int):
+        """Delete all passphrases of a given guild
+        Args:
+            guild_id: The Discord ID of the guild whose passphrases to delete"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM passphrases WHERE guild_id=?"
+        cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)

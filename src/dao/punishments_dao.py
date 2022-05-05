@@ -85,3 +85,13 @@ class PunishmentsDAO:
         sql = "DELETE FROM punishments WHERE id=?"
         cursor.execute(sql, (punishment_id,))
         self.db_connection.commit_and_close(connection)
+
+    def delete_guild_punishments(self, guild_id: int):
+        """Permanently delete the entire punishment record of a given guild
+        Args:
+            guild_id: The Discord ID of the guild whose punishment records to delete"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM punishments WHERE guild_id=?"
+        cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)

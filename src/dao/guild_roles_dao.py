@@ -76,3 +76,13 @@ class GuildRolesDAO:
         sql = "DELETE FROM guild_roles WHERE role_id=?"
         cursor.execute(sql, (role_id,))
         self.db_connection.commit_and_close(connection)
+
+    def delete_guild_roles(self, guild_id: int):
+        """Delete all guild roles of a given guild
+        Args:
+            guild_id: The Discord ID of the guild whose guild roles to delete"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM guild_roles WHERE guild_id=?"
+        cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)

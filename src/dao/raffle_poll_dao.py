@@ -105,3 +105,13 @@ class RafflesAndPollsDAO:
         sql = "DELETE FROM raffles_and_polls WHERE id=?"
         cursor.execute(sql, (raffle_poll_id,))
         self.db_connection.commit_and_close(connection)
+
+    def delete_guild_raffles_and_polls(self, guild_id: int):
+        """Delete all raffles and polls of a given guild
+        Args:
+            guild_id: The Discord ID of the guild whose raffles and polls to delete"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM raffles_and_polls WHERE guild_id=?"
+        cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)

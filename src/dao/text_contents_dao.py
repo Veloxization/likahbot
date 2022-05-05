@@ -74,3 +74,13 @@ class TextContentsDAO:
         sql = "DELETE FROM text_contents WHERE guild_id=? AND type=?"
         cursor.execute(sql, (guild_id, content_type))
         self.db_connection.commit_and_close(connection)
+
+    def delete_guild_text_contents(self, guild_id: int):
+        """Delete all text contents for a given guild
+        Args:
+            guild_id: The Discord ID of the guild whose text contents to delete"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM text_contents WHERE guild_id=?"
+        cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)
