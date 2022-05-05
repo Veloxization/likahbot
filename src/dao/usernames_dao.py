@@ -47,9 +47,9 @@ class UsernamesDAO:
             username_limit: How many usernames for one user are allowed in the database at a time"""
 
         previous_usernames = self.find_user_usernames(user_id)
-        while len(previous_usernames) >= username_limit:
+        if len(previous_usernames) >= username_limit:
             username = previous_usernames.pop(0)
-            self.delete_username(username["id"])
+            self.delete_earlier_usernames(user_id, username["id"])
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO usernames (user_id, username, time) VALUES (?, ?, datetime())"
@@ -64,6 +64,17 @@ class UsernamesDAO:
         connection, cursor = self.db_connection.connect_to_db()
         sql = "DELETE FROM usernames WHERE id=?"
         cursor.execute(sql, (username_id,))
+        self.db_connection.commit_and_close(connection)
+
+    def delete_earlier_usernames(self, user_id: int, username_id: int):
+        """Delete the specified username and any usernames added before it
+        Args:
+            user_id: The Discord ID of the user whose usernames to delete
+            username_id: All nicknames added before this are deleted"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM usernames WHERE id<=? AND user_id=?"
+        cursor.execute(sql, (username_id, user_id))
         self.db_connection.commit_and_close(connection)
 
     def delete_user_usernames(self, user_id: int):

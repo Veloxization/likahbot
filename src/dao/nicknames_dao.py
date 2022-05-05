@@ -49,9 +49,9 @@ class NicknamesDAO:
             nickname_limit: How many nicknames for one user are allowed in the database at a time"""
 
         previous_nicknames = self.find_user_nicknames(user_id, guild_id)
-        while len(previous_nicknames) >= nickname_limit:
+        if len(previous_nicknames) >= nickname_limit:
             nickname = previous_nicknames.pop(0)
-            self.delete_nickname(nickname["id"])
+            self.delete_earlier_user_nicknames(user_id, guild_id, nickname["id"])
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO nicknames (user_id, nickname, guild_id, time) VALUES (?, ?, ?, datetime())"
@@ -66,6 +66,18 @@ class NicknamesDAO:
         connection, cursor = self.db_connection.connect_to_db()
         sql = "DELETE FROM nicknames WHERE id=?"
         cursor.execute(sql, (nickname_id,))
+        self.db_connection.commit_and_close(connection)
+
+    def delete_earlier_user_nicknames(self, user_id: int, guild_id: int, nickname_id: int):
+        """Delete the specified nickname and any nicknames added before it
+        Args:
+            user_id: The Discord ID of the user whose nicknames to delete
+            guild_id: The Discord ID of the guild from which the nicknames come from
+            nickname_id: All nicknames added before this are deleted"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM nicknames WHERE id<=? AND user_id=? AND guild_id=?"
+        cursor.execute(sql, (nickname_id, user_id, guild_id))
         self.db_connection.commit_and_close(connection)
 
     def delete_user_nicknames(self, user_id: int, guild_id: int):
