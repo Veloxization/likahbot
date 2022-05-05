@@ -116,7 +116,8 @@ CREATE TABLE IF NOT EXISTS text_contents (
     id INTEGER PRIMARY KEY,
     guild_id INTEGER NOT NULL,
     content TEXT,
-    type TEXT /*WELCOME TEXT, WELCOME IMAGE*/
+    type TEXT, /*WELCOME TEXT, WELCOME IMAGE*/
+    CONSTRAINT unq UNIQUE (guild_id, type)
 );
 CREATE TABLE IF NOT EXISTS log_content_rules (
     id INTEGER PRIMARY KEY,
