@@ -112,6 +112,12 @@ CREATE TABLE IF NOT EXISTS unverified_reminder_messages (
     message TEXT NOT NULL,
     timedelta INTEGER
 );
+CREATE TABLE IF NOT EXISTS unverified_message_history (
+    id INTEGER PRIMARY KEY,
+    reminder_message_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY (reminder_message_id) REFERENCES unverified_reminder_messages (id)
+);
 CREATE TABLE IF NOT EXISTS text_contents (
     id INTEGER PRIMARY KEY,
     guild_id INTEGER NOT NULL,
