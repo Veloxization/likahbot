@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS reminders (
     content TEXT NOT NULL,
     reminder_date DATETIME NOT NULL,
     public BOOLEAN NOT NULL, /*Anyone can add themselves to a public reminder*/
-    interval INTEGER, /*The reminder interval in milliseconds*/
+    interval INTEGER, /*The reminder interval in seconds*/
     repeats_left INTEGER,
     next_reminder TEXT
 );
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS left_members (
 CREATE TABLE IF NOT EXISTS unverified_kick_rules (
     id INTEGER PRIMARY KEY,
     guild_id INTEGER NOT NULL,
-    timedelta INTEGER /*in milliseconds*/
+    timedelta INTEGER /*in seconds*/
 );
 CREATE TABLE IF NOT EXISTS unverified_reminder_messages (
     id INTEGER PRIMARY KEY,
