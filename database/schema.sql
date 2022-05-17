@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS left_members (
 );
 CREATE TABLE IF NOT EXISTS unverified_kick_rules (
     id INTEGER PRIMARY KEY,
-    guild_id INTEGER NOT NULL,
+    guild_id INTEGER NOT NULL UNIQUE,
     timedelta INTEGER /*in seconds*/
 );
 CREATE TABLE IF NOT EXISTS unverified_reminder_messages (
