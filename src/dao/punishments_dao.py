@@ -95,3 +95,11 @@ class PunishmentsDAO:
         sql = "DELETE FROM punishments WHERE guild_id=?"
         cursor.execute(sql, (guild_id,))
         self.db_connection.commit_and_close(connection)
+
+    def clear_punishments_table(self):
+        """Delete every single punishment from the table"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM punishments"
+        cursor.execute(sql)
+        self.db_connection.commit_and_close(connection)
