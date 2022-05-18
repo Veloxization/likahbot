@@ -18,6 +18,7 @@ class DBConnection:
         Returns: A Connection object and a Cursor object for database commands"""
 
         connection = sqlite3.connect(self.db_address)
+        connection.row_factory = sqlite3.Row
         return connection, connection.cursor()
 
     def close_connection(self, connection: sqlite3.Connection):

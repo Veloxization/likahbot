@@ -40,7 +40,8 @@ class UsernamesDAO:
         return usernames
 
     def add_username(self, username: str, user_id: int, username_limit: int = 5):
-        """Add a new username to the database. If five names exist already, the oldest is deleted.
+        """Add a new username to the database. If more than limit names exist already,
+           the oldest are deleted.
         Args:
             username: The username to add
             user_id: The Discord ID of the user this username is associated with
@@ -48,8 +49,8 @@ class UsernamesDAO:
 
         previous_usernames = self.find_user_usernames(user_id)
         if len(previous_usernames) >= username_limit:
-            username = previous_usernames.pop(0)
-            self.delete_earlier_usernames(user_id, username["id"])
+            this_username = previous_usernames.pop()
+            self.delete_earlier_usernames(user_id, this_username["id"])
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO usernames (user_id, username, time) VALUES (?, ?, datetime())"
@@ -85,4 +86,12 @@ class UsernamesDAO:
         connection, cursor = self.db_connection.connect_to_db()
         sql = "DELETE FROM usernames WHERE user_id=?"
         cursor.execute(sql, (user_id,))
+        self.db_connection.commit_and_close(connection)
+
+    def clear_usernames_table(self):
+        """Delete every single username from the table"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM usernames"
+        cursor.execute(sql)
         self.db_connection.commit_and_close(connection)
