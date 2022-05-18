@@ -50,8 +50,8 @@ class NicknamesDAO:
 
         previous_nicknames = self.find_user_nicknames(user_id, guild_id)
         if len(previous_nicknames) >= nickname_limit:
-            nickname = previous_nicknames.pop(0)
-            self.delete_earlier_user_nicknames(user_id, guild_id, nickname["id"])
+            this_nickname = previous_nicknames.pop()
+            self.delete_earlier_user_nicknames(user_id, guild_id, this_nickname["id"])
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO nicknames (user_id, nickname, guild_id, time) VALUES (?, ?, ?, datetime())"
@@ -99,4 +99,12 @@ class NicknamesDAO:
         connection, cursor = self.db_connection.connect_to_db()
         sql = "DELETE FROM nicknames WHERE guild_id=?"
         cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)
+
+    def clear_nicknames_table(self):
+        """Delete every single nickname from the table"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM nicknames"
+        cursor.execute(sql)
         self.db_connection.commit_and_close(connection)
