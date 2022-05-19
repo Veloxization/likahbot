@@ -89,3 +89,11 @@ class UtilityChannelsDAO:
         sql = "DELETE FROM utility_channels WHERE guild_id=?"
         cursor.execute(sql, (guild_id,))
         self.db_connection.commit_and_close(connection)
+
+    def clear_utility_channels_table(self):
+        """Delete every single nickname from the table"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM utility_channels"
+        cursor.execute(sql)
+        self.db_connection.commit_and_close(connection)
