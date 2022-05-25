@@ -23,7 +23,7 @@ class UnverifiedReminderHistoryDAO:
         Returns: A list of Rows containing the member's reminder history"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM unverified_reminder_history WHERE user_id=? AND guild_id=? " \
+        sql = "SELECT * FROM unverified_reminder_history " \
               "INNER JOIN unverified_reminder_messages AS urm ON urm.id=reminder_message_id " \
               "WHERE user_id=? AND guild_id=? " \
               "ORDER BY timedelta DESC"
@@ -51,7 +51,7 @@ class UnverifiedReminderHistoryDAO:
             guild_id: The Discord ID of the guild from which the reminders were sent"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "DELETE FROM unverified_reminder_history AS urh WHERE user_id=2345 AND urh.id IN " \
+        sql = "DELETE FROM unverified_reminder_history AS urh WHERE user_id=? AND urh.id IN " \
               "(SELECT urh.id FROM unverified_reminder_history AS urh " \
               "INNER JOIN unverified_reminder_messages AS urm ON urm.id=reminder_message_id " \
               "WHERE guild_id=?)"
@@ -69,4 +69,12 @@ class UnverifiedReminderHistoryDAO:
               "INNER JOIN unverified_reminder_messages AS urm ON urm.id=reminder_message_id " \
               "WHERE guild_id=?)"
         cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)
+
+    def clear_unverified_reminder_history_table(self):
+        """Delete every single unverified reminder history from the table"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM unverified_reminder_history"
+        cursor.execute(sql)
         self.db_connection.commit_and_close(connection)
