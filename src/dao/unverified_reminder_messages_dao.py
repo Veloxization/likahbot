@@ -1,5 +1,8 @@
 """The classes and functions handling data access objects for the unverified reminder messages
-table"""
+table.
+The database table keeps track of the reminder messages sent to joining members about verification.
+If a guild uses bot verification and a member doesn't go through with it in a timely manner, these
+reminders can help the user remember to verify."""
 from db_connection.db_connector import DBConnection
 
 class UnverifiedReminderMessagesDAO:

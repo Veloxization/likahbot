@@ -1,4 +1,8 @@
-"""The classes and functions handling data access objects for the left members table"""
+"""The classes and functions handling data access objects for the left members table.
+The database table keeps track of members who may have left guilds the bot is on.
+It is important to keep track of this due to legal reasons, like GDPR. This makes sure
+that users who are no longer in the guild or even using Discord don't have their data
+stored any longer than necessary."""
 from db_connection.db_connector import DBConnection
 
 class LeftMembersDAO:

@@ -1,4 +1,6 @@
-"""The classes and functions handling data access objects for the punishments table"""
+"""The classes and functions handling data access objects for the punishments table.
+The database table keeps track of a user's punishment history. Punishments include
+things like kicks, bans, timeouts and warnings."""
 from db_connection.db_connector import DBConnection
 
 class PunishmentsDAO:

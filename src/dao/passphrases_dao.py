@@ -1,4 +1,7 @@
-"""The classes and functions handling data access objects for the passphrases table"""
+"""The classes and functions handling data access objects for the passphrases table.
+The database table keeps track of the passphrases of a guild. Passphrases are a possible
+verification for a guild, requiring the member to enter a specific phrase to be granted
+access to the wider guild."""
 from db_connection.db_connector import DBConnection
 
 class PassphrasesDAO:

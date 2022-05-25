@@ -1,4 +1,6 @@
-"""The classes and functions handling data access objects for the usernames table"""
+"""The classes and functions handling data access objects for the usernames table
+The database table keeps track of a user's username history, including what username
+they were and when they changed to that."""
 from db_connection.db_connector import DBConnection
 
 class UsernamesDAO:

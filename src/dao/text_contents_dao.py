@@ -1,4 +1,6 @@
-"""The classes and functions handling data access objects for the text_contents table"""
+"""The classes and functions handling data access objects for the text_contents table.
+The database table keeps track of different text contents the bot may use within a given guild.
+Such content may include what the bot says when someone new joins the guild."""
 from db_connection.db_connector import DBConnection
 
 class TextContentsDAO:

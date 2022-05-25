@@ -1,5 +1,8 @@
 """The classes and functions handling data access objects for the unverified reminder history
-table"""
+table.
+The database table keeps track of verification reminders already sent to the user and is
+linked to the unverified_reminder_messages table. This way the bot doesn't accidentally
+send the same reminder twice to the same user."""
 from db_connection.db_connector import DBConnection
 
 class UnverifiedReminderHistoryDAO:

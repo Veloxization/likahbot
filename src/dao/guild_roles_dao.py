@@ -1,4 +1,7 @@
-"""The classes and functions handling data access objects for the guild_roles table"""
+"""The classes and functions handling data access objects for the guild_roles table.
+The database table keeps track of roles used for varying purposes within a guild.
+A guild may have a separate role for new members, verified new members, full members,
+admins and moderators, for example."""
 from db_connection.db_connector import DBConnection
 
 class GuildRolesDAO:

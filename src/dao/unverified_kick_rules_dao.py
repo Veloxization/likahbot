@@ -1,4 +1,7 @@
-"""The classes and functions handling data access objects for the unverified kick rules table"""
+"""The classes and functions handling data access objects for the unverified kick rules table.
+The database table keeps track of the rules for kicking unverified members within different guilds.
+This makes sure that the guild does not fill with members who never intend to verify and become full
+members."""
 from db_connection.db_connector import DBConnection
 
 class UnverifiedKickRulesDAO:

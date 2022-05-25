@@ -1,4 +1,7 @@
-"""The classes and functions handling data access objects for the utility_channels table"""
+"""The classes and functions handling data access objects for the utility_channels table.
+The database table keeps track of channels used for varying purposes within a guild.
+A specified channel could be a rule channel, or maybe a channel where the bot posts logs
+or welcoming messages."""
 from db_connection.db_connector import DBConnection
 
 class UtilityChannelsDAO:

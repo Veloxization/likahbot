@@ -1,4 +1,7 @@
-"""The classes and functions handling data access objects for the nicknames table"""
+"""The classes and functions handling data access objects for the nicknames table.
+The database table keeps track of a user's nickname history, including what nickname
+they were and when they changed to that. Nicknames are guild specific and hence the
+inclusion of an identifying guild ID is necessary"""
 from db_connection.db_connector import DBConnection
 
 class NicknamesDAO:
