@@ -84,3 +84,11 @@ class TextContentsDAO:
         sql = "DELETE FROM text_contents WHERE guild_id=?"
         cursor.execute(sql, (guild_id,))
         self.db_connection.commit_and_close(connection)
+
+    def clear_text_contents_table(self):
+        """Delete every single text content from the table"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM text_contents"
+        cursor.execute(sql)
+        self.db_connection.commit_and_close(connection)
