@@ -54,6 +54,16 @@ class UnverifiedReminderMessagesDAO:
         cursor.execute(sql, (guild_id, message, send_time))
         self.db_connection.commit_and_close(connection)
 
+    def edit_guild_unverified_message(self, reminder_message_id: int, message: str, send_time: int):
+        """Edit an existing unverified reminder message
+        Args:
+            reminder_message_id: The database ID of the reminder message to edit"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "UPDATE unverified_reminder_messages SET message=?, timedelta=? WHERE id=?"
+        cursor.execute(sql, (message, send_time, reminder_message_id))
+        self.db_connection.commit_and_close(connection)
+
     def delete_unverified_reminder_message(self, reminder_message_id: int):
         """Delete a specific unverified reminder message
         Args:
@@ -72,4 +82,12 @@ class UnverifiedReminderMessagesDAO:
         connection, cursor = self.db_connection.connect_to_db()
         sql = "DELETE FROM unverified_reminder_messages WHERE guild_id=?"
         cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)
+
+    def clear_unverified_reminder_messages_table(self):
+        """Delete every single unverified reminder message from the table"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM unverified_reminder_messages"
+        cursor.execute(sql)
         self.db_connection.commit_and_close(connection)
