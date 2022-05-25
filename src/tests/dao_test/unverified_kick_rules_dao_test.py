@@ -2,7 +2,7 @@ import unittest
 import os
 from dao.unverified_kick_rules_dao import UnverifiedKickRulesDAO
 
-class TestTextContentsDAO(unittest.TestCase):
+class TestUnverifiedKickRulesDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
         os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
