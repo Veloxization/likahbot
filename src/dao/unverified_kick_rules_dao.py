@@ -39,6 +39,18 @@ class UnverifiedKickRulesDAO:
         cursor.execute(sql, (guild_id, kick_timing))
         self.db_connection.commit_and_close(connection)
 
+    def edit_guild_unverified_kick_rules(self, guild_id: int, kick_timing: int):
+        """Edit the timing for a guild's unverified kick timing
+        Args:
+            guild_id: The Discord ID of the guild whose kick rules to edit
+            kick_timing: The new time, in seconds, it takes before and unverified member is
+                         kicked"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "UPDATE unverified_kick_rules SET timedelta=? WHERE guild_id=?"
+        cursor.execute(sql, (kick_timing, guild_id))
+        self.db_connection.commit_and_close(connection)
+
     def remove_guild_unverified_kick_rules(self, guild_id: int):
         """Remove the kick rules of a specific guild
         Args:
@@ -47,4 +59,12 @@ class UnverifiedKickRulesDAO:
         connection, cursor = self.db_connection.connect_to_db()
         sql = "DELETE FROM unverified_kick_rules WHERE guild_id=?"
         cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)
+
+    def clear_unverified_kick_rules_table(self):
+        """Delete every single unverified kick rule from the table"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM unverified_kick_rules"
+        cursor.execute(sql)
         self.db_connection.commit_and_close(connection)
