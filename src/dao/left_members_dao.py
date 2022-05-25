@@ -95,3 +95,21 @@ class LeftMembersDAO:
         sql = "DELETE FROM left_members WHERE user_id=?"
         cursor.execute(sql, (user_id,))
         self.db_connection.commit_and_close(connection)
+
+    def remove_guild_left_member_records(self, guild_id: int):
+        """Remove all records of left members of a guild
+        Args:
+            guild_id: The Discord ID of the guild whose records to remove"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM left_members WHERE guild_id=?"
+        cursor.execute(sql, (guild_id,))
+        self.db_connection.commit_and_close(connection)
+
+    def clear_left_members_table(self):
+        """Delete every single left member from the table"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM left_members"
+        cursor.execute(sql)
+        self.db_connection.commit_and_close(connection)
