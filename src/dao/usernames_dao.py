@@ -52,7 +52,7 @@ class UsernamesDAO:
         previous_usernames = self.find_user_usernames(user_id)
         if len(previous_usernames) >= username_limit:
             this_username = previous_usernames.pop()
-            self.delete_earlier_usernames(user_id, this_username["id"])
+            self._delete_earlier_usernames(user_id, this_username["id"])
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO usernames (user_id, username, time) VALUES (?, ?, datetime())"
@@ -69,7 +69,7 @@ class UsernamesDAO:
         cursor.execute(sql, (username_id,))
         self.db_connection.commit_and_close(connection)
 
-    def delete_earlier_usernames(self, user_id: int, username_id: int):
+    def _delete_earlier_usernames(self, user_id: int, username_id: int):
         """Delete the specified username and any usernames added before it
         Args:
             user_id: The Discord ID of the user whose usernames to delete
