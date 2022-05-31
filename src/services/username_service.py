@@ -1,6 +1,4 @@
-"""The username service is used to call methods in the usernames DAO class. It'll be easier to
-transfer to another database format as you will only have to edit the DAO classes while leaving
-this class mostly intact."""
+"""The username service is used to call methods in the usernames DAO class."""
 
 from dao.usernames_dao import UsernamesDAO
 from entities.username_entity import UsernameEntity
