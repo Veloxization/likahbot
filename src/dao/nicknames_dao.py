@@ -44,7 +44,8 @@ class NicknamesDAO:
         return nicknames
 
     def add_nickname(self, nickname: str, user_id: int, guild_id: int, nickname_limit: int = 5):
-        """Add a new nickname to the database. If five names exist already, the oldest is deleted.
+        """Add a new nickname to the database. If more than limit names exist already, the oldest
+        are deleted.
         Args:
             nickname: The nickname to add
             user_id: The Discord ID of the user this nickname is associated with
@@ -54,7 +55,7 @@ class NicknamesDAO:
         previous_nicknames = self.find_user_nicknames(user_id, guild_id)
         if len(previous_nicknames) >= nickname_limit:
             this_nickname = previous_nicknames.pop()
-            self.delete_earlier_user_nicknames(user_id, guild_id, this_nickname["id"])
+            self._delete_earlier_user_nicknames(user_id, guild_id, this_nickname["id"])
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO nicknames (user_id, nickname, guild_id, time) VALUES (?, ?, ?, datetime())"
@@ -71,7 +72,7 @@ class NicknamesDAO:
         cursor.execute(sql, (nickname_id,))
         self.db_connection.commit_and_close(connection)
 
-    def delete_earlier_user_nicknames(self, user_id: int, guild_id: int, nickname_id: int):
+    def _delete_earlier_user_nicknames(self, user_id: int, guild_id: int, nickname_id: int):
         """Delete the specified nickname and any nicknames added before it
         Args:
             user_id: The Discord ID of the user whose nicknames to delete
