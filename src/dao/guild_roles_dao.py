@@ -25,7 +25,7 @@ class GuildRolesDAO:
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "SELECT * FROM guild_roles " \
-              "INNER JOIN guild_role_categories AS grc ON category_id=grc.id" \
+              "INNER JOIN guild_role_categories AS grc ON category_id=grc.id " \
               "WHERE guild_id=? ORDER BY category ASC"
         cursor.execute(sql, (guild_id,))
         roles = cursor.fetchall()
