@@ -49,18 +49,18 @@ class GuildRolesDAO:
         self.db_connection.close_connection(connection)
         return roles
 
-    def get_guild_role_by_role_id(self, role_id: int):
-        """Get a role of a specific ID
+    def get_guild_roles_by_role_id(self, role_id: int):
+        """Get guild roles with a specific ID
         Args:
             role_id: The ID of the role from the Discord Guild
-        Returns: A Row containing the found role, None if none are found"""
+        Returns: A list of Rows containing the found roles"""
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "SELECT * FROM guild_roles " \
               "INNER JOIN guild_role_categories AS grc ON category_id=grc.id " \
               "WHERE role_id=?"
         cursor.execute(sql, (role_id,))
-        role = cursor.fetchone()
+        role = cursor.fetchall()
         self.db_connection.close_connection(connection)
         return role
 
