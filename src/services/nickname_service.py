@@ -15,7 +15,7 @@ class NicknameService:
 
         self.nicknames_dao = NicknamesDAO(db_address)
 
-    def convert_to_entity(self, row):
+    def _convert_to_entity(self, row):
         """Convert a database row to a nickname entity
         Args:
             row: The database row to convert to a nickname entity
@@ -31,7 +31,7 @@ class NicknameService:
         Returns: A list of Nickname entities"""
 
         rows = self.nicknames_dao.find_nickname(nickname)
-        return [self.convert_to_entity(row) for row in rows]
+        return [self._convert_to_entity(row) for row in rows]
 
     def find_user_nicknames(self, user_id: int, guild_id: int):
         """Find all nicknames for a given user
@@ -41,7 +41,7 @@ class NicknameService:
         Returns: A list of Nickname entities"""
 
         rows = self.nicknames_dao.find_user_nicknames(user_id, guild_id)
-        return [self.convert_to_entity(row) for row in rows]
+        return [self._convert_to_entity(row) for row in rows]
 
     def add_nickname(self, nickname: str, user_id: int, guild_id: int, nickname_limit: int = 5):
         """Add a new nickname. If more than limit names exist already, the oldest are deleted.

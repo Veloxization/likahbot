@@ -15,7 +15,7 @@ class UsernameService:
 
         self.usernames_dao = UsernamesDAO(db_address)
 
-    def convert_to_entity(self, row):
+    def _convert_to_entity(self, row):
         """Convert a database row to a username entity
         Args:
             row: The database row to convert to a username entity
@@ -30,7 +30,7 @@ class UsernameService:
         Returns: A list of username entities"""
 
         rows = self.usernames_dao.find_username(username)
-        return [self.convert_to_entity(row) for row in rows]
+        return [self._convert_to_entity(row) for row in rows]
 
     def find_user_usernames(self, user_id: int):
         """Find all usernames for a given user
@@ -39,7 +39,7 @@ class UsernameService:
         Returns: A list of username entities"""
 
         rows = self.usernames_dao.find_user_usernames(user_id)
-        return [self.convert_to_entity(row) for row in rows]
+        return [self._convert_to_entity(row) for row in rows]
 
     def add_username(self, username: str, user_id: int, username_limit: int = 5):
         """Add a new username. If more than limit names exist already, the oldest are deleted.

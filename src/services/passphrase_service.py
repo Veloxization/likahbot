@@ -15,7 +15,7 @@ class PassphraseService:
 
         self.passphrases_dao = PassphrasesDAO(db_address)
 
-    def convert_to_entity(self, row):
+    def _convert_to_entity(self, row):
         """Convert a database row to a passphrase entity
         Args:
             row: The database row to convert to a passphrase entity
@@ -30,7 +30,7 @@ class PassphraseService:
         Returns: A list of Passphrase entities containing the passphrases of the Guild"""
 
         rows = self.passphrases_dao.get_all_guild_passphrases(guild_id)
-        return [self.convert_to_entity(row) for row in rows]
+        return [self._convert_to_entity(row) for row in rows]
 
     def add_passphrase(self, guild_id: int, content: str):
         """Add a new verification passphrase to be used on a guild

@@ -15,7 +15,7 @@ class PunishmentService:
 
         self.punishments_dao = PunishmentsDAO(db_address)
 
-    def convert_to_entity(self, row):
+    def _convert_to_entity(self, row):
         """Convert a database row to a punishment entity
         Args:
             row: The database row to convert to a punishment entity
@@ -32,7 +32,7 @@ class PunishmentService:
         Returns: A list of Punishment entites containing all the found punishments"""
 
         rows = self.punishments_dao.get_user_punishments(user_id, guild_id)
-        return [self.convert_to_entity(row) for row in rows]
+        return [self._convert_to_entity(row) for row in rows]
 
     def get_all_user_punishments(self, user_id: int, guild_id):
         """Get a full list of all punishments a user has within a given guild
@@ -42,7 +42,7 @@ class PunishmentService:
         Returns: A list of Punishment entities containing all the found punishments"""
 
         rows = self.punishments_dao.get_all_user_punishments(user_id, guild_id)
-        return [self.convert_to_entity(row) for row in rows]
+        return [self._convert_to_entity(row) for row in rows]
 
     def add_punishment(self, user_id: int, issuer_id: int, guild_id: int,
                        punishment_type: str = None, reason: str = None, deleted: bool = False):
