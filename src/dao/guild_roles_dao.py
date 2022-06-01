@@ -60,9 +60,9 @@ class GuildRolesDAO:
               "INNER JOIN guild_role_categories AS grc ON category_id=grc.id " \
               "WHERE role_id=?"
         cursor.execute(sql, (role_id,))
-        role = cursor.fetchall()
+        roles = cursor.fetchall()
         self.db_connection.close_connection(connection)
-        return role
+        return roles
 
     def add_guild_role(self, role_id: int, category_id: int):
         """Add a role under a guild role category
@@ -75,14 +75,15 @@ class GuildRolesDAO:
         cursor.execute(sql, (role_id, category_id))
         self.db_connection.commit_and_close(connection)
 
-    def remove_guild_role(self, role_id: int):
+    def remove_guild_role_from_category(self, role_id: int, category_id: int):
         """Remove a guild role by the role's Discord ID
         Args:
-            role_id: The Discord ID of the role to remove"""
+            role_id: The Discord ID of the role to remove
+            category_id: The database ID of the category to remove this role from"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "DELETE FROM guild_roles WHERE role_id=?"
-        cursor.execute(sql, (role_id,))
+        sql = "DELETE FROM guild_roles WHERE role_id=? AND category_id=?"
+        cursor.execute(sql, (role_id, category_id))
         self.db_connection.commit_and_close(connection)
 
     def delete_guild_roles(self, guild_id: int):
