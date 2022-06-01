@@ -8,6 +8,7 @@ class NicknameEntity():
         db_id: The database ID of the nickname
         user_id: The Discord ID of the user this nickname is tied to
         nickname: The nickname string
+        guild_id: The Discord ID of the guild this nickname is tied to
         time: A datetime object telling the time this nickname came to be used"""
 
     def __init__(self, db_id: int, user_id: int, nickname: str, guild_id: int, time: str):
@@ -16,6 +17,7 @@ class NicknameEntity():
             db_id: The database ID of the nickname
             user_id: The Discord ID of the user this nickname is tied to
             nickname: The nickname string
+            guild_id: The Discord ID of the guild this nickname is tied to
             time: The time string telling the time this nickname came to be used"""
 
         self.db_id = db_id
