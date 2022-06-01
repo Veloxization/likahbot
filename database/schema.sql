@@ -69,11 +69,16 @@ CREATE TABLE IF NOT EXISTS birthdays (
     user_id INTEGER NOT NULL,
     birth_date DATE NOT NULL
 );
+CREATE TABLE IF NOT EXISTS guild_role_categories (
+    id INTEGER PRIMARY KEY,
+    guild_id INTEGER NOT NULL,
+    category TEXT /*NEW, VERIFIED, NORMAL, BIRTHDAY, MODERATOR, ADMIN*/
+)
 CREATE TABLE IF NOT EXISTS guild_roles (
     id INTEGER PRIMARY KEY,
     role_id INTEGER NOT NULL,
-    guild_id INTEGER NOT NULL,
-    type TEXT /*NEW, VERIFIED, NORMAL, BIRTHDAY, MODERATOR, ADMIN*/
+    category_id INTEGER NOT NULL,
+    FOREIGN KEY (category_id) REFERENCES guild_role_categories (id)
 );
 CREATE TABLE IF NOT EXISTS level_reward_roles (
     id INTEGER PRIMARY KEY,

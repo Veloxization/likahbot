@@ -17,30 +17,34 @@ class GuildRolesDAO:
         self.db_connection = DBConnection(db_address)
 
     def get_all_guild_roles(self, guild_id: int):
-        """Get all specified roles of a specified Guild
+        """Get all guild roles of a specified Guild
         Args:
             guild_id: The ID of the Discord Guild to look for roles
         Returns:
             A list of Rows containing the found roles"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM guild_roles WHERE guild_id=? ORDER BY type ASC"
+        sql = "SELECT * FROM guild_roles " \
+              "INNER JOIN guild_role_categories AS grc ON category_id=grc.id" \
+              "WHERE guild_id=? ORDER BY category ASC"
         cursor.execute(sql, (guild_id,))
         roles = cursor.fetchall()
         self.db_connection.close_connection(connection)
         return roles
 
-    def get_guild_roles_of_type(self, role_type: str, guild_id: int):
+    def get_guild_roles_of_type(self, role_category: str, guild_id: int):
         """Get all Guild roles of specific type
         Args:
-            role_type: The type of role to get (e.g. ADMIN, NEW, VERIFIED etc.)
+            role_category: The category of role to get (e.g. ADMIN, NEW, VERIFIED etc.)
             guild_id: The ID of the Discord Guild to look for roles
         Returns:
             A list of Rows containing the found roles"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM guild_roles WHERE type=? AND guild_id=?"
-        cursor.execute(sql, (role_type, guild_id))
+        sql = "SELECT * FROM guild_roles " \
+              "INNER JOIN guild_role_categories AS grc ON category_id=grc.id " \
+              "WHERE category=? AND guild_id=?"
+        cursor.execute(sql, (role_category, guild_id))
         roles = cursor.fetchall()
         self.db_connection.close_connection(connection)
         return roles
@@ -52,22 +56,23 @@ class GuildRolesDAO:
         Returns: A Row containing the found role, None if none are found"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM guild_roles WHERE role_id=?"
+        sql = "SELECT * FROM guild_roles " \
+              "INNER JOIN guild_role_categories AS grc ON category_id=grc.id " \
+              "WHERE role_id=?"
         cursor.execute(sql, (role_id,))
         role = cursor.fetchone()
         self.db_connection.close_connection(connection)
         return role
 
-    def add_guild_role(self, role_id: int, guild_id: int, role_type: str):
+    def add_guild_role(self, role_id: int, category_id: int):
         """Add a role under a guild role category
         Args:
             role_id: The ID of the role from the Discord Guild
-            guild_id: The ID of the Discord Guild the role is in
-            role_type: The category of this role (e.g. ADMIN, NEW, VERIFIED etc.)"""
+            category_id: The database ID of the category this role belongs in"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "INSERT INTO guild_roles (role_id, guild_id, type) VALUES (?, ?, ?)"
-        cursor.execute(sql, (role_id, guild_id, role_type))
+        sql = "INSERT INTO guild_roles (role_id, category_id) VALUES (?, ?)"
+        cursor.execute(sql, (role_id, category_id))
         self.db_connection.commit_and_close(connection)
 
     def remove_guild_role(self, role_id: int):
@@ -86,7 +91,8 @@ class GuildRolesDAO:
             guild_id: The Discord ID of the guild whose guild roles to delete"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "DELETE FROM guild_roles WHERE guild_id=?"
+        sql = "DELETE FROM guild_roles WHERE category_id IN " \
+              "(SELECT id FROM guild_role_categories WHERE guild_id=?)"
         cursor.execute(sql, (guild_id,))
         self.db_connection.commit_and_close(connection)
 
