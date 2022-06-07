@@ -24,7 +24,7 @@ class GuildRolesDAO:
             A list of Rows containing the found roles"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM guild_roles " \
+        sql = "SELECT gr.id, role_id, category_id, guild_id, category FROM guild_roles AS gr " \
               "INNER JOIN guild_role_categories AS grc ON category_id=grc.id " \
               "WHERE guild_id=? ORDER BY category ASC"
         cursor.execute(sql, (guild_id,))
@@ -41,7 +41,7 @@ class GuildRolesDAO:
             A list of Rows containing the found roles"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM guild_roles " \
+        sql = "SELECT gr.id, role_id, category_id, guild_id, category FROM guild_roles " \
               "INNER JOIN guild_role_categories AS grc ON category_id=grc.id " \
               "WHERE category=? AND guild_id=?"
         cursor.execute(sql, (role_category, guild_id))
@@ -56,7 +56,7 @@ class GuildRolesDAO:
         Returns: A list of Rows containing the found roles"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM guild_roles " \
+        sql = "SELECT gr.id, role_id, category_id, guild_id, category FROM guild_roles " \
               "INNER JOIN guild_role_categories AS grc ON category_id=grc.id " \
               "WHERE role_id=?"
         cursor.execute(sql, (role_id,))
