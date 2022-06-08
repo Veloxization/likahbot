@@ -94,7 +94,7 @@ class UtilityChannelsDAO:
         self.db_connection.commit_and_close(connection)
 
     def clear_utility_channels_table(self):
-        """Delete every single nickname from the table"""
+        """Delete every single utility channel from the table"""
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "DELETE FROM utility_channels"

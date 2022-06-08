@@ -6,7 +6,7 @@ from entities.guild_role_entity import GuildRoleEntity
 class GuildRoleSerivce:
     """A service for calling methods from guild roles DAO
     Attributes:
-        guild_role_dao: The DAO object this service will use"""
+        guild_roles_dao: The DAO object this service will use"""
 
     def __init__(self, db_address):
         """Create a new service for guild roles DAO
@@ -18,7 +18,7 @@ class GuildRoleSerivce:
     def _convert_to_entity(self, row):
         """Convert a database row to a guild role entity
         Args:
-            row: The database row to convert to a guild row entity
+            row: The database row to convert to a guild role entity
         Returns: A guild role entity equivalent to the database row"""
 
         return GuildRoleEntity(row["id"], row["role_id"], row["category_id"], row["guild_id"],
