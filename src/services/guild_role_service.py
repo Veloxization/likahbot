@@ -3,7 +3,7 @@
 from dao.guild_roles_dao import GuildRolesDAO
 from entities.guild_role_entity import GuildRoleEntity
 
-class GuildRoleSerivce:
+class GuildRoleService:
     """A service for calling methods from guild roles DAO
     Attributes:
         guild_roles_dao: The DAO object this service will use"""
