@@ -49,7 +49,7 @@ class TextContentService:
             content: The actual text content
             content_type: The type of text content (e.g. WELCOME MESSAGE)"""
 
-        self.text_contents_dao.create_text_content(guild_id)
+        self.text_contents_dao.create_text_content(guild_id, content, content_type)
 
     def edit_text_content(self, guild_id: int, content_type: str, content: str = None):
         """Edit existing text contents for a given guild
