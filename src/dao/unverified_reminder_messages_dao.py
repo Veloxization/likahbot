@@ -60,7 +60,9 @@ class UnverifiedReminderMessagesDAO:
     def edit_guild_unverified_message(self, reminder_message_id: int, message: str, send_time: int):
         """Edit an existing unverified reminder message
         Args:
-            reminder_message_id: The database ID of the reminder message to edit"""
+            reminder_message_id: The database ID of the reminder message to edit
+            message: The new message that will be sent to the unverified member
+            send_time: The new time the message will be sent after, in seconds"""
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "UPDATE unverified_reminder_messages SET message=?, timedelta=? WHERE id=?"
