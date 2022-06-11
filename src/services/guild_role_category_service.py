@@ -56,7 +56,7 @@ class GuildRoleCategorySerivce:
 
         self.guild_role_categories_dao.remove_all_guild_role_categories(guild_id)
 
-    def clear_guild_role_categories_table(self):
+    def clear_guild_role_categories(self):
         """Delete every single guild role category"""
 
         self.guild_role_categories_dao.clear_guild_role_categories_table()

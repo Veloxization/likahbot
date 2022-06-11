@@ -54,7 +54,7 @@ class PassphraseService:
 
         self.passphrases_dao.delete_guild_passphrases(guild_id)
 
-    def clear_passphrases_table(self):
+    def clear_passphrases(self):
         """Delete every single passphrase"""
 
         self.passphrases_dao.clear_passphrases_table()

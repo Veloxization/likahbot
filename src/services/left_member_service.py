@@ -88,7 +88,7 @@ class LeftMemberService:
 
         self.left_members_dao.remove_guild_left_member_records(guild_id)
 
-    def clear_left_members_table(self):
+    def clear_left_members(self):
         """Delete every single left member record"""
 
         self.left_members_dao.clear_left_members_table()

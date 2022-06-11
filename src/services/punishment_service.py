@@ -79,7 +79,7 @@ class PunishmentService:
 
         self.punishments_dao.delete_guild_punishments(guild_id)
 
-    def clear_punishments_table(self):
+    def clear_punishments(self):
         """Delete every single punishment record"""
 
         self.punishments_dao.clear_punishments_table()

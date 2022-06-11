@@ -75,7 +75,7 @@ class GuildRoleService:
 
         self.guild_roles_dao.delete_guild_roles(guild_id)
 
-    def clear_guild_roles_table(self):
+    def clear_guild_roles(self):
         """Delete every single guild role"""
 
         self.guild_roles_dao.clear_guild_roles_table()

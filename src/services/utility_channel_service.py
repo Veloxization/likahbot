@@ -80,7 +80,7 @@ class UtilityChannelService:
 
         self.utility_channels_dao.delete_guild_utility_channels(guild_id)
 
-    def clear_utility_channels_table(self):
+    def clear_utility_channels(self):
         """Delete every single utility channel"""
 
         self.utility_channels_dao.clear_utility_channels_table()

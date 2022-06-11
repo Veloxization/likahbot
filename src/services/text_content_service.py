@@ -75,7 +75,7 @@ class TextContentService:
 
         self.text_contents_dao.delete_guild_text_contents(guild_id)
 
-    def clear_text_contents_table(self):
+    def clear_text_contents(self):
         """Delete all text contents"""
 
         self.text_contents_dao.clear_text_contents_table()

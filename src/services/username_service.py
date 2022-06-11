@@ -64,7 +64,7 @@ class UsernameService:
 
         self.usernames_dao.delete_user_usernames(user_id)
 
-    def clear_usernames_table(self):
+    def clear_usernames(self):
         """Delete every single username record"""
 
         self.usernames_dao.clear_usernames_table()

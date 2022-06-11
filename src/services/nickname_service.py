@@ -75,7 +75,7 @@ class NicknameService:
 
         self.nicknames_dao.delete_guild_nicknames(guild_id)
 
-    def clear_nicknames_table(self):
+    def clear_nicknames(self):
         """Delete every single nickname record"""
 
         self.nicknames_dao.clear_nicknames_table()
