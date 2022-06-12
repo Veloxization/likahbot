@@ -26,7 +26,8 @@ class UnverifiedReminderHistoryDAO:
         Returns: A list of Rows containing the member's reminder history"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM unverified_reminder_history " \
+        sql = "SELECT urh.id, reminder_message_id, user_id " \
+              "FROM unverified_reminder_history AS urh " \
               "INNER JOIN unverified_reminder_messages AS urm ON urm.id=reminder_message_id " \
               "WHERE user_id=? AND guild_id=? " \
               "ORDER BY timedelta DESC"
