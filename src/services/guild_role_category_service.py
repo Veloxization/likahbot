@@ -4,7 +4,7 @@ class."""
 from dao.guild_role_categories_dao import GuildRoleCategoriesDAO
 from entities.guild_role_category_entity import GuildRoleCategoryEntity
 
-class GuildRoleCategorySerivce:
+class GuildRoleCategoryService:
     """A service for calling methods from guild role categories DAO
     Attributes:
         guild_role_categories_dao: The DAO object this service will use"""
