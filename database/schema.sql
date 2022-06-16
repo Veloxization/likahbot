@@ -21,10 +21,17 @@ CREATE TABLE IF NOT EXISTS punishments (
     time DATETIME,
     deleted BOOLEAN
 );
-CREATE TABLE IF NOT EXISTS passphrases (
+CREATE TABLE IF NOT EXISTS verification_questions (
     id INTEGER PRIMARY KEY,
     guild_id INTEGER NOT NULL,
-    content TEXT NOT NULL
+    question TEXT NOT NULL,
+    order INTEGER
+);
+CREATE TABLE IF NOT EXISTS verification_answers (
+    id INTEGER PRIMARY KEY,
+    question_id INTEGER NOT NULL,
+    answer TEXT,
+    FOREIGN KEY (question_id) REFERENCES verification_questions (id)
 );
 CREATE TABLE IF NOT EXISTS experience (
     id INTEGER PRIMARY KEY,
