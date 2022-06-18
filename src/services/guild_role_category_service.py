@@ -23,6 +23,8 @@ class GuildRoleCategoryService:
             row: The database row to convert to a guild row category entity
         Returns: A guild role category entity equivalent to the database row"""
 
+        if not row:
+            return None
         return GuildRoleCategoryEntity(row["id"], row["guild_id"], row["category"])
 
     def get_all_guild_role_categories(self, guild_id: int):

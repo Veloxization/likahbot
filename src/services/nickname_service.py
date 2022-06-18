@@ -21,6 +21,8 @@ class NicknameService:
             row: The database row to convert to a nickname entity
         Returns: A nickname entity equivalent to the database row"""
 
+        if not row:
+            return None
         return NicknameEntity(row["id"], row["user_id"], row["nickname"], row["guild_id"],
                               row["time"])
 

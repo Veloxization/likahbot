@@ -21,6 +21,8 @@ class GuildRoleService:
             row: The database row to convert to a guild role entity
         Returns: A guild role entity equivalent to the database row"""
 
+        if not row:
+            return None
         return GuildRoleEntity(row["id"], row["role_id"], row["category_id"], row["guild_id"],
                                row["category"])
 

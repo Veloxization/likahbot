@@ -21,6 +21,8 @@ class PunishmentService:
             row: The database row to convert to a punishment entity
         Returns: A punishment entity equivalent to the database row"""
 
+        if not row:
+            return None
         return PunishmentEntity(row["id"], row["user_id"], row["issuer_id"], row["guild_id"],
                                 row["type"], row["time"], row["reason"], row["deleted"])
 

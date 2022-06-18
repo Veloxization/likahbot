@@ -23,6 +23,8 @@ class UnverifiedReminderMessageService:
             row: The database row to convert to an unverified reminder message entity
         Returns: An unverified reminder message entity equivalent to the database row"""
 
+        if not row:
+            return None
         return UnverifiedReminderMessageEntity(row["id"], row["guild_id"], row["message"],
                                                row["timedelta"])
 

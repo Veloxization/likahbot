@@ -21,6 +21,8 @@ class TextContentService:
             row: The database row to convert to a text content entity
         Returns: A text content entity equivalent to the database row"""
 
+        if not row:
+            return None
         return TextContentEntity(row["id"], row["guild_id"], row["content"], row["type"])
 
     def get_guild_text_contents(self, guild_id: int):

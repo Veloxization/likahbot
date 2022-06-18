@@ -22,6 +22,8 @@ class UtilityChannelService:
             row: The database row to convert to a utility channel entity
         Returns: A utility channel entity equivalent to the database row"""
 
+        if not row:
+            return None
         return UtilityChannelEntity(row["id"], row["channel_id"], row["guild_id"],
                                     row["channel_purpose"])
 

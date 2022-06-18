@@ -23,6 +23,8 @@ class UnverifiedReminderHistoryService:
             row: The database row to convert to an unverified reminder history entity
         Returns: An unverified reminder history entity equivalent to the database row"""
 
+        if not row:
+            return None
         return UnverifiedReminderHistoryEntity(row["id"], row["reminder_message_id"],
                                                row["user_id"])
 

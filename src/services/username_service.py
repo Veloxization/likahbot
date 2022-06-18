@@ -21,6 +21,8 @@ class UsernameService:
             row: The database row to convert to a username entity
         Returns: A username entity equivalent to the database row"""
 
+        if not row:
+            return None
         return UsernameEntity(row["id"], row["user_id"], row["username"], row["time"])
 
     def find_username(self, username: str):

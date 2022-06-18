@@ -21,6 +21,8 @@ class LeftMemberService:
             row: The database row to convert to a left member entity
         Returns: A left member entity equivalent to the database row"""
 
+        if not row:
+            return None
         return LeftMemberEntity(row["id"], row["user_id"], row["guild_id"], row["leave_date"])
 
     def get_all_guild_left_members(self, guild_id: int):
