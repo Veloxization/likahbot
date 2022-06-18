@@ -25,8 +25,7 @@ class UnverifiedReminderMessageService:
 
         if not row:
             return None
-        return UnverifiedReminderMessageEntity(row["id"], row["guild_id"], row["message"],
-                                               row["timedelta"])
+        return UnverifiedReminderMessageEntity(row["id"], row["message"], row["timedelta"])
 
     def get_guild_unverified_reminder_messages(self, guild_id: int):
         """Get all unverified reminder messages for a given guild
