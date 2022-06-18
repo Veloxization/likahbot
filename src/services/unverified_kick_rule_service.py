@@ -23,7 +23,9 @@ class UnverifiedKickRuleService:
             row: The database row to convert to an unverified kick rule entity
         Returns: An unverified kick rule entity equivalent to the database row"""
 
-        return UnverifiedKickRuleEntity(row["id"], row["guild_id"], row["timedelta"])
+        if not row:
+            return None
+        return UnverifiedKickRuleEntity(row["timedelta"])
 
     def get_guild_unverified_kick_rules(self, guild_id: int):
         """Get the rules for kicking unverified members from specified guild

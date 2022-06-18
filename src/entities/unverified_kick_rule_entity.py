@@ -7,13 +7,11 @@ class UnverifiedKickRuleEntity():
         guild_id: The Discord ID of the guild the kick rule applies for
         timedelta: The time in seconds until an unverified member is kicked"""
 
-    def __init__(self, db_id: int, guild_id: int, timedelta: int):
+    def __init__(self, timedelta: int):
         """Create a new unverified kick rule entity
         Args:
             db_id: The database ID of the utility channel
             guild_id: The Discord ID of the guild the kick rule applies for
             timedelta: The time in seconds until an unverified member is kicked"""
 
-        self.db_id = db_id
-        self.guild_id = guild_id
         self.timedelta = timedelta
