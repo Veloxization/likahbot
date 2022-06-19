@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS verification_questions (
     id INTEGER PRIMARY KEY,
     guild_id INTEGER NOT NULL,
     question TEXT NOT NULL,
-    order INTEGER
+    question_priority INTEGER
 );
 CREATE TABLE IF NOT EXISTS verification_answers (
     id INTEGER PRIMARY KEY,
