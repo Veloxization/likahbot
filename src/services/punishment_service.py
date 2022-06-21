@@ -67,6 +67,13 @@ class PunishmentService:
 
         self.punishments_dao.mark_deleted(punishment_id)
 
+    def unmark_deleted(self, punishment_id: int):
+        """Mark a deleted punishment as undeleted
+        Args:
+            punishment_id: The database ID of the deleted punishment to mark as undeleted"""
+
+        self.punishments_dao.unmark_deleted(punishment_id)
+
     def edit_punishment_reason(self, punishment_id: int, reason: str):
         """Edit the reason for an existing punishment
         Args:

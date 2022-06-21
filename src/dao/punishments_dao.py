@@ -78,6 +78,16 @@ class PunishmentsDAO:
         cursor.execute(sql, (punishment_id,))
         self.db_connection.commit_and_close(connection)
 
+    def unmark_deleted(self, punishment_id: int):
+        """Mark a deleted punishment as undeleted
+        Args:
+            punishment_id: The database ID of the deleted punishment to mark as undeleted"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "UPDATE punishments SET deleted=FALSE WHERE id=?"
+        cursor.execute(sql, (punishment_id,))
+        self.db_connection.commit_and_close(connection)
+
     def edit_punishment_reason(self, punishment_id: int, reason: str):
         """Edit the reason for an existing punishment
         Args:
