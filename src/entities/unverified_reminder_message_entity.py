@@ -6,7 +6,6 @@ class UnverifiedReminderMessageEntity(MasterEntity):
     """An object derived from the unverified reminder messages database table's rows
     Attributes:
         db_id: The database ID of the unverified reminder message
-        guild_id: The Discord ID of the guild this reminder message is associated with
         message: The verification reminder message that will be sent to an unverified user
         timedelta: The time in seconds until the message is sent, counted from time of joining"""
 
@@ -14,7 +13,6 @@ class UnverifiedReminderMessageEntity(MasterEntity):
         """Create a new unverified reminder message entity
         Args:
             db_id: The database ID of the unverified reminder message
-            guild_id: The Discord ID of the guild this reminder message is associated with
             message: The verification reminder message that will be sent to an unverified user
             timedelta: The time in seconds until the message is sent, counted from time of
                        joining"""

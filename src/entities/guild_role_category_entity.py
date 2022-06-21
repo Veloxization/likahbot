@@ -9,6 +9,12 @@ class GuildRoleCategoryEntity(MasterEntity):
         category: The category name, e.g. BIRTHDAY, MODERATOR, ADMIN etc."""
 
     def __init__(self, db_id: int, guild_id: int, category: str):
+        """Create a new guild role category entity
+        Args:
+            db_id: The database ID of the guild role category
+            guild_id: The Discord ID of the guild this category is tied to
+            category: The category name, e.g. BIRTHDAY, MODERATOR, ADMIN etc."""
+
         self.db_id = db_id
         self.guild_id = guild_id
         self.category = category
