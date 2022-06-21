@@ -26,6 +26,14 @@ class TestPunishmentService(unittest.TestCase):
         punishments = self.punishment_service.get_all_user_punishments(1234, 9876)
         self.assertTrue(punishments[0].deleted)
 
+    def test_punishment_reasons_are_edited_correctly(self):
+        self.punishment_service.add_punishment(1234, 3456, 9876, reason="Test1")
+        punishments = self.punishment_service.get_all_user_punishments(1234, 9876)
+        self.assertEqual(punishments[0].reason, "Test1")
+        self.punishment_service.edit_punishment_reason(punishments[0].db_id, "Test2")
+        punishments = self.punishment_service.get_all_user_punishments(1234, 9876)
+        self.assertEqual(punishments[0].reason, "Test2")
+
     def test_deleted_user_punishments_are_not_returned_with_regular_search(self):
         self.punishment_service.add_punishment(1234, 3456, 9876, deleted=True)
         punishments = self.punishment_service.get_user_punishments(1234, 9876)

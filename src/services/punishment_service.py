@@ -67,6 +67,14 @@ class PunishmentService:
 
         self.punishments_dao.mark_deleted(punishment_id)
 
+    def edit_punishment_reason(self, punishment_id: int, reason: str):
+        """Edit the reason for an existing punishment
+        Args:
+            punishment_id: The database ID of the punishment to edit
+            reason: The new reason for the punishment"""
+
+        self.punishments_dao.edit_punishment_reason(punishment_id, reason)
+
     def delete_punishment(self, punishment_id: int):
         """Permanently delete a punishment
         Args:

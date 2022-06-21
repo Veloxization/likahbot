@@ -78,6 +78,17 @@ class PunishmentsDAO:
         cursor.execute(sql, (punishment_id,))
         self.db_connection.commit_and_close(connection)
 
+    def edit_punishment_reason(self, punishment_id: int, reason: str):
+        """Edit the reason for an existing punishment
+        Args:
+            punishment_id: The database ID of the punishment to edit
+            reason: The new reason for the punishment"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "UPDATE punishments SET reason=? WHERE id=?"
+        cursor.execute(sql, (reason, punishment_id))
+        self.db_connection.commit_and_close(connection)
+
     def delete_punishment(self, punishment_id: int):
         """Permanently delete a punishment
         Args:

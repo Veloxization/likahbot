@@ -26,6 +26,14 @@ class TestPunishmentsDAO(unittest.TestCase):
         punishments = self.punishments_dao.get_all_user_punishments(1234, 9876)
         self.assertTrue(punishments[0]["deleted"])
 
+    def test_punishment_reasons_are_edited_correctly(self):
+        self.punishments_dao.add_punishment(1234, 2345, 9876, reason="Test1")
+        punishments = self.punishments_dao.get_user_punishments(1234, 9876)
+        self.assertEqual(punishments[0]["reason"], "Test1")
+        self.punishments_dao.edit_punishment_reason(punishments[0]["id"], "Test2")
+        punishments = self.punishments_dao.get_user_punishments(1234, 9876)
+        self.assertEqual(punishments[0]["reason"], "Test2")
+
     def test_punishments_are_deleted_correctly(self):
         self.punishments_dao.add_punishment(1234, 2345, 9876)
         punishments = self.punishments_dao.get_all_user_punishments(1234, 9876)
