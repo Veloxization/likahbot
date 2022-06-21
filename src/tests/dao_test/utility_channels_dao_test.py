@@ -50,7 +50,7 @@ class TestUtilityChannelsDAO(unittest.TestCase):
 
     def test_utility_channels_by_id_are_returned_correctly(self):
         self.utility_channels_dao.create_guild_utility_channel(1234, 9876, "TEST")
-        channel = self.utility_channels_dao.get_guild_utility_channel_by_id(9876, 1234)
-        self.assertEqual(channel["channel_id"], 1234)
-        self.assertEqual(channel["guild_id"], 9876)
-        self.assertEqual(channel["channel_purpose"], "TEST")
+        channels = self.utility_channels_dao.get_guild_utility_channel_by_id(9876, 1234)
+        self.assertEqual(channels[0]["channel_id"], 1234)
+        self.assertEqual(channels[0]["guild_id"], 9876)
+        self.assertEqual(channels[0]["channel_purpose"], "TEST")

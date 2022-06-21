@@ -54,8 +54,8 @@ class UtilityChannelService:
             channel_id: The Discord ID of the channel to get
         Returns: A utility channel entity if the channel is used as one"""
 
-        row = self.utility_channels_dao.get_guild_utility_channel_by_id(guild_id, channel_id)
-        return self._convert_to_entity(row)
+        rows = self.utility_channels_dao.get_guild_utility_channel_by_id(guild_id, channel_id)
+        return [self._convert_to_entity(row) for row in rows]
 
     def create_guild_utility_channel(self, channel_id: int, guild_id: int, channel_purpose: str):
         """Create a new guild utility channel

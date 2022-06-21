@@ -49,13 +49,12 @@ class UtilityChannelsDAO:
         Args:
             guild_id: The Discord ID of the guild whose channel to get
             channel_id: The Discord ID of the channel to get
-        Returns: A Row containing the information of the specific utility channel,
-                 None if not found"""
+        Returns: A list of Rows containing all the different utilities for this channel"""
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "SELECT * FROM utility_channels WHERE guild_id=? AND channel_id=?"
         cursor.execute(sql, (guild_id, channel_id))
-        channel = cursor.fetchone()
+        channel = cursor.fetchall()
         self.db_connection.close_connection(connection)
         return channel
 
