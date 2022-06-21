@@ -1,8 +1,10 @@
 """Punishment database rows converted into Python objects"""
 
+import discord
 from time_handler.time import TimeStringConverter
+from entities.master_entity import MasterEntity
 
-class PunishmentEntity():
+class PunishmentEntity(MasterEntity):
     """An object derived from the punishments database table's rows
     Attributes:
         db_id: The database ID of the punishment
@@ -35,3 +37,11 @@ class PunishmentEntity():
         self.reason = reason
         self.time = time
         self.deleted = deleted
+
+    def get_discord_issuer(self, client: discord.Client):
+        """Get the Discord user from the issuer ID, if possible
+        Args:
+            client: The client to fetch the user
+        Returns: A discord.User object"""
+
+        return client.get_user(self.issuer_id)

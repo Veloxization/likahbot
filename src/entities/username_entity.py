@@ -1,8 +1,9 @@
 """Username database rows converted into Python objects"""
 
 from time_handler.time import TimeStringConverter
+from entities.master_entity import MasterEntity
 
-class UsernameEntity():
+class UsernameEntity(MasterEntity):
     """An object derived from the usernames database table's rows
     Attributes:
         db_id: The database ID of the username

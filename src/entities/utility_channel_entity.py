@@ -1,6 +1,8 @@
 """Utility channel database rows converted into Python objects"""
 
-class UtilityChannelEntity():
+from entities.master_entity import MasterEntity
+
+class UtilityChannelEntity(MasterEntity):
     """An object derived from the utility channels database table's rows
     Attributes:
         db_id: The database ID of the utility channel

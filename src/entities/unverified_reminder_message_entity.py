@@ -1,6 +1,8 @@
 """Unverified reminder message database rows converted into Python objects"""
 
-class UnverifiedReminderMessageEntity():
+from entities.master_entity import MasterEntity
+
+class UnverifiedReminderMessageEntity(MasterEntity):
     """An object derived from the unverified reminder messages database table's rows
     Attributes:
         db_id: The database ID of the unverified reminder message

@@ -1,6 +1,8 @@
 """Verification answer database rows converted into Python objects"""
 
-class VerificationAnswerEntity():
+from entities.master_entity import MasterEntity
+
+class VerificationAnswerEntity(MasterEntity):
     """An object derived from the verification answers database table's rows
     Attributes:
         db_id: The database ID of the verification answer

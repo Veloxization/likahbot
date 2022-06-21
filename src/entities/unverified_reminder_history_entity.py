@@ -1,6 +1,8 @@
 """Unverified reminder history database rows converted into Python objects"""
 
-class UnverifiedReminderHistoryEntity():
+from entities.master_entity import MasterEntity
+
+class UnverifiedReminderHistoryEntity(MasterEntity):
     """An object derived from the unverified reminder history database table's rows
     Attributes:
         db_id: The database ID of the unverified reminder history entry

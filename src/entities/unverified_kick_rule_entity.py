@@ -1,6 +1,8 @@
 """Unverified kick rule database rows converted into Python objects"""
 
-class UnverifiedKickRuleEntity():
+from entities.master_entity import MasterEntity
+
+class UnverifiedKickRuleEntity(MasterEntity):
     """An object derived from the unverified kick rules database table's rows
     Attributes:
         db_id: The database ID of the unverified kick rule

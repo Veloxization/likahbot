@@ -1,8 +1,9 @@
 """Left member database rows converted into Python objects"""
 
 from time_handler.time import TimeStringConverter
+from entities.master_entity import MasterEntity
 
-class LeftMemberEntity():
+class LeftMemberEntity(MasterEntity):
     """An object derived from the left members database table's rows
     Attributes:
         db_id: The database ID of the left member

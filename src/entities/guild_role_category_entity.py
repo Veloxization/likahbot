@@ -1,6 +1,7 @@
 """Guild role category database rows converted into Python objects"""
+from entities.master_entity import MasterEntity
 
-class GuildRoleCategoryEntity():
+class GuildRoleCategoryEntity(MasterEntity):
     """An object derived from the guild role categories database table's rows
     Attributes:
         db_id: The database ID of the guild role category

@@ -1,6 +1,8 @@
 """Text content database rows converted into Python objects"""
 
-class TextContentEntity():
+from entities.master_entity import MasterEntity
+
+class TextContentEntity(MasterEntity):
     """An object derived from the text contents database table's rows
     Attributes:
         db_id: The database ID of the text content

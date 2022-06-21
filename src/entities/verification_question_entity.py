@@ -1,6 +1,8 @@
 """Verification question database rows converted into Python objects"""
 
-class VerificationQuestionEntity():
+from entities.master_entity import MasterEntity
+
+class VerificationQuestionEntity(MasterEntity):
     """An object derived from the verification question database table's rows
     Attributes:
         db_id: The database ID of the utility channel
