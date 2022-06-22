@@ -22,16 +22,25 @@ async def on_ready():
 
 moderator_setting_commands = bot.create_group("guildsettings", "Adjust guild specific settings")
 
-@moderator_setting_commands.command(name="addlogchannel", guild_ids=debug_guilds)
-async def add_log_channel(
+@moderator_setting_commands.command(name="addutilitychannel", guild_ids=debug_guilds)
+async def add_utility_channel(
     ctx: discord.ApplicationContext,
-    channel: discord.TextChannel):
-    """Add a new log channel for a guild
-    Args:
-        ctx: The application context of the command
-        channel: The channel to add as a log channel"""
+    utility: discord.Option(str,
+                            "The utility to add for a channel",
+                            choices=["log", "rules", "verification"]),
+    channel: discord.Option(discord.TextChannel, "The channel to apply the utility to")):
+    """Assign a channel for a specified utility"""
 
-    utility_channel_service.create_guild_utility_channel(channel.id, ctx.guild.id, "LOG")
-    await ctx.respond(f"{channel.mention} is now a log channel. Future logs will be posted there.")
+    if utility not in ("log", "rules", "verification"):
+        await ctx.respond(f"I am not sure what \"{utility}\" is.")
+        return
+
+    utility_channel_service.create_guild_utility_channel(channel.id, ctx.guild.id, utility)
+    if utility == "log":
+        await ctx.respond(f"{channel.mention} is now a log channel. Future logs will be posted there.")
+    if utility == "rules":
+        await ctx.respond(f"{channel.mention} is now a rules channel. If you've specified any rules, they will be posted and maintained there.")
+    if utility == "verification":
+        await ctx.respond(f"{channel.mention} is now a verification channel. New members can verify through this channel from now on.")
 
 bot.run(str(sys.argv[1]))
