@@ -155,7 +155,8 @@ CREATE TABLE IF NOT EXISTS utility_channels (
     id INTEGER PRIMARY KEY,
     channel_id INTEGER NOT NULL,
     guild_id INTEGER NOT NULL,
-    channel_purpose /*LOG, RULES, PASSPHRASE*/
+    channel_purpose, /*LOG, RULES, PASSPHRASE*/
+    CONSTRAINT unq UNIQUE (channel_id, guild_id, channel_purpose)
 );
 CREATE TABLE IF NOT EXISTS currencies (
     id INTEGER PRIMARY KEY,
