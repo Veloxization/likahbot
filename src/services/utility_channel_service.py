@@ -75,6 +75,15 @@ class UtilityChannelService:
 
         self.utility_channels_dao.delete_utility_channel(channel_id, guild_id)
 
+    def delete_utility_from_channel(self, channel_id: int, guild_id: int, channel_purpose: str):
+        """Stop using a specific channel as a specific utility channel
+        Args:
+            channel_id: The Discord ID of the channel to remove a utility from
+            guild_id: The Discord ID of the guild where the channel resides
+            channel_purpose: The purpose to remove from the channel"""
+
+        self.utility_channels_dao.delete_utility_from_channel(channel_id, guild_id, channel_purpose)
+
     def delete_guild_utility_channels(self, guild_id: int):
         """Delete all utility channels used by a guild
         Args:

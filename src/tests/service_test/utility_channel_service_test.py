@@ -37,6 +37,16 @@ class TestUtilityChannelService(unittest.TestCase):
         channels = self.utility_channel_service.get_all_guild_utility_channels(9876)
         self.assertEqual(len(channels), 0)
 
+    def test_certain_utilities_are_removed_from_channels_correctly(self):
+        self.utility_channel_service.create_guild_utility_channel(1234, 9876, "test1")
+        self.utility_channel_service.create_guild_utility_channel(1234, 9876, "test2")
+        channels = self.utility_channel_service.get_guild_utility_channel_by_id(9876, 1234)
+        self.assertEqual(len(channels), 2)
+        self.utility_channel_service.delete_utility_from_channel(1234, 9876, "test1")
+        channels = self.utility_channel_service.get_guild_utility_channel_by_id(9876, 1234)
+        self.assertEqual(len(channels), 1)
+        self.assertEqual(channels[0].channel_purpose, "test2")
+
     def test_guild_utility_channels_are_deleted_correctly(self):
         self.utility_channel_service.create_guild_utility_channel(1234, 9876, "test1")
         self.utility_channel_service.create_guild_utility_channel(2345, 8765, "test2")

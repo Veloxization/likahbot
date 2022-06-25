@@ -82,6 +82,18 @@ class UtilityChannelsDAO:
         cursor.execute(sql, (channel_id, guild_id))
         self.db_connection.commit_and_close(connection)
 
+    def delete_utility_from_channel(self, channel_id: int, guild_id: int, channel_purpose: str):
+        """Stop using a specific channel as a specific utility channel
+        Args:
+            channel_id: The Discord ID of the channel to remove a utility from
+            guild_id: The Discord ID of the guild where the channel resides
+            channel_purpose: The purpose to remove from the channel"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "DELETE FROM utility_channels WHERE channel_id=? AND guild_id=? AND channel_purpose=?"
+        cursor.execute(sql, (channel_id, guild_id, channel_purpose))
+        self.db_connection.commit_and_close(connection)
+
     def delete_guild_utility_channels(self, guild_id: int):
         """Delete all utility channels used by a guild
         Args:

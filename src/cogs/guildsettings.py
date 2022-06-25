@@ -38,3 +38,24 @@ class GuildSettings(commands.Cog):
             await ctx.respond(f"{channel.mention} is now a rules channel. If you've specified any rules, they will be posted and maintained there.")
         if utility == "verification":
             await ctx.respond(f"{channel.mention} is now a verification channel. New members can verify through this channel from now on.")
+
+    @commands.slash_command(name="removechannelutility",
+                            description="Remove an established utility from a channel",
+                            guild_ids=[383107941173166083])
+    async def remove_channel_utility(self,
+        ctx: discord.ApplicationContext,
+        utility: discord.Option(str,
+                                "The utility to remove from the channel",
+                                choices=["log", "rules", "verification"]),
+        channel: discord.Option(discord.TextChannel, "The channel to remove the the utility from")):
+        """Remove a utility from a certain channel"""
+
+        channels = self.utility_channel_service.get_guild_utility_channel_by_id(ctx.guild.id, channel.id)
+        utilities = [chan.channel_purpose for chan in channels]
+        if utility not in utilities:
+            await ctx.respond(f"{channel.mention} does not have the utility `{utility}` applied to it.\n" \
+                               "Use the command `listutilitychannels` to get a list of a channel's utilities.")
+            return
+
+        self.utility_channel_service.delete_utility_from_channel(channel.id, ctx.guild.id, utility)
+        await ctx.respond(f"{channel.mention} no longer has the utility `{utility}`.")

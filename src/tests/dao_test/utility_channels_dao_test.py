@@ -26,6 +26,16 @@ class TestUtilityChannelsDAO(unittest.TestCase):
         channels = self.utility_channels_dao.get_all_guild_utility_channels(9876)
         self.assertEqual(len(channels), 0)
 
+    def test_certain_utilities_are_removed_from_channels_correctly(self):
+        self.utility_channels_dao.create_guild_utility_channel(1234, 9876, "TEST1")
+        self.utility_channels_dao.create_guild_utility_channel(1234, 9876, "TEST2")
+        channels = self.utility_channels_dao.get_guild_utility_channel_by_id(9876, 1234)
+        self.assertEqual(len(channels), 2)
+        self.utility_channels_dao.delete_utility_from_channel(1234, 9876, "TEST1")
+        channels = self.utility_channels_dao.get_guild_utility_channel_by_id(9876, 1234)
+        self.assertEqual(len(channels), 1)
+        self.assertEqual(channels[0]["channel_purpose"], "TEST2")
+
     def test_guild_utility_channels_are_deleted_correctly(self):
         self.utility_channels_dao.create_guild_utility_channel(1234, 9876, "TEST")
         self.utility_channels_dao.create_guild_utility_channel(2345, 8765, "TEST")
