@@ -25,7 +25,8 @@ class UtilityChannelsDAO:
         Returns: A list of Rows with all the channels found"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM utility_channels WHERE guild_id=? AND channel_purpose=?"
+        sql = "SELECT * FROM utility_channels WHERE guild_id=? AND channel_purpose=? " \
+              "ORDER BY channel_id ASC"
         cursor.execute(sql, (guild_id, channel_purpose))
         channels = cursor.fetchall()
         self.db_connection.close_connection(connection)
@@ -38,7 +39,8 @@ class UtilityChannelsDAO:
         Returns: A list of Rows containing all the utility channels"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM utility_channels WHERE guild_id=?"
+        sql = "SELECT * FROM utility_channels WHERE guild_id=? " \
+              "ORDER BY channel_id ASC, channel_purpose ASC"
         cursor.execute(sql, (guild_id,))
         channels = cursor.fetchall()
         self.db_connection.close_connection(connection)
@@ -52,7 +54,8 @@ class UtilityChannelsDAO:
         Returns: A list of Rows containing all the different utilities for this channel"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM utility_channels WHERE guild_id=? AND channel_id=?"
+        sql = "SELECT * FROM utility_channels WHERE guild_id=? AND channel_id=? " \
+              "ORDER BY channel_purpose ASC"
         cursor.execute(sql, (guild_id, channel_id))
         channel = cursor.fetchall()
         self.db_connection.close_connection(connection)
