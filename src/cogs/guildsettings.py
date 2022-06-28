@@ -2,7 +2,7 @@
 
 import discord
 from discord.ext import commands
-from discord.ui import Button, View
+from helpers.embed_pager import EmbedPager
 from services.utility_channel_service import UtilityChannelService
 
 class GuildSettings(commands.Cog):
@@ -61,34 +61,39 @@ class GuildSettings(commands.Cog):
         self.utility_channel_service.delete_utility_from_channel(channel.id, ctx.guild.id, utility)
         await ctx.respond(f"{channel.mention} no longer has the utility `{utility}`.")
 
-    @commands.slash_command(name="listutilitychannels",
+    @commands.slash_command(name="listchannelutilities",
                             description="List the channels used as utility channels",
                             guild_ids=[383107941173166083])
-    async def list_utility_channels(self,
+    async def list_channel_utilities(self,
         ctx: discord.ApplicationContext,
         channel: discord.Option(discord.TextChannel,
                                 "To list the utilities of a single channel, use this argument",
                                 required=False)):
         """List the utility channels the guild uses"""
 
+        embed = discord.Embed(title=f"{ctx.guild.name} utility channels")
         if channel:
             channels = self.utility_channel_service.get_guild_utility_channel_by_id(ctx.guild.id,
                                                                                     channel.id)
+            embed.title = f"#{channel.name} utilities"
         else:
             channels = self.utility_channel_service.get_all_guild_utility_channels(ctx.guild.id)
-        embed = discord.Embed(title=f"{ctx.guild.name} utility channels")
-        if channel:
-            embed.title = f"#{channel.name} utilities"
         if not channels:
-            embed.add_field(name="No channels found",
-                            value="This guild has no utility channels. " \
-                                  "Consider adding some with the `addchannelutility` command")
+            if channel:
+                embed.add_field(name="No utilities",
+                                value="This channel has no utilities. " \
+                                      "Consider adding some with the `addchannelutility` command")
+            else:
+                embed.add_field(name="No channels found",
+                                value="This guild has no utility channels. " \
+                                      "Consider adding some with the `addchannelutility` command")
             await ctx.respond(embed=embed)
             return
-        if len(channels) <= 25:
-            for chan in channels:
-                embed.add_field(name=f"#{ctx.guild.get_channel(chan.channel_id).name}",
-                                value=chan.channel_purpose,
-                                inline=True)
-            await ctx.respond(embed=embed)
-            return
+        fields = []
+        for chan in channels:
+            fields.append(discord.EmbedField(f"#{ctx.guild.get_channel(chan.channel_id).name}",
+                                             chan.channel_purpose))
+        embed_pager = EmbedPager(fields)
+        embed_pager.embed = embed
+        res_embed, res_view = embed_pager.get_embed_and_view()
+        await ctx.respond(embed=res_embed, view=res_view)
