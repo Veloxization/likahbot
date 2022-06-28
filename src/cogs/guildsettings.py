@@ -2,6 +2,7 @@
 
 import discord
 from discord.ext import commands
+from discord.ui import View, Button
 from helpers.embed_pager import EmbedPager
 from services.utility_channel_service import UtilityChannelService
 
@@ -79,6 +80,31 @@ class GuildSettings(commands.Cog):
             return
         self.utility_channel_service.delete_utility_channel(channel.id, ctx.guild.id)
         await ctx.respond(f"{channel.mention} is no longer used as a utility channel.")
+
+    @commands.slash_command(name="removeguildutilitychannels",
+                            description="Clear all channel utilities from the guild",
+                            guild_ids=[383107941173166083])
+    async def remove_guild_utility_channels(self,
+        ctx: discord.ApplicationContext):
+        """Remove all utility channels from a given guild"""
+
+        channels = self.utility_channel_service.get_all_guild_utility_channels(ctx.guild.id)
+        async def confirm_button_callback(interaction: discord.Interaction):
+            self.utility_channel_service.delete_guild_utility_channels(ctx.guild.id)
+            await interaction.response.edit_message(content=f"Removed **{len(channels)}** " \
+                                                            f"channel utilities from {ctx.guild.name}.",
+                                                    view=None)
+
+        async def cancel_button_callback(interaction: discord.Interaction):
+            await interaction.response.edit_message(content="Utility channel removal cancelled", view=None)
+
+        confirm_button = Button(label="Confirm", style=discord.ButtonStyle.green)
+        cancel_button = Button(label="Cancel", style=discord.ButtonStyle.red)
+        confirm_button.callback = confirm_button_callback
+        cancel_button.callback = cancel_button_callback
+        view = View(confirm_button, cancel_button)
+        await ctx.respond(f"Are you sure? This will delete **{len(channels)}** utilities from the guild.",
+                          view=view)
 
     @commands.slash_command(name="listchannelutilities",
                             description="List the channels used as utility channels",
