@@ -14,7 +14,7 @@ class EmbedPager:
         button_first: The button to take the user to the first page
         button_previous: The button to take the user to the previous page
         button_next: The button to take the user to the next page
-        button_last: The button to take the user to the lastpage"""
+        button_last: The button to take the user to the last page"""
 
     def __init__(self, fields: list, page_limit: int = 25, page: int = 1):
         """Create a new embed pager object
