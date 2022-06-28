@@ -61,6 +61,25 @@ class GuildSettings(commands.Cog):
         self.utility_channel_service.delete_utility_from_channel(channel.id, ctx.guild.id, utility)
         await ctx.respond(f"{channel.mention} no longer has the utility `{utility}`.")
 
+    @commands.slash_command(name="removeallchannelutilities",
+                            description="Remove all utilities from a single channel",
+                            guild_ids=[383107941173166083])
+    async def remove_all_channel_utilities(self,
+        ctx: discord.ApplicationContext,
+        channel: discord.Option(discord.TextChannel,
+                                "The channel to remove utilities from")):
+        """Remove all utilities from a single channel"""
+
+        channels = self.utility_channel_service.get_guild_utility_channel_by_id(ctx.guild.id,
+                                                                                channel.id)
+        if not channels:
+            await ctx.respond(f"{channel.mention} does not have any utilities applied. " \
+                              "You can find the guild's utility channels with the " \
+                              "`listchannelutilities` command.")
+            return
+        self.utility_channel_service.delete_utility_channel(channel.id, ctx.guild.id)
+        await ctx.respond(f"{channel.mention} is no longer used as a utility channel.")
+
     @commands.slash_command(name="listchannelutilities",
                             description="List the channels used as utility channels",
                             guild_ids=[383107941173166083])
