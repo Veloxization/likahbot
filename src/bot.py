@@ -6,10 +6,11 @@ decrypted value as an argument."""
 
 import sys
 import discord
+from config.constants import Constants
 from cogs.guildsettings import GuildSettings
 from cogs.logging import Logging
 
-DB_ADDRESS = "database/likahbotdatabase.db" # Change this to suit your database needs
+DB_ADDRESS = Constants.DB_ADDRESS.value
 intents = discord.Intents.all()
 bot = discord.Bot(intents=intents)
 
