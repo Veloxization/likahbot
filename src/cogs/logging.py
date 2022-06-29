@@ -9,9 +9,7 @@ class Logging(commands.Cog):
     if one is defined for the guild.
     Attributes:
         bot: The bot that handles the logging
-        utility_channel_service: The service used to get the logging channel
-        log_channels: A dictionary containing cached log channels for guilds to avoid continuous
-                      database calls. {Guild object: [Channel objects]}"""
+        utility_channel_service: The service used to get the logging channel"""
 
     def __init__(self, bot: discord.Client, db_address):
         """Activate the Logging cog
@@ -21,7 +19,6 @@ class Logging(commands.Cog):
 
         self.bot = bot
         self._utility_channel_service = UtilityChannelService(db_address)
-        self._log_channels = {}
 
     def _get_guild_log_channels(self, guild: discord.Guild):
         """Get the channels used for logs for a specific guild
@@ -29,22 +26,32 @@ class Logging(commands.Cog):
             guild: The Discord Guild whose log channel to get
         Returns: A list of discord.Channel objects if log channels were found"""
 
-        if guild in self._log_channels:
-            return self._log_channels[guild]
         channels = self._utility_channel_service.get_guild_utility_channel_by_purpose(guild.id,
-                                                                                      "LOG")
-        self._log_channels[guild] = channels
-        return channels
+                                                                                      "log")
+        if not channels:
+            return None
+        log_channels = [channel.get_discord_channel(self.bot) for channel in channels]
+        return log_channels
 
-    def clear_cache(self):
-        """Completely clear the log channel cache"""
+    @commands.Cog.listener()
+    async def on_message_edit(self, before: discord.Message, after: discord.Message):
+        """Log an edited message"""
 
-        self._log_channels = {}
-
-    def delete_guild_from_cache(self, guild: discord.Guild):
-        """Delete a guild's log channels from cache
-        Args:
-            guild: The Discord Guild whose log channels to delete from cache"""
-
-        if guild in self._log_channels:
-            self._log_channels.pop(guild)
+        log_channels = self._get_guild_log_channels(after.guild)
+        print(len(log_channels))
+        embed = discord.Embed(color=discord.Color.orange(),
+                              title="Message edited",
+                              description=f"Message by {after.author.mention} edited in {after.channel.mention}",
+                              url=after.jump_url)
+        embed.set_author(name=after.author.display_name, icon_url=after.author.avatar.url)
+        embed.set_footer(text=f"ID: {after.id}")
+        before_content = before.content
+        after_content = after.content
+        if not before_content:
+            before_content = "`Could not fetch`"
+        if not after_content:
+            after_content = "`Could not fetch`"
+        embed.add_field(name="Before", value=before_content)
+        embed.add_field(name="After", value=after_content)
+        for channel in log_channels:
+            await channel.send(embed=embed)

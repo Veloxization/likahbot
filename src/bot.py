@@ -7,9 +7,11 @@ decrypted value as an argument."""
 import sys
 import discord
 from cogs.guildsettings import GuildSettings
+from cogs.logging import Logging
 
 DB_ADDRESS = "database/likahbotdatabase.db" # Change this to suit your database needs
-bot = discord.Bot()
+intents = discord.Intents.all()
+bot = discord.Bot(intents=intents)
 
 @bot.event
 async def on_ready():
@@ -18,6 +20,7 @@ async def on_ready():
     print(f"Python {sys.version}\n{sys.version_info}")
     print(f"Logged on as {bot.user}")
     bot.add_cog(GuildSettings(bot, DB_ADDRESS))
+    bot.add_cog(Logging(bot, DB_ADDRESS))
     await bot.sync_commands()
 
 bot.run(str(sys.argv[1]))
