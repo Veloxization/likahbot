@@ -1,8 +1,10 @@
 """Houses the cog that handles logging"""
 
 import discord
+import datetime
 from discord.ext import commands
 from services.utility_channel_service import UtilityChannelService
+from helpers.invite_use_tracker import InviteUseTracker
 
 class Logging(commands.Cog):
     """This cog handles all listeners that are used for logging events in the logging channel
@@ -11,14 +13,16 @@ class Logging(commands.Cog):
         bot: The bot that handles the logging
         utility_channel_service: The service used to get the logging channel"""
 
-    def __init__(self, bot: discord.Client, db_address):
+    def __init__(self, bot: discord.Client, db_address, invites: dict):
         """Activate the Logging cog
         Args:
             bot: The bot that does the logging
-            db_address: The location where the bot database is located"""
+            db_address: The location where the bot database is located
+            invites: A dictionary containing {Guild: [Invite]} key-value pairs"""
 
         self.bot = bot
         self._utility_channel_service = UtilityChannelService(db_address)
+        self.invites = invites
 
     def _get_guild_log_channels(self, guild: discord.Guild):
         """Get the channels used for logs for a specific guild
@@ -58,3 +62,42 @@ class Logging(commands.Cog):
         embed.add_field(name="After", value=after_content)
         for channel in log_channels:
             await channel.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member: discord.Member):
+        """Log a joining member"""
+
+        log_channels = self._get_guild_log_channels(member.guild)
+        embed = discord.Embed(color=discord.Color.green(),
+                              title="Member joined",
+                              description=f"{member.mention} joined **{member.guild.name}**")
+        embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+        embed.set_footer(text=f"ID: {member.id}")
+        embed.set_thumbnail(url=member.display_avatar.url)
+        invites = await member.guild.invites()
+        invite_tracker = InviteUseTracker(self.invites[member.guild], invites)
+        join_invite = invite_tracker.check_difference()
+        if not join_invite:
+            join_invite = "`Could not fetch`"
+        else:
+            join_invite = f"`{join_invite.code}` by **{join_invite.inviter}**"
+        embed.add_field(name="Using invite", value=join_invite)
+        create_date = member.created_at.replace(tzinfo=None)
+        epoch = (create_date - datetime.datetime(1970, 1, 1)).total_seconds()
+        account_created = f"<t:{int(epoch)}:R>"
+        embed.add_field(name="Account created", value=account_created)
+        self.invites[member.guild] = await member.guild.invites()
+        for channel in log_channels:
+            await channel.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_invite_create(self, invite: discord.Invite):
+        """Log an invite creation"""
+
+        self.invites[invite.guild].append(invite)
+
+    @commands.Cog.listener()
+    async def on_invite_delete(self, invite: discord.Invite):
+        """Log an invite deletion"""
+
+        self.invites[invite.guild] = await invite.guild.invites()
