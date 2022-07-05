@@ -38,7 +38,6 @@ class Logging(commands.Cog):
         """Log an edited message"""
 
         log_channels = self._get_guild_log_channels(after.guild)
-        print(len(log_channels))
         embed = discord.Embed(color=discord.Color.orange(),
                               title="Message edited",
                               description=f"Message by {after.author.mention} edited in {after.channel.mention}",
@@ -51,6 +50,10 @@ class Logging(commands.Cog):
             before_content = "`Could not fetch`"
         if not after_content:
             after_content = "`Could not fetch`"
+        if len(before_content) > 512:
+            before_content = before_content[0:256] + "...\n..." + before_content[-256:]
+        if len(after_content) > 512:
+            after_content = after_content[0:256] + "...\n..." + after_content[-256:]
         embed.add_field(name="Before", value=before_content)
         embed.add_field(name="After", value=after_content)
         for channel in log_channels:
