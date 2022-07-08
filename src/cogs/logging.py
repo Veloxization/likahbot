@@ -46,7 +46,7 @@ class Logging(commands.Cog):
                               title="Message edited",
                               description=f"Message by {after.author.mention} edited in {after.channel.mention}",
                               url=after.jump_url)
-        embed.set_author(name=after.author.display_name, icon_url=after.author.avatar.url)
+        embed.set_author(name=after.author, icon_url=after.author.avatar.url)
         embed.set_footer(text=f"ID: {after.id}")
         before_content = before.content
         after_content = after.content
@@ -92,7 +92,7 @@ class Logging(commands.Cog):
         embed = discord.Embed(color=discord.Color.green(),
                               title="Member joined",
                               description=f"{member.mention} joined **{member.guild.name}**")
-        embed.set_author(name=member.display_name, icon_url=member.display_avatar.url)
+        embed.set_author(name=member, icon_url=member.display_avatar.url)
         embed.set_footer(text=f"ID: {member.id}")
         embed.set_thumbnail(url=member.display_avatar.url)
         invites = await member.guild.invites()
