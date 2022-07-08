@@ -64,6 +64,27 @@ class Logging(commands.Cog):
             await channel.send(embed=embed)
 
     @commands.Cog.listener()
+    async def on_message_delete(self, message: discord.Message):
+        """Log a deleted message"""
+
+        if not message:
+            return
+        log_channels = self._get_guild_log_channels(message.guild)
+        embed = discord.Embed(color=discord.Color.dark_orange(),
+                              title="Message deleted",
+                              description=f"Message by {message.author.mention} deleted in {message.channel.mention}")
+        embed.set_author(name=message.author, icon_url=message.author.avatar.url)
+        embed.set_footer(text=f"ID: {message.id}")
+        content = message.content
+        if not content:
+            content = "`Could not fetch`"
+        if len(content) > 512:
+            content = content[:512] + "..."
+        embed.add_field(name="Content", value=content)
+        for channel in log_channels:
+            await channel.send(embed=embed)
+
+    @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         """Log a joining member"""
 
