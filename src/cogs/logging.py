@@ -112,6 +112,26 @@ class Logging(commands.Cog):
             await channel.send(embed=embed)
 
     @commands.Cog.listener()
+    async def on_member_remove(self, member: discord.Member):
+        """Log a leaving member"""
+
+        log_channels = self._get_guild_log_channels(member.guild)
+        embed = discord.Embed(color=discord.Color.yellow(),
+                              title="Member left",
+                              description=f"{member.mention} left **{member.guild.name}**")
+        embed.set_author(name=member, icon_url=member.display_avatar.url)
+        embed.set_footer(text=f"ID: {member.id}")
+        roles = member.roles
+        roles.pop(0) # Remove the @everyone role
+        if not roles:
+            roles = ["N/A"]
+        else:
+            roles = [role.mention for role in roles]
+        embed.add_field(name="Roles", value=', '.join(roles))
+        for channel in log_channels:
+            await channel.send(embed=embed)
+
+    @commands.Cog.listener()
     async def on_invite_create(self, invite: discord.Invite):
         """Log an invite creation"""
 
