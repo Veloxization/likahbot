@@ -15,7 +15,7 @@ Do note that the bot is in a very very early stage of development currently and 
   - `python3 -m pip install -U requirements.txt`
 6. Initialize the bot's database
   - `sqlite3 database/database.db < database/schema.sql`
-  - Change the DB_ADDRESS constant in [bot.py](https://github.com/Veloxization/likahbot/blob/main/src/bot.py) to reflect whatever name you gave the database
+  - Change the DB_ADDRESS constant in [constants.py](https://github.com/Veloxization/likahbot/blob/main/src/config/constants.py) to reflect whatever name you gave the database
 7. Create a new application and bot user through [Discord Developer Portal](https://discord.com/developers/applications)
 8. Invite the bot to your Discord server
   - e.g. use link: `https://discord.com/oauth2/authorize?client_id=[your client id here]&scope=applications.commands&permissions=[your permission integer here]`
