@@ -58,15 +58,19 @@ class PunishmentsDAO:
             guild_id: The Discord Guild ID of the guild where the punishment was issued
             punishment_type: The type of the punishment, e.g. BAN, KICK, TIMEOUT
             reason: The reason for the punishment
-            deleted: Whether the punishment is deleted"""
+            deleted: Whether the punishment is deleted
+        Returns: The Row for the newly created punishment"""
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO punishments " \
                     "(user_id, issuer_id, guild_id, type, reason, time, deleted) " \
                "VALUES " \
-                    "(?, ?, ?, ?, ?, datetime(), ?)"
+                    "(?, ?, ?, ?, ?, datetime(), ?) " \
+               "RETURNING *"
         cursor.execute(sql, (user_id, issuer_id, guild_id, punishment_type, reason, deleted))
+        punishment = cursor.fetchone()
         self.db_connection.commit_and_close(connection)
+        return punishment
 
     def mark_deleted(self, punishment_id: int):
         """Mark a punishment as deleted
