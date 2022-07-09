@@ -18,6 +18,12 @@ class TestPunishmentsDAO(unittest.TestCase):
         punishments = self.punishments_dao.get_user_punishments(1234, 9876)
         self.assertEqual(len(punishments), 1)
 
+    def test_added_punishments_are_returned_correctly(self):
+        punishment = self.punishments_dao.add_punishment(1234, 2345, 9876)
+        self.assertEqual(punishment["user_id"], 1234)
+        self.assertEqual(punishment["issuer_id"], 2345)
+        self.assertEqual(punishment["guild_id"], 9876)
+
     def test_punishments_are_marked_deleted_correctly(self):
         self.punishments_dao.add_punishment(1234, 2345, 9876)
         punishments = self.punishments_dao.get_all_user_punishments(1234, 9876)
