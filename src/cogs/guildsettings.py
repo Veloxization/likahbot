@@ -91,12 +91,20 @@ class GuildSettings(commands.Cog):
 
         channels = self.utility_channel_service.get_all_guild_utility_channels(ctx.guild.id)
         async def confirm_button_callback(interaction: discord.Interaction):
+            if interaction.user != ctx.author:
+                await interaction.response.send_message("You cannot interact with this response.",
+                                                        ephemeral=True)
+                return
             self.utility_channel_service.delete_guild_utility_channels(ctx.guild.id)
             await interaction.response.edit_message(content=f"Removed **{len(channels)}** " \
                                                             f"channel utilities from {ctx.guild.name}.",
                                                     view=None)
 
         async def cancel_button_callback(interaction: discord.Interaction):
+            if interaction.user != ctx.author:
+                await interaction.response.send_message("You cannot interact with this response.",
+                                                        ephemeral=True)
+                return
             await interaction.response.edit_message(content="Utility channel removal cancelled", view=None)
 
         confirm_button = Button(label="Confirm", style=discord.ButtonStyle.green)
@@ -133,7 +141,7 @@ class GuildSettings(commands.Cog):
                 embed.add_field(name="No channels found",
                                 value="This guild has no utility channels. " \
                                       "Consider adding some with the `addchannelutility` command")
-            await ctx.respond(embed=embed)
+            await ctx.respond(embed=embed, ephemeral=True)
             return
         fields = []
         for chan in channels:
@@ -142,4 +150,4 @@ class GuildSettings(commands.Cog):
         embed_pager = EmbedPager(fields)
         embed_pager.embed = embed
         res_embed, res_view = embed_pager.get_embed_and_view()
-        await ctx.respond(embed=res_embed, view=res_view)
+        await ctx.respond(embed=res_embed, view=res_view, ephemeral=True)
