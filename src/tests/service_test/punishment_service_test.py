@@ -11,6 +11,12 @@ class TestPunishmentService(unittest.TestCase):
     def tearDown(self):
         self.punishment_service.clear_punishments()
 
+    def test_added_punishments_are_returned_correctly(self):
+        punishment = self.punishment_service.add_punishment(1234, 3456, 9876)
+        self.assertEqual(punishment.user_id, 1234)
+        self.assertEqual(punishment.issuer_id, 3456)
+        self.assertEqual(punishment.guild_id, 9876)
+
     def test_user_punishments_are_found_correctly(self):
         self.punishment_service.add_punishment(1234, 3456, 9876)
         self.punishment_service.add_punishment(2345, 3456, 9876)
