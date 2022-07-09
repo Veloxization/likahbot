@@ -57,7 +57,8 @@ class GuildSettings(commands.Cog):
         utilities = [chan.channel_purpose for chan in channels]
         if utility not in utilities:
             await ctx.respond(f"{channel.mention} does not have the utility `{utility}` applied to it.\n" \
-                               "Use the command `listutilitychannels` to get a list of a channel's utilities.")
+                               "Use the command `listutilitychannels` to get a list of a channel's utilities.",
+                              ephemeral=True)
             return
 
         self.utility_channel_service.delete_utility_from_channel(channel.id, ctx.guild.id, utility)
@@ -77,7 +78,8 @@ class GuildSettings(commands.Cog):
         if not channels:
             await ctx.respond(f"{channel.mention} does not have any utilities applied. " \
                               "You can find the guild's utility channels with the " \
-                              "`listchannelutilities` command.")
+                              "`listchannelutilities` command.",
+                              ephemeral=True)
             return
         self.utility_channel_service.delete_utility_channel(channel.id, ctx.guild.id)
         await ctx.respond(f"{channel.mention} is no longer used as a utility channel.")
