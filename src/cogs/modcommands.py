@@ -1,7 +1,6 @@
 """Houses the cog that handles moderation commands"""
 
 import discord
-import aiohttp
 from discord.ext import commands
 from config.constants import Constants
 from helpers.embed_pager import EmbedPager
