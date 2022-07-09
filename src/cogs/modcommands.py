@@ -67,3 +67,47 @@ class ModCommands(commands.Cog):
         """Run when the ban command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
+    @commands.slash_command(name="kick",
+                            description="Kick a member",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(kick_members=True)
+    async def kick(self,
+        ctx: discord.ApplicationContext,
+        member: discord.Option(discord.Member,
+                               "The member to kick."),
+        reason: discord.Option(str, "An optional reason for the kick", required=False),
+        notify: discord.Option(bool, "Whether the bot should attempt to notify the member about the kick",
+                               default=False, required=False),
+        log_as_punishment: discord.Option(bool,
+                                          "Whether this kick should be logged as a punishment towards the user",
+                                          default=True, required=False)):
+        """Kick a member from the guild"""
+
+        if ctx.author.top_role <= member.top_role:
+            await ctx.respond("You cannot kick this member. Insufficient role hierarchy.",
+                              ephemeral=True)
+            return
+        send_success = ""
+        if notify and isinstance(member, discord.Member):
+            try:
+                await member.send(f"You have been kicked from **{ctx.guild.name}**.\n" \
+                                  f"Provided reason: `{reason}`")
+                send_success = "User was successfully notified."
+            except discord.Forbidden:
+                send_success = "User couldn't be reached for notification."
+            except discord.HTTPException:
+                send_success = "Sending a notification failed."
+            except discord.InvalidArgument:
+                send_success = "Sending a notification failed due to InvalidArgument"
+        await member.kick(reason=reason)
+        await ctx.respond(f"**{member.name}** was kicked from **{ctx.guild.name}**. {send_success}")
+        if log_as_punishment:
+            self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
+                                                   punishment_type="kick", reason=reason)
+
+    @kick.error
+    async def kick_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the kick command encounters an error"""
+
+        await ctx.respond(f"{error}", ephemeral=True)
