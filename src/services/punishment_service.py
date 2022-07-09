@@ -57,8 +57,9 @@ class PunishmentService:
             reason: The reason for the punishment
             deleted: Whether the punishment is deleted"""
 
-        self.punishments_dao.add_punishment(user_id, issuer_id, guild_id, punishment_type, reason,
-                                            deleted)
+        row = self.punishments_dao.add_punishment(user_id, issuer_id, guild_id, punishment_type,
+                                                  reason, deleted)
+        return self._convert_to_entity(row)
 
     def mark_deleted(self, punishment_id: int):
         """Mark a punishment as deleted
