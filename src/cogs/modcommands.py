@@ -58,6 +58,8 @@ class ModCommands(commands.Cog):
                 send_success = "Sending a notification failed due to InvalidArgument"
         await ctx.guild.ban(member, reason=reason, delete_message_days=delete_message_days)
         await ctx.respond(f"**{member.name}** was banned from **{ctx.guild.name}**. {send_success}")
+        self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
+                                               punishment_type="ban", reason=reason)
 
     @ban.error
     async def ban_error(self, ctx: discord.ApplicationContext, error):
