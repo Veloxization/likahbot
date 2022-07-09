@@ -55,7 +55,8 @@ class PunishmentService:
             guild_id: The Discord Guild ID of the guild where the punishment was issued
             punishment_type: The type of the punishment, e.g. BAN, KICK, TIMEOUT
             reason: The reason for the punishment
-            deleted: Whether the punishment is deleted"""
+            deleted: Whether the punishment is deleted
+        Returns: The newly created punishment entity"""
 
         row = self.punishments_dao.add_punishment(user_id, issuer_id, guild_id, punishment_type,
                                                   reason, deleted)
