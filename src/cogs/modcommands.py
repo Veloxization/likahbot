@@ -42,7 +42,8 @@ class ModCommands(commands.Cog):
             member = await self.bot.fetch_user(member)
         elif isinstance(member, discord.Member):
             if ctx.author.top_role <= member.top_role:
-                await ctx.respond("You cannot ban this member. Insufficient role hierarchy.")
+                await ctx.respond("You cannot ban this member. Insufficient role hierarchy.",
+                                  ephemeral=True)
                 return
         send_success = ""
         if notify and isinstance(member, discord.Member):
@@ -65,4 +66,4 @@ class ModCommands(commands.Cog):
     async def ban_error(self, ctx: discord.ApplicationContext, error):
         """Run when the ban command encounters an error"""
 
-        await ctx.respond(f"{error}")
+        await ctx.respond(f"{error}", ephemeral=True)
