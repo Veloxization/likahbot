@@ -9,6 +9,7 @@ import discord
 from config.constants import Constants
 from cogs.guildsettings import GuildSettings
 from cogs.logging import Logging
+from cogs.modcommands import ModCommands
 
 DB_ADDRESS = Constants.DB_ADDRESS.value
 intents = discord.Intents.all()
@@ -25,6 +26,7 @@ async def on_ready():
     for guild in bot.guilds:
         invites[guild] = await guild.invites()
     bot.add_cog(Logging(bot, DB_ADDRESS, invites))
+    bot.add_cog(ModCommands(bot, DB_ADDRESS))
     await bot.sync_commands()
 
 bot.run(str(sys.argv[1]))

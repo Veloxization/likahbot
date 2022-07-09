@@ -1,7 +1,9 @@
 """Houses the cog that handles moderation commands"""
 
 import discord
+import aiohttp
 from discord.ext import commands
+from config.constants import Constants
 from helpers.embed_pager import EmbedPager
 from services.punishment_service import PunishmentService
 
@@ -19,3 +21,46 @@ class ModCommands(commands.Cog):
 
         self.bot = bot
         self.punishment_service = PunishmentService(db_address)
+
+    @commands.slash_command(name="ban",
+                            description="Ban a member or a user",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(ban_members=True)
+    async def ban(self,
+        ctx: discord.ApplicationContext,
+        member: discord.Option(discord.User,
+                               "The user to ban from the guild. Can also be the ID of a non-member."),
+        reason: discord.Option(str, "An optional reason for the ban", required=False),
+        delete_message_days: discord.Option(int,
+                                            "How many days worth of messages to delete from the member",
+                                            min_value=0, max_value=7, default=0, required=False),
+        notify: discord.Option(bool, "Whether the bot should attempt to notify the member about the ban",
+                               default=False, required=False)):
+        """Ban a member from the guild"""
+
+        if isinstance(member, int):
+            member = await self.bot.fetch_user(member)
+        elif isinstance(member, discord.Member):
+            if ctx.author.top_role <= member.top_role:
+                await ctx.respond("You cannot ban this member. Insufficient role hierarchy.")
+                return
+        send_success = ""
+        if notify and isinstance(member, discord.Member):
+            try:
+                await member.send(f"You have been banned from **{ctx.guild.name}**.\n" \
+                                  f"Provided reason: `{reason}`")
+                send_success = "User was successfully notified."
+            except discord.Forbidden:
+                send_success = "User couldn't be reached for notification."
+            except discord.HTTPException:
+                send_success = "Sending a notification failed."
+            except discord.InvalidArgument:
+                send_success = "Sending a notification failed due to InvalidArgument"
+        await ctx.guild.ban(member, reason=reason, delete_message_days=delete_message_days)
+        await ctx.respond(f"**{member.name}** was banned from **{ctx.guild.name}**. {send_success}")
+
+    @ban.error
+    async def ban_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the ban command encounters an error"""
+
+        await ctx.respond(f"{error}")
