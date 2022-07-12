@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from config.constants import Constants
 from helpers.embed_pager import EmbedPager
+from helpers.temp_channel_creator import TempChannelCreator
 from services.punishment_service import PunishmentService
 
 class ModCommands(commands.Cog):
@@ -108,5 +109,40 @@ class ModCommands(commands.Cog):
     @kick.error
     async def kick_error(self, ctx: discord.ApplicationContext, error):
         """Run when the kick command encounters an error"""
+
+        await ctx.respond(f"{error}", ephemeral=True)
+
+    @commands.slash_command(name="warn",
+                            description="Warn a member",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(moderate_members=True)
+    async def warn(self,
+        ctx: discord.ApplicationContext,
+        member: discord.Option(discord.Member, "The member to warn"),
+        reason: discord.Option(str, "The reason for the warning")):
+        """Send and log a warning to a member"""
+
+        if ctx.author.top_role < member.top_role:
+            await ctx.respond("You cannot send a warning. Insufficient role hierarchy.",
+                              ephemeral=True)
+            return
+        punishment = self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
+                                                            punishment_type="warn", reason=reason)
+        try:
+            await member.send(f"You have been issued a warning on **{ctx.guild.name}**\n" \
+                              f"Provided reason:\n`{reason}`")
+            await ctx.respond(f"**{member.name}** was sent a warning.")
+        except discord.Forbidden:
+            temp_channel_creator = TempChannelCreator(self.bot, ctx.guild)
+            await temp_channel_creator.get_temp_category()
+            channel = await temp_channel_creator.create_warn_channel(member,
+                                                                     punishment.db_id,
+                                                                     punishment.reason)
+            await ctx.respond(f"A new warning channel was created for **{member.name}**: " \
+                              f"{channel.mention}")
+
+    @warn.error
+    async def warn_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the warn command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
