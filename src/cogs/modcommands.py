@@ -250,3 +250,9 @@ class ModCommands(commands.Cog):
                                                        ctx.guild.id,
                                                        punishment_type="timeout",
                                                        reason=reason)
+
+    @timeout.error
+    async def timeout_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the timeout command encounters an error"""
+
+        await ctx.respond(f"{error}", ephemeral=True)
