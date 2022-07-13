@@ -1,7 +1,9 @@
 """Houses the cog that handles moderation commands"""
 
 import discord
+from datetime import timedelta
 from discord.ext import commands
+from discord.ui import View, Button
 from config.constants import Constants
 from helpers.embed_pager import EmbedPager
 from helpers.temp_channel_creator import TempChannelCreator
@@ -146,3 +148,105 @@ class ModCommands(commands.Cog):
         """Run when the warn command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
+    @commands.slash_command(name="timeout",
+                            description="Time out a member or modify or end an existing timeout. " \
+                                        "If no time is specified, defaults to 1 hour.",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(moderate_members=True)
+    async def timeout(self,
+        ctx: discord.ApplicationContext,
+        member: discord.Option(discord.Member, "The member to time out"),
+        reason: discord.Option(str, "The reason for the time out", required=False),
+        minutes: discord.Option(int, "Minutes to add to the timeout duration",
+                                min_value=1, max_value=59, default=0, required=False),
+        hours: discord.Option(int, "Hours to add to the timeout duration",
+                              min_value=1, max_value=23, default=0, required=False),
+        days: discord.Option(int, "Days to add to the timeout duration",
+                             min_value=1, max_value=7, default=0, required=False),
+        notify: discord.Option(bool,
+                               "Whether the bot should attempt to notify the member about the timeout",
+                               default=False, required=False),
+        log_as_punishment: discord.Option(bool,
+                                          "Whether this timeout should be logged as a punishment towards the user",
+                                          default=True, required=False)):
+        """Time out a member, preventing them from chatting and joining voice channels"""
+
+        duration = timedelta(days=days, hours=hours, minutes=minutes)
+        if duration.days == 0 and duration.seconds == 0:
+            duration = timedelta(hours=1)
+        async def modify_button_callback(interaction: discord.Interaction):
+            if interaction.user != ctx.author:
+                await interaction.response.send_message("You cannot interact with this response.",
+                                                        ephemeral=True)
+            await member.remove_timeout(reason="Modifying existing timeout")
+            await member.timeout_for(duration=duration,
+                                     reason=f"Modified existing timeout with reason: {reason}")
+            success = ""
+            if notify:
+                success = "Member was successfully notified."
+                try:
+                    await member.send(f"Your existing timeout in **{ctx.guild.name}** has been modified.\n" \
+                                      f"Provided reason: `{reason}`")
+                except discord.Forbidden:
+                    success = "Member couldn't be reached for notification."
+                except discord.HTTPException:
+                    success = "Sending a notification failed."
+                except discord.InvalidArgument:
+                    success = "Sending a notification failed due to InvalidArgument"
+            await interaction.response.edit_message(content=f"{member}'s timeout modified with new parameters. {success}",
+                                                    view=None)
+            if log_as_punishment:
+                self.punishment_service.add_punishment(member.id, interaction.user.id,
+                                                       interaction.guild.id,
+                                                       punishment_type="timeout",
+                                                       reason=f"Timeout modified with reason: {reason}")
+
+        async def end_timeout_button_callback(interaction: discord.Interaction):
+            if interaction.user != ctx.author:
+                await interaction.response.send_message("You cannot interact with this response.",
+                                                        ephemeral=True)
+            await member.remove_timeout()
+            await interaction.response.edit_message(content=f"{member}'s timeout ended.\n" \
+                                                    "Consider using the `removetimeout` command in " \
+                                                    "the future for faster interaction.",
+                                                    view=None)
+
+        async def cancel_button_callback(interaction: discord.Interaction):
+            if interaction.user != ctx.author:
+                await interaction.response.send_message("You cannot interact with this response.",
+                                                        ephemeral=True)
+            await interaction.response.edit_message(content="Member's timeout was not changed", view=None)
+
+        if member.timed_out:
+            button_modify = Button(label="Modify", style=discord.ButtonStyle.blurple, emoji="🛠️")
+            button_modify.callback = modify_button_callback
+            button_end = Button(label="End timeout", style=discord.ButtonStyle.gray)
+            button_end.callback = end_timeout_button_callback
+            button_cancel = Button(label="Cancel action", style=discord.ButtonStyle.red)
+            button_cancel.callback = cancel_button_callback
+            view = View(button_modify, button_end, button_cancel)
+            await ctx.respond(f"{member.mention} is already timed out. " \
+                             "Do you want to add a new timeout, " \
+                             "end the current one or cancel this interaction?",
+                             view=view)
+        else:
+            await member.timeout_for(duration=duration, reason=reason)
+            success = ""
+            if notify:
+                success = "Member was successfully notified."
+                try:
+                    await member.send(f"You have been timed out.\n" \
+                                      f"Provided reason: `{reason}`")
+                except discord.Forbidden:
+                    success = "Member couldn't be reached for notification."
+                except discord.HTTPException:
+                    success = "Sending a notification failed."
+                except discord.InvalidArgument:
+                    success = "Sending a notification failed due to InvalidArgument"
+            await ctx.respond(f"**{member.name}** was timed out. {success}")
+            if log_as_punishment:
+                self.punishment_service.add_punishment(member.id, ctx.author.id,
+                                                       ctx.guild.id,
+                                                       punishment_type="timeout",
+                                                       reason=reason)
