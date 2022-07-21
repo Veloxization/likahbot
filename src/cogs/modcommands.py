@@ -9,6 +9,7 @@ from helpers.embed_pager import EmbedPager
 from helpers.temp_channel_creator import TempChannelCreator
 from helpers.messager import Messager
 from services.punishment_service import PunishmentService
+from time_handler.time import TimeStringConverter, EpochConverter
 
 class ModCommands(commands.Cog):
     """This cog handles all commands that are used for moderation purposes
@@ -268,5 +269,46 @@ class ModCommands(commands.Cog):
     @remove_timeout.error
     async def remove_timeout_error(self, ctx: discord.ApplicationContext, error):
         """Run when the removetimeout command encounters an error"""
+
+        await ctx.respond(f"{error}", ephemeral=True)
+
+    @commands.slash_command(name="listpunishments",
+                            description="List punishments for a user",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(moderate_members=True)
+    async def list_punishments(self,
+        ctx: discord.ApplicationContext,
+        user: discord.Option(discord.User, "The user whose punishment history to view")):
+        """List a user's punishments"""
+
+        punishments = self.punishment_service.get_user_punishments(user.id, ctx.guild.id)
+        punishment_fields = []
+        time_converter = TimeStringConverter()
+        epoch_converter = EpochConverter()
+        for punishment in punishments:
+            time = time_converter.string_to_datetime(punishment.time)
+            epoch = epoch_converter.convert_to_epoch(time)
+            issuer = self.bot.get_user(punishment.issuer_id)
+            if not issuer:
+                issuer = await self.bot.fetch_user(punishment.issuer_id)
+            if not issuer:
+                issuer = f"Unknown user with ID {punishment.issuer_id}"
+            field = discord.EmbedField(f"ID: {punishment.db_id}, Type: {punishment.punishment_type}",
+                                       f"**Time:** <t:{epoch}>\n" \
+                                       f"**Issuer:** {issuer}\n" \
+                                       f"`{punishment.reason}`")
+            punishment_fields.append(field)
+
+        embed_pager = EmbedPager(punishment_fields, page_limit=3)
+        embed_pager.embed = discord.Embed(title=f"Punishments of {user}",
+                                          color=discord.Color.dark_orange(),
+                                          description=f"{user.name} has " \
+                                                      f"{len(punishment_fields)} punishments")
+        embed, view = embed_pager.get_embed_and_view()
+        await ctx.respond(embeds=[embed], view=view, ephemeral=True)
+
+    @list_punishments.error
+    async def list_punishments_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the listpunishments command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
