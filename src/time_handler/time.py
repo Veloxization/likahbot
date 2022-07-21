@@ -63,3 +63,14 @@ class TimeDifference:
             delta = second_datetime - first_datetime
         time_seconds = delta.days * 24 * 60 * 60 + delta.seconds
         return time_multiplier * time_seconds
+
+class EpochConverter:
+    """A class to convert a datetime object to the Epoch time"""
+
+    def convert_to_epoch(self, datetime_object: datetime):
+        """Convert a datetime object to Epoch time
+        Args:
+            datetime_object: The datetime object to convert
+        Returns: An int representing the seconds since Jan 1st 1970 00:00 UTC"""
+
+        return int((datetime_object - datetime(1970, 1, 1)).total_seconds())
