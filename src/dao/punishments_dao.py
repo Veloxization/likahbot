@@ -27,7 +27,7 @@ class PunishmentsDAO:
         sql = "SELECT * FROM punishments WHERE user_id=? " \
                "AND guild_id=? " \
                "AND deleted=FALSE " \
-               "ORDER BY time ASC"
+               "ORDER BY time DESC"
         cursor.execute(sql, (user_id, guild_id))
         punishments = cursor.fetchall()
         self.db_connection.close_connection(connection)
@@ -43,7 +43,7 @@ class PunishmentsDAO:
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "SELECT * FROM punishments WHERE user_id=? AND guild_id=? " \
-               "ORDER BY time ASC, deleted DESC"
+               "ORDER BY time DESC, deleted DESC"
         cursor.execute(sql, (user_id, guild_id))
         punishments = cursor.fetchall()
         self.db_connection.close_connection(connection)
