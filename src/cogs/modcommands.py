@@ -7,6 +7,7 @@ from discord.ui import View, Button
 from config.constants import Constants
 from helpers.embed_pager import EmbedPager
 from helpers.temp_channel_creator import TempChannelCreator
+from helpers.messager import Messager
 from services.punishment_service import PunishmentService
 
 class ModCommands(commands.Cog):
@@ -49,16 +50,10 @@ class ModCommands(commands.Cog):
                 return
         send_success = ""
         if notify and isinstance(member, discord.Member):
-            try:
-                await member.send(f"You have been banned from **{ctx.guild.name}**.\n" \
-                                  f"Provided reason: `{reason}`")
-                send_success = "User was successfully notified."
-            except discord.Forbidden:
-                send_success = "User couldn't be reached for notification."
-            except discord.HTTPException:
-                send_success = "Sending a notification failed."
-            except discord.InvalidArgument:
-                send_success = "Sending a notification failed due to InvalidArgument"
+            messager = Messager(member)
+            send_success = await messager.send_message("You have been banned from " \
+                                                       f"**{ctx.guild.name}**.\n" \
+                                                       f"Provided reason: `{reason}`")
         await ctx.guild.ban(member, reason=reason, delete_message_days=delete_message_days)
         await ctx.respond(f"**{member.name}** was banned from **{ctx.guild.name}**. {send_success}")
         self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
@@ -92,16 +87,10 @@ class ModCommands(commands.Cog):
             return
         send_success = ""
         if notify and isinstance(member, discord.Member):
-            try:
-                await member.send(f"You have been kicked from **{ctx.guild.name}**.\n" \
-                                  f"Provided reason: `{reason}`")
-                send_success = "User was successfully notified."
-            except discord.Forbidden:
-                send_success = "User couldn't be reached for notification."
-            except discord.HTTPException:
-                send_success = "Sending a notification failed."
-            except discord.InvalidArgument:
-                send_success = "Sending a notification failed due to InvalidArgument"
+            messager = Messager(member)
+            send_success = await messager.send_message("You have been kicked from " \
+                                                       f"**{ctx.guild.name}**.\n" \
+                                                       f"Provided reason: `{reason}`")
         await member.kick(reason=reason)
         await ctx.respond(f"**{member.name}** was kicked from **{ctx.guild.name}**. {send_success}")
         if log_as_punishment:
@@ -184,16 +173,10 @@ class ModCommands(commands.Cog):
                                      reason=f"Modified existing timeout with reason: {reason}")
             success = ""
             if notify:
-                success = "Member was successfully notified."
-                try:
-                    await member.send(f"Your existing timeout in **{ctx.guild.name}** has been modified.\n" \
-                                      f"Provided reason: `{reason}`")
-                except discord.Forbidden:
-                    success = "Member couldn't be reached for notification."
-                except discord.HTTPException:
-                    success = "Sending a notification failed."
-                except discord.InvalidArgument:
-                    success = "Sending a notification failed due to InvalidArgument"
+                messager = Messager(member)
+                success = await messager.send_message(f"Your existing timeout in **{ctx.guild.name}** " \
+                                                      "has been modified.\n" \
+                                                      f"Provided reason: `{reason}`")
             await interaction.response.edit_message(content=f"{member}'s timeout modified with new parameters. {success}",
                                                     view=None)
             if log_as_punishment:
@@ -234,16 +217,9 @@ class ModCommands(commands.Cog):
             await member.timeout_for(duration=duration, reason=reason)
             success = ""
             if notify:
-                success = "Member was successfully notified."
-                try:
-                    await member.send(f"You have been timed out.\n" \
-                                      f"Provided reason: `{reason}`")
-                except discord.Forbidden:
-                    success = "Member couldn't be reached for notification."
-                except discord.HTTPException:
-                    success = "Sending a notification failed."
-                except discord.InvalidArgument:
-                    success = "Sending a notification failed due to InvalidArgument"
+                messager = Messager(member)
+                success = await messager.send_message(f"You have been timed out.\n" \
+                                                      f"Provided reason: `{reason}`")
             await ctx.respond(f"**{member.name}** was timed out. {success}")
             if log_as_punishment:
                 self.punishment_service.add_punishment(member.id, ctx.author.id,
@@ -254,5 +230,43 @@ class ModCommands(commands.Cog):
     @timeout.error
     async def timeout_error(self, ctx: discord.ApplicationContext, error):
         """Run when the timeout command encounters an error"""
+
+        await ctx.respond(f"{error}", ephemeral=True)
+
+    @commands.slash_command(name="removetimeout",
+                            description="Remove a timeout from a member",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(moderate_members=True)
+    async def remove_timeout(self,
+        ctx: discord.ApplicationContext,
+        member: discord.Option(discord.Member, "The timed out member whose timeout to remove"),
+        notify: discord.Option(bool,
+                               "Whether the bot should attempt to notify the member about ending " \
+                               "the timeout", default=False, required=False)):
+        """Remove a member's timeout"""
+
+        if ctx.author.top_role <= member.top_role:
+            await ctx.respond("You cannot end this timeout. " \
+                              "Insufficient role hierarchy.",
+                              ephemeral=True)
+            return
+
+        if not member.timed_out:
+            await ctx.respond(f"{member.mention} is not timed out! " \
+                              "Are you sure you picked the right member?",
+                              ephemeral=True)
+            return
+
+        await member.remove_timeout()
+        success = ""
+        if notify:
+            messager = Messager(member)
+            success = await messager.send_message(f"Your timeout in **{ctx.guild}** " \
+                                                  "has been ended.")
+        await ctx.respond(f"{member}'s timeout ended. {success}")
+
+    @remove_timeout.error
+    async def remove_timeout_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the removetimeout command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
