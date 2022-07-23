@@ -441,3 +441,53 @@ class ModCommands(commands.Cog):
         """Run when the deletepunishment command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
+    @commands.slash_command(name="restorepunishment",
+                            description="Restore a previously deleted punishment",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(moderate_members=True)
+    async def restore_punishment(self,
+        ctx: discord.ApplicationContext,
+        punishment_id: discord.Option(int, "The ID of the punishment to restore")):
+        """Restore a deleted punishment"""
+
+        punishment = self.punishment_service.get_punishment_by_id(punishment_id)
+
+        if not punishment:
+            await ctx.respond(f"No punishment with ID {punishment_id} found.\n" \
+                              "Use the `listdeletedpunishments` command to get punishment IDs of " \
+                              "deleted punishments.",
+                              ephemeral=True)
+            return
+        if punishment.guild_id != ctx.guild.id:
+            await ctx.respond(f"No punishment with ID {punishment_id} found for this guild.\n" \
+                              "Make sure you run this command within the punishment's guild.",
+                              ephemeral=True)
+            return
+        if not punishment.deleted:
+            await ctx.respond(f"Punishment with ID {punishment_id} is not deleted and does not " \
+                              "need to be restored.",
+                              ephemeral=True)
+            return
+
+        self.punishment_service.unmark_deleted(punishment_id)
+        time_converter = TimeStringConverter()
+        punishment_timestamp = time_converter.string_to_datetime(punishment.time)
+        embed = discord.Embed(title=f"Punishment {punishment_id}", timestamp=punishment_timestamp,
+                              description=f"Punishment ID {punishment_id} has been restored.",
+                              color=discord.Color.dark_green())
+        if not punishment.reason:
+            punishment.reason = "N/A"
+        user = await punishment.get_discord_user(self.bot)
+        issuer = await punishment.get_discord_issuer(self.bot)
+        embed.add_field(name="User", value=user, inline=False)
+        embed.add_field(name="Issuer", value=issuer, inline=False)
+        embed.add_field(name="Type", value=punishment.punishment_type, inline=False)
+        embed.add_field(name="Reason", value=punishment.reason, inline=False)
+        await ctx.respond(embed=embed)
+
+    @restore_punishment.error
+    async def restore_punishment_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the restorepunishment command encounters an error"""
+
+        await ctx.respond(f"{error}", ephemeral=True)
