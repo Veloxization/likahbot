@@ -46,6 +46,15 @@ class PunishmentService:
         rows = self.punishments_dao.get_all_user_punishments(user_id, guild_id)
         return [self._convert_to_entity(row) for row in rows]
 
+    def get_punishment_by_id(self, punishment_id: int):
+        """Get a punishment by its database ID
+        Args:
+            punishment_id: The database ID of the punishment to get
+        Returns: A Punishment entity representing the found punishment. None if not found."""
+
+        row = self.punishments_dao.get_punishment_by_id(punishment_id)
+        return self._convert_to_entity(row)
+
     def add_punishment(self, user_id: int, issuer_id: int, guild_id: int,
                        punishment_type: str = None, reason: str = None, deleted: bool = False):
         """Add a new punishment for a guild member
