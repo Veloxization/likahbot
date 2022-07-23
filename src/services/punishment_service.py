@@ -55,6 +55,16 @@ class PunishmentService:
         row = self.punishments_dao.get_punishment_by_id(punishment_id)
         return self._convert_to_entity(row)
 
+    def get_deleted_punishments(self, user_id: int, guild_id: int):
+        """Get a list of punishments marked deleted a user has within a given guild
+        Args:
+            user_id: The Discord ID of the user whose deleted punishments to get
+            guild_id: The Discord ID of the guild in which the punishments were given
+        Returns: A list of Punishment entities containing all the found punishments"""
+
+        rows = self.punishments_dao.get_deleted_punishments(user_id, guild_id)
+        return [self._convert_to_entity(row) for row in rows]
+
     def add_punishment(self, user_id: int, issuer_id: int, guild_id: int,
                        punishment_type: str = None, reason: str = None, deleted: bool = False):
         """Add a new punishment for a guild member
