@@ -295,7 +295,7 @@ class ModCommands(commands.Cog):
                                        f"`{punishment.reason}`")
             punishment_fields.append(field)
 
-        embed_pager = EmbedPager(punishment_fields, page_limit=3)
+        embed_pager = EmbedPager(punishment_fields, page_limit=5)
         embed_pager.embed = discord.Embed(title=f"Punishments of {user}",
                                           color=discord.Color.dark_orange(),
                                           description=f"{user.name} has " \
