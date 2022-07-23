@@ -36,7 +36,7 @@ class PunishmentService:
         rows = self.punishments_dao.get_user_punishments(user_id, guild_id)
         return [self._convert_to_entity(row) for row in rows]
 
-    def get_all_user_punishments(self, user_id: int, guild_id):
+    def get_all_user_punishments(self, user_id: int, guild_id: int):
         """Get a full list of all punishments a user has within a given guild
         Args:
             user_id: The Discord ID of the user whose punishment history to search

@@ -33,7 +33,7 @@ class PunishmentsDAO:
         self.db_connection.close_connection(connection)
         return punishments
 
-    def get_all_user_punishments(self, user_id: int, guild_id):
+    def get_all_user_punishments(self, user_id: int, guild_id: int):
         """Get a full list of all punishments a user has within a given guild
         Args:
             user_id: The Discord ID of the user whose punishment history to search
