@@ -24,6 +24,14 @@ class TestPunishmentsDAO(unittest.TestCase):
         self.assertEqual(punishment["issuer_id"], 2345)
         self.assertEqual(punishment["guild_id"], 9876)
 
+    def test_punishments_are_found_correctly_by_id(self):
+        punishment1 = self.punishments_dao.add_punishment(1234, 2345, 9876)
+        punishment2 = self.punishments_dao.get_punishment_by_id(punishment1["id"])
+        self.assertEqual(punishment1["id"], punishment2["id"])
+        self.assertEqual(punishment1["issuer_id"], punishment2["issuer_id"])
+        self.assertEqual(punishment1["user_id"], punishment2["user_id"])
+        self.assertEqual(punishment1["guild_id"], punishment2["guild_id"])
+
     def test_punishments_are_marked_deleted_correctly(self):
         self.punishments_dao.add_punishment(1234, 2345, 9876)
         punishments = self.punishments_dao.get_all_user_punishments(1234, 9876)
