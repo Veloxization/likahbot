@@ -309,6 +309,43 @@ class ModCommands(commands.Cog):
 
         await ctx.respond(f"{error}", ephemeral=True)
 
+    @commands.slash_command(name="listdeletedpunishments",
+                            description="List deleted punishments for a user",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(moderate_members=True)
+    async def list_deleted_punishments(self,
+        ctx: discord.ApplicationContext,
+        user: discord.Option(discord.User, "The user whose deleted punishments to view")):
+        """List a user's deleted punishments"""
+
+        punishments = self.punishment_service.get_deleted_punishments(user.id, ctx.guild.id)
+        punishment_fields = []
+        time_converter = TimeStringConverter()
+        epoch_converter = EpochConverter()
+        for punishment in punishments:
+            time = time_converter.string_to_datetime(punishment.time)
+            epoch = epoch_converter.convert_to_epoch(time)
+            issuer = await punishment.get_discord_issuer(self.bot)
+            field = discord.EmbedField(f"ID: {punishment.db_id}, Type: {punishment.punishment_type}",
+                                       f"**Time:** <t:{epoch}>\n" \
+                                       f"**Issuer:** {issuer}\n" \
+                                       f"`{punishment.reason}`")
+            punishment_fields.append(field)
+
+        embed_pager = EmbedPager(punishment_fields, page_limit=5)
+        embed_pager.embed = discord.Embed(title=f"Deleted punishments of {user}",
+                                          color=discord.Color.dark_red(),
+                                          description=f"{user.name} has " \
+                                                      f"{len(punishment_fields)} deleted punishments")
+        embed, view = embed_pager.get_embed_and_view()
+        await ctx.respond(embeds=[embed], view=view, ephemeral=True)
+
+    @list_deleted_punishments.error
+    async def list_deleted_punishments_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the listdeteletedpunishments command encounters an error"""
+
+        await ctx.respond(f"{error}", ephemeral=True)
+
     @commands.slash_command(name="editpunishment",
                             description="Edit an existing punishment for a user.",
                             guild_ids=Constants.DEBUG_GUILDS.value)
