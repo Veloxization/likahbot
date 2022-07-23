@@ -49,6 +49,19 @@ class PunishmentsDAO:
         self.db_connection.close_connection(connection)
         return punishments
 
+    def get_punishment_by_id(self, punishment_id: int):
+        """Get a punishment by its database ID
+        Args:
+            punishment_id: The database ID of the punishment to get
+        Returns: A Row representing the found punishment. None if not found."""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "SELECT * FROM punishments WHERE id=?"
+        cursor.execute(sql, (punishment_id,))
+        punishment = cursor.fetchone()
+        self.db_connection.close_connection(connection)
+        return punishment
+
     def add_punishment(self, user_id: int, issuer_id: int, guild_id: int,
                        punishment_type: str = None, reason: str = None, deleted: bool = False):
         """Add a new punishment for a guild member
