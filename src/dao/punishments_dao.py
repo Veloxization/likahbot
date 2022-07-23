@@ -49,6 +49,21 @@ class PunishmentsDAO:
         self.db_connection.close_connection(connection)
         return punishments
 
+    def get_deleted_punishments(self, user_id: int, guild_id: int):
+        """Get a list of punishments marked deleted a user has within a given guild
+        Args:
+            user_id: The Discord ID of the user whose deleted punishments to get
+            guild_id: The Discord ID of the guild in which the punishments were given
+        Returns: A list of Rows containing all the found punishments"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "SELECT * FROM punishments WHERE user_id=? AND guild_id=? AND deleted=TRUE " \
+              "ORDER BY time DESC"
+        cursor.execute(sql, (user_id, guild_id))
+        punishments = cursor.fetchall()
+        self.db_connection.close_connection(connection)
+        return punishments
+
     def get_punishment_by_id(self, punishment_id: int):
         """Get a punishment by its database ID
         Args:
