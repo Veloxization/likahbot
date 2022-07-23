@@ -24,7 +24,7 @@ class Logging(commands.Cog):
         self._utility_channel_service = UtilityChannelService(db_address)
         self.invites = invites
 
-    def _get_guild_log_channels(self, guild: discord.Guild):
+    async def _get_guild_log_channels(self, guild: discord.Guild):
         """Get the channels used for logs for a specific guild
         Args:
             guild: The Discord Guild whose log channel to get
@@ -34,14 +34,14 @@ class Logging(commands.Cog):
                                                                                       "log")
         if not channels:
             return None
-        log_channels = [channel.get_discord_channel(self.bot) for channel in channels]
+        log_channels = [await channel.get_discord_channel(self.bot) for channel in channels]
         return log_channels
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
         """Log an edited message"""
 
-        log_channels = self._get_guild_log_channels(after.guild)
+        log_channels = await self._get_guild_log_channels(after.guild)
         embed = discord.Embed(color=discord.Color.orange(),
                               title="Message edited",
                               description=f"Message by {after.author.mention} edited in {after.channel.mention}",
@@ -69,7 +69,7 @@ class Logging(commands.Cog):
 
         if not message:
             return
-        log_channels = self._get_guild_log_channels(message.guild)
+        log_channels = await self._get_guild_log_channels(message.guild)
         embed = discord.Embed(color=discord.Color.dark_orange(),
                               title="Message deleted",
                               description=f"Message by {message.author.mention} deleted in {message.channel.mention}")
@@ -88,7 +88,7 @@ class Logging(commands.Cog):
     async def on_member_join(self, member: discord.Member):
         """Log a joining member"""
 
-        log_channels = self._get_guild_log_channels(member.guild)
+        log_channels = await self._get_guild_log_channels(member.guild)
         embed = discord.Embed(color=discord.Color.green(),
                               title="Member joined",
                               description=f"{member.mention} joined **{member.guild.name}**")
@@ -115,7 +115,7 @@ class Logging(commands.Cog):
     async def on_member_remove(self, member: discord.Member):
         """Log a leaving member"""
 
-        log_channels = self._get_guild_log_channels(member.guild)
+        log_channels = await self._get_guild_log_channels(member.guild)
         embed = discord.Embed(color=discord.Color.yellow(),
                               title="Member left",
                               description=f"{member.mention} left **{member.guild.name}**")

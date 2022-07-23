@@ -288,11 +288,7 @@ class ModCommands(commands.Cog):
         for punishment in punishments:
             time = time_converter.string_to_datetime(punishment.time)
             epoch = epoch_converter.convert_to_epoch(time)
-            issuer = self.bot.get_user(punishment.issuer_id)
-            if not issuer:
-                issuer = await self.bot.fetch_user(punishment.issuer_id)
-            if not issuer:
-                issuer = f"Unknown user with ID {punishment.issuer_id}"
+            issuer = punishment.get_discord_issuer(self.bot)
             field = discord.EmbedField(f"ID: {punishment.db_id}, Type: {punishment.punishment_type}",
                                        f"**Time:** <t:{epoch}>\n" \
                                        f"**Issuer:** {issuer}\n" \
