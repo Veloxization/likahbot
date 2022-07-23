@@ -42,7 +42,7 @@ class PunishmentEntity(MasterEntity):
         """Get the Discord user from the issuer ID, if possible
         Args:
             client: The client to fetch the user
-        Returns: A discord.User object"""
+        Returns: A discord.User object or str if not found"""
 
         issuer = client.get_user(self.issuer_id)
         if not issuer:

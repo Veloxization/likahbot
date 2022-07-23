@@ -14,7 +14,7 @@ class MasterEntity():
         """Get the Discord guild from the ID, if possible
         Args:
             client: The client to fetch the guild
-        Returns: A discord.Guild object"""
+        Returns: A discord.Guild object or str if not found"""
 
         guild = client.get_guild(self.guild_id)
         if not guild:
@@ -28,7 +28,7 @@ class MasterEntity():
         """Get the Discord user from the ID, if possible
         Args:
             client: The client to fetch the user
-        Returns: A discord.User object"""
+        Returns: A discord.User object or str if not found"""
 
         user = client.get_user(self.user_id)
         if not user:
@@ -42,7 +42,8 @@ class MasterEntity():
         """Get the Discord channel from the ID, if possible
         Args:
             client: The client to fetch the channel
-        Returns: A discord.abc.GuildChannel, discord.Thread or discord.abc.PrivateChannel object"""
+        Returns: A discord.abc.GuildChannel, discord.Thread or discord.abc.PrivateChannel object,
+                 or str if not found"""
 
         channel = client.get_channel(self.channel_id)
         if not channel:
@@ -56,7 +57,7 @@ class MasterEntity():
         """Get the Discord role from the ID, if possible
         Args:
             client: The client to fetch the role
-        Returns: A discord.Role object"""
+        Returns: A discord.Role object or str if not found"""
 
         guild = self.get_discord_guild(client)
         if not isinstance(guild, discord.Guild) or not guild:
