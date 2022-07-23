@@ -38,10 +38,16 @@ class PunishmentEntity(MasterEntity):
         self.time = time
         self.deleted = deleted
 
-    def get_discord_issuer(self, client: discord.Client):
+    async def get_discord_issuer(self, client: discord.Client):
         """Get the Discord user from the issuer ID, if possible
         Args:
             client: The client to fetch the user
         Returns: A discord.User object"""
 
-        return client.get_user(self.issuer_id)
+        issuer = client.get_user(self.issuer_id)
+        if not issuer:
+            try:
+                issuer = await client.fetch_user(self.issuer_id)
+            except discord.NotFound:
+                issuer = f"Unknown user with ID {self.issuer_id}"
+        return issuer
