@@ -147,7 +147,8 @@ class GuildSettings(commands.Cog):
             return
         fields = []
         for chan in channels:
-            fields.append(discord.EmbedField(f"#{chan.get_discord_channel(self.bot).name}",
+            channel_obj = await chan.get_discord_channel(self.bot)
+            fields.append(discord.EmbedField(f"#{channel_obj.name}",
                                              chan.channel_purpose))
         embed_pager = EmbedPager(fields)
         embed_pager.embed = embed
