@@ -24,6 +24,14 @@ class TestPunishmentService(unittest.TestCase):
         self.assertEqual(len(punishments), 1)
         self.assertEqual(punishments[0].user_id, 1234)
 
+    def test_punishments_are_found_correctly_by_id(self):
+        punishment1 = self.punishment_service.add_punishment(1234, 3456, 9876)
+        punishment2 = self.punishment_service.get_punishment_by_id(punishment1.db_id)
+        self.assertEqual(punishment1.db_id, punishment2.db_id)
+        self.assertEqual(punishment1.issuer_id, punishment2.issuer_id)
+        self.assertEqual(punishment1.user_id, punishment2.user_id)
+        self.assertEqual(punishment1.guild_id, punishment2.guild_id)
+
     def test_user_punishments_are_marked_deleted_correctly(self):
         self.punishment_service.add_punishment(1234, 3456, 9876)
         punishments = self.punishment_service.get_all_user_punishments(1234, 9876)
