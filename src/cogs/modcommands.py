@@ -312,3 +312,49 @@ class ModCommands(commands.Cog):
         """Run when the listpunishments command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
+    @commands.slash_command(name="editpunishment",
+                            description="Edit an existing punishment for a user.",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(moderate_members=True)
+    async def edit_punishment(self,
+        ctx: discord.ApplicationContext,
+        punishment_id: discord.Option(int, "The ID of the punishment to edit"),
+        new_reason: discord.Option(str, "The new reason for this punishment")):
+        """Edit a specific punishment"""
+
+        punishment = self.punishment_service.get_punishment_by_id(punishment_id)
+
+        if not punishment:
+            await ctx.respond(f"No punishment with ID {punishment_id} found.\n" \
+                              "Use the `listpunishments` command to get punishment IDs.",
+                              ephemeral=True)
+            return
+        if punishment.guild_id != ctx.guild.id:
+            await ctx.respond(f"No punishment with ID {punishment_id} found for this guild.\n" \
+                              "Make sure you run this command within the punishment's guild.",
+                              ephemeral=True)
+            return
+
+        self.punishment_service.edit_punishment_reason(punishment_id, new_reason)
+        time_converter = TimeStringConverter()
+        punishment_timestamp = time_converter.string_to_datetime(punishment.time)
+        embed = discord.Embed(title=f"Punishment {punishment_id}", timestamp=punishment_timestamp,
+                              description=f"Punishment ID {punishment_id} has been edited.",
+                              color=discord.Color.blurple())
+        if not punishment.reason:
+            punishment.reason = "N/A"
+        user = await punishment.get_discord_user(self.bot)
+        issuer = await punishment.get_discord_issuer(self.bot)
+        embed.add_field(name="User", value=user, inline=False)
+        embed.add_field(name="Issuer", value=issuer, inline=False)
+        embed.add_field(name="Type", value=punishment.punishment_type, inline=False)
+        embed.add_field(name="Reason before", value=punishment.reason)
+        embed.add_field(name="Reason after", value=new_reason)
+        await ctx.respond(embed=embed)
+
+    @edit_punishment.error
+    async def edit_punishment_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the editpunishment command encounters and error"""
+
+        await ctx.respond(f"{error}", ephemeral=True)
