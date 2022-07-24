@@ -442,6 +442,78 @@ class ModCommands(commands.Cog):
 
         await ctx.respond(f"{error}", ephemeral=True)
 
+    @commands.slash_command(name="permadeletepunishment",
+                            description="Permanently delete a punishment record. " \
+                                        "Punishments deleted like this cannot be recovered.",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(administrator=True)
+    async def permadelete_punishment(self,
+        ctx: discord.ApplicationContext,
+        punishment_id: discord.Option(int, "The ID of the punishment to permanently delete")):
+        """Permanently delete a punishment from a user"""
+
+        punishment = self.punishment_service.get_punishment_by_id(punishment_id)
+
+        if not punishment:
+            await ctx.respond(f"No punishment with ID {punishment_id} found.\n" \
+                              "Use the `listallpunishments` command to get punishment IDs.",
+                              ephemeral=True)
+            return
+        if punishment.guild_id != ctx.guild.id:
+            await ctx.respond(f"No punishment with ID {punishment_id} found for this guild.\n" \
+                              "Make sure you run this command within the punishment's guild.",
+                              ephemeral=True)
+            return
+
+        time_converter = TimeStringConverter()
+        punishment_timestamp = time_converter.string_to_datetime(punishment.time)
+        embed = discord.Embed(title=f"Punishment {punishment_id}", timestamp=punishment_timestamp,
+                              description=f"Punishment ID {punishment_id} will be permanently " \
+                                          "deleted.",
+                              color=discord.Color.red())
+        if not punishment.reason:
+            punishment.reason = "N/A"
+        user = await punishment.get_discord_user(self.bot)
+        issuer = await punishment.get_discord_issuer(self.bot)
+        embed.add_field(name="User", value=user, inline=False)
+        embed.add_field(name="Issuer", value=issuer, inline=False)
+        embed.add_field(name="Type", value=punishment.punishment_type, inline=False)
+        embed.add_field(name="Reason", value=punishment.reason, inline=False)
+
+        async def delete_button_callback(interaction: discord.Interaction):
+            if interaction.user != ctx.author:
+                await interaction.response.send_message("You cannot interact with this response.",
+                                                        ephemeral=True)
+                return
+            embed.description = f"Punishment ID {punishment_id} has been permanently " \
+                                "deleted."
+            self.punishment_service.delete_punishment(punishment_id)
+            await interaction.response.edit_message(content=None, view=None, embed=embed)
+        async def cancel_button_callback(interaction: discord.Interaction):
+            if interaction.user != ctx.author:
+                await interaction.response.send_message("You cannot interact with this response.",
+                                                        ephemeral=True)
+                return
+            await interaction.response.edit_message(content="Permanent deletion of punishment ID " \
+                                                    f"{punishment_id} cancelled",
+                                                    embed=None, view=None)
+
+        delete_button = Button(label="Delete", style=discord.ButtonStyle.red)
+        delete_button.callback = delete_button_callback
+        cancel_button = Button(label="Cancel", style=discord.ButtonStyle.gray)
+        cancel_button.callback = cancel_button_callback
+        view = View(delete_button, cancel_button)
+        await ctx.respond("**NOTE:** This command will *permanently* delete this punishment.\n" \
+                          "If you want to be able to view or recover this punishment " \
+                          "in the future, use the `deletepunishment` command instead.",
+                          embed=embed, view=view)
+
+    @permadelete_punishment.error
+    async def permadelete_punishment_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the permadeletepunishment command encounters an error"""
+
+        await ctx.respond(f"{error}", ephemeral=True)
+
     @commands.slash_command(name="restorepunishment",
                             description="Restore a previously deleted punishment",
                             guild_ids=Constants.DEBUG_GUILDS.value)
