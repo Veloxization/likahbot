@@ -389,6 +389,7 @@ class ModCommands(commands.Cog):
 
     @list_all_punishments.error
     async def list_all_punishments_error(self, ctx: discord.ApplicationContext, error):
+        """Run when listallpunishments command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
 
