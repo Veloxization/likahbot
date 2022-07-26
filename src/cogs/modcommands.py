@@ -169,6 +169,7 @@ class ModCommands(commands.Cog):
             if interaction.user != ctx.author:
                 await interaction.response.send_message("You cannot interact with this response.",
                                                         ephemeral=True)
+                return
             await member.remove_timeout(reason="Modifying existing timeout")
             await member.timeout_for(duration=duration,
                                      reason=f"Modified existing timeout with reason: {reason}")
@@ -190,6 +191,7 @@ class ModCommands(commands.Cog):
             if interaction.user != ctx.author:
                 await interaction.response.send_message("You cannot interact with this response.",
                                                         ephemeral=True)
+                return
             await member.remove_timeout()
             await interaction.response.edit_message(content=f"{member}'s timeout ended.\n" \
                                                     "Consider using the `removetimeout` command in " \
@@ -200,6 +202,7 @@ class ModCommands(commands.Cog):
             if interaction.user != ctx.author:
                 await interaction.response.send_message("You cannot interact with this response.",
                                                         ephemeral=True)
+                return
             await interaction.response.edit_message(content="Member's timeout was not changed", view=None)
 
         if member.timed_out:
