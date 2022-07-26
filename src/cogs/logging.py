@@ -41,6 +41,9 @@ class Logging(commands.Cog):
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
         """Log an edited message"""
 
+        if before.author.bot:
+            return
+
         log_channels = await self._get_guild_log_channels(after.guild)
         embed = discord.Embed(color=discord.Color.orange(),
                               title="Message edited",
@@ -66,6 +69,9 @@ class Logging(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
         """Log a deleted message"""
+
+        if message.author.bot:
+            return
 
         if not message:
             return
