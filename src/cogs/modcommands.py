@@ -349,6 +349,49 @@ class ModCommands(commands.Cog):
 
         await ctx.respond(f"{error}", ephemeral=True)
 
+    @commands.slash_command(name="listallpunishments",
+                            description="List all punishments the user has, " \
+                                        "including deleted ones",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(moderate_members=True)
+    async def list_all_punishments(self,
+        ctx: discord.ApplicationContext,
+        user: discord.Option(discord.User, "The user whose punishments to view")):
+        """List a user's punishments regardless of deletion status"""
+
+        punishments = self.punishment_service.get_all_user_punishments(user.id, ctx.guild.id)
+        punishment_fields = []
+        time_converter = TimeStringConverter()
+        epoch_converter = EpochConverter()
+        for punishment in punishments:
+            time = time_converter.string_to_datetime(punishment.time)
+            epoch = epoch_converter.convert_to_epoch(time)
+            issuer = await punishment.get_discord_issuer(self.bot)
+            if punishment.deleted:
+                field = discord.EmbedField(f"~~ID: {punishment.db_id}, Type: {punishment.punishment_type}~~",
+                                           f"~~**Time:** <t:{epoch}>\n" \
+                                           f"**Issuer:** {issuer}\n" \
+                                           f"`{punishment.reason}`~~")
+            else:
+                field = discord.EmbedField(f"ID: {punishment.db_id}, Type: {punishment.punishment_type}",
+                                           f"**Time:** <t:{epoch}>\n" \
+                                           f"**Issuer:** {issuer}\n" \
+                                           f"`{punishment.reason}`")
+            punishment_fields.append(field)
+
+        embed_pager = EmbedPager(punishment_fields, page=5)
+        embed_pager.embed = discord.Embed(title=f"Punishments of {user}",
+                                          color=discord.Color.orange(),
+                                          description=f"{user.name} has " \
+                                                      f"{len(punishment_fields)} punishments")
+        embed, view = embed_pager.get_embed_and_view()
+        await ctx.respond(embeds=[embed], view=view, ephemeral=True)
+
+    @list_all_punishments.error
+    async def list_all_punishments_error(self, ctx: discord.ApplicationContext, error):
+
+        await ctx.respond(f"{error}", ephemeral=True)
+
     @commands.slash_command(name="editpunishment",
                             description="Edit an existing punishment for a user.",
                             guild_ids=Constants.DEBUG_GUILDS.value)
