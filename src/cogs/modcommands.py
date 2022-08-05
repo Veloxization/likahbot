@@ -56,7 +56,7 @@ class ModCommands(commands.Cog):
                                                        f"**{ctx.guild.name}**.\n" \
                                                        f"Provided reason: `{reason}`")
         await ctx.guild.ban(member, reason=reason, delete_message_days=delete_message_days)
-        await ctx.respond(f"**{member.name}** was banned from **{ctx.guild.name}**. {send_success}")
+        await ctx.respond(f"**{member}** was banned from **{ctx.guild.name}**. {send_success}")
         self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
                                                punishment_type="ban", reason=reason)
 
@@ -115,7 +115,7 @@ class ModCommands(commands.Cog):
                                                        f"**{ctx.guild.name}**.\n" \
                                                        f"Provided reason: `{reason}`")
         await member.kick(reason=reason)
-        await ctx.respond(f"**{member.name}** was kicked from **{ctx.guild.name}**. {send_success}")
+        await ctx.respond(f"**{member}** was kicked from **{ctx.guild.name}**. {send_success}")
         if log_as_punishment:
             self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
                                                    punishment_type="kick", reason=reason)
@@ -145,14 +145,14 @@ class ModCommands(commands.Cog):
         try:
             await member.send(f"You have been issued a warning on **{ctx.guild.name}**\n" \
                               f"Provided reason:\n`{reason}`")
-            await ctx.respond(f"**{member.name}** was sent a warning.")
+            await ctx.respond(f"**{member}** was sent a warning.")
         except discord.Forbidden:
             temp_channel_creator = TempChannelCreator(self.bot, ctx.guild)
             await temp_channel_creator.get_temp_category()
             channel = await temp_channel_creator.create_warn_channel(member,
                                                                      punishment.db_id,
                                                                      punishment.reason)
-            await ctx.respond(f"A new warning channel was created for **{member.name}**: " \
+            await ctx.respond(f"A new warning channel was created for **{member}**: " \
                               f"{channel.mention}")
 
     @warn.error
@@ -225,7 +225,7 @@ class ModCommands(commands.Cog):
                 await interaction.response.send_message("You cannot interact with this response.",
                                                         ephemeral=True)
                 return
-            await interaction.response.edit_message(content="Member's timeout was not changed", view=None)
+            await interaction.response.edit_message(content=f"{member}'s timeout was not changed", view=None)
 
         if member.timed_out:
             button_modify = Button(label="Modify", style=discord.ButtonStyle.blurple, emoji="🛠️")
@@ -235,7 +235,7 @@ class ModCommands(commands.Cog):
             button_cancel = Button(label="Cancel action", style=discord.ButtonStyle.red)
             button_cancel.callback = cancel_button_callback
             view = View(button_modify, button_end, button_cancel)
-            await ctx.respond(f"{member.mention} is already timed out. " \
+            await ctx.respond(f"{member} is already timed out. " \
                              "Do you want to add a new timeout, " \
                              "end the current one or cancel this interaction?",
                              view=view)
@@ -278,7 +278,7 @@ class ModCommands(commands.Cog):
             return
 
         if not member.timed_out:
-            await ctx.respond(f"{member.mention} is not timed out! " \
+            await ctx.respond(f"{member} is not timed out! " \
                               "Are you sure you picked the right member?",
                               ephemeral=True)
             return
