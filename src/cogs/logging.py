@@ -151,6 +151,19 @@ class Logging(commands.Cog):
             await channel.send(embed=embed)
 
     @commands.Cog.listener()
+    async def on_member_unban(self, guild: discord.Guild, user):
+        """Log an unbanned user"""
+
+        log_channels = await self._get_guild_log_channels(guild)
+        embed = discord.Embed(color=discord.Color.purple(),
+                              title="Member unbanned",
+                              description=f"{user.mention} was unbanned in **{guild.name}**")
+        embed.set_author(name=user, icon_url=user.avatar.url)
+        embed.set_footer(text=f"ID: {user.id}")
+        for channel in log_channels:
+            await channel.send(embed=embed)
+
+    @commands.Cog.listener()
     async def on_invite_create(self, invite: discord.Invite):
         """Log an invite creation"""
 
