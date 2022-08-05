@@ -66,6 +66,28 @@ class ModCommands(commands.Cog):
 
         await ctx.respond(f"{error}", ephemeral=True)
 
+    @commands.slash_command(name="unban",
+                            description="Unban a user",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(ban_members=True)
+    async def unban(self,
+        ctx: discord.ApplicationContext,
+        member: discord.Option(discord.User,
+                               "The user to unban from the guild."),
+        reason: discord.Option(str,
+                               "The reason for the unban. Will appear in audit log.",
+                               required=False)):
+        """Unban a member from the guild"""
+
+        await ctx.guild.unban(member, reason=reason)
+        await ctx.respond(f"**{member}** was unbanned from **{ctx.guild.name}**")
+
+    @unban.error
+    async def unban_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the unban command encounters an error"""
+
+        await ctx.respond(f"{error}", ephemeral=True)
+
     @commands.slash_command(name="kick",
                             description="Kick a member",
                             guild_ids=Constants.DEBUG_GUILDS.value)
