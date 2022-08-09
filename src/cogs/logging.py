@@ -178,6 +178,16 @@ class Logging(commands.Cog):
             for channel in log_channels:
                 await channel.send(embed=embed)
 
+        if before.timed_out and not after.timed_out:
+            embed = discord.Embed(color=discord.Color.dark_blue(),
+                                  title="Member timeout removed",
+                                  description=f"{after.mention}'s timeout was removed in " \
+                                              f"**{after.guild.name}**")
+            embed.set_author(name=after, icon_url=after.display_avatar.url)
+            embed.set_footer(text=f"ID: {after.id}")
+            for channel in log_channels:
+                await channel.send(embed=embed)
+
     @commands.Cog.listener()
     async def on_invite_create(self, invite: discord.Invite):
         """Log an invite creation"""
