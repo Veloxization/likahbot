@@ -117,6 +117,7 @@ CREATE TABLE IF NOT EXISTS left_members (
 CREATE TABLE IF NOT EXISTS temporary_bans (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
+    guild_id INTEGER NOT NULL,
     unban_date DATETIME NOT NULL
 );
 CREATE TABLE IF NOT EXISTS unverified_kick_rules (
