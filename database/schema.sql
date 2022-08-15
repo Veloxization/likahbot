@@ -118,7 +118,8 @@ CREATE TABLE IF NOT EXISTS temporary_bans (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
     guild_id INTEGER NOT NULL,
-    unban_date DATETIME NOT NULL
+    unban_date DATETIME NOT NULL,
+    CONSTRAINT unq UNIQUE (user_id, guild_id)
 );
 CREATE TABLE IF NOT EXISTS unverified_kick_rules (
     id INTEGER PRIMARY KEY,
