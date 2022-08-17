@@ -29,6 +29,13 @@ class TestTempBanService(unittest.TestCase):
         self.assertEqual(len(temp_bans), 2)
         self.assertEqual(temp_bans[0].user_id, temp_bans[1].user_id)
 
+    def test_specific_temp_bans_are_found_correctly(self):
+        self.temp_ban_service.create_temp_ban(1234, 9876, self.expiration1)
+        self.temp_ban_service.create_temp_ban(2345, 8765, self.expiration1)
+        temp_ban = self.temp_ban_service.get_temp_ban(1234, 9876)
+        self.assertEqual(temp_ban.user_id, 1234)
+        self.assertEqual(temp_ban.guild_id, 9876)
+
     def test_temp_bans_are_edited_correctly(self):
         self.temp_ban_service.create_temp_ban(1234, 9876, self.expiration1)
         temp_bans = self.temp_ban_service.get_expired_temp_bans()
