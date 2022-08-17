@@ -28,6 +28,20 @@ class TempBansDAO:
         self.db_connection.close_connection(connection)
         return temp_bans
 
+    def get_temp_ban(self, user_id: int, guild_id: int):
+        """Get a specific temporary ban
+        Args:
+            user_id: The Discord ID of the user whose temporary ban to get
+            guild_id: The Discord ID of the guild from which to get the ban
+        Returns: A list of Rows containing the found temporary ban"""
+
+        connection, cursor = self.db_connection.connect_to_db()
+        sql = "SELECT * FROM temporary_bans WHERE user_id=? AND guild_id=?"
+        cursor.execute(sql, (user_id, guild_id))
+        temp_ban = cursor.fetchone()
+        self.db_connection.close_connection(connection)
+        return temp_ban
+
     def get_expired_temp_bans(self):
         """Get all expired temporary bans
         Returns: A list of Rows containing expired bans"""
