@@ -33,7 +33,7 @@ class TempBansDAO:
         Args:
             user_id: The Discord ID of the user whose temporary ban to get
             guild_id: The Discord ID of the guild from which to get the ban
-        Returns: A list of Rows containing the found temporary ban"""
+        Returns: A Row object containing the found temporary ban"""
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "SELECT * FROM temporary_bans WHERE user_id=? AND guild_id=?"
