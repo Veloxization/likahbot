@@ -32,6 +32,13 @@ class TestTempBansDAO(unittest.TestCase):
         self.assertNotEqual(temp_bans[0]["user_id"], 1234)
         self.assertNotEqual(temp_bans[1]["user_id"], 1234)
 
+    def test_specific_temp_bans_are_found_correctly(self):
+        self.temp_bans_dao.create_temp_ban(1234, 9876, self.expiration1)
+        self.temp_bans_dao.create_temp_ban(2345, 9876, self.expiration1)
+        temp_ban = self.temp_bans_dao.get_temp_ban(1234, 9876)
+        self.assertEqual(temp_ban["user_id"], 1234)
+        self.assertEqual(temp_ban["guild_id"], 9876)
+
     def test_temp_bans_are_edited_correctly(self):
         self.temp_bans_dao.create_temp_ban(1234, 9876, self.expiration2)
         temp_bans = self.temp_bans_dao.get_expired_temp_bans()
