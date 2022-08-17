@@ -42,6 +42,16 @@ class TempBanService:
         rows = self.temp_bans_dao.get_expired_temp_bans()
         return [self._convert_to_entity(row) for row in rows]
 
+    def get_temp_ban(self, user_id: int, guild_id: int):
+        """Get a specific temporary ban
+        Args:
+            user_id: The Discord ID of the user whose temporary ban to get
+            guild_id: The Discord ID of the guild from which to get the ban
+        Returns: A temp ban entity representing the found temporary ban, None if not found"""
+
+        row = self.temp_bans_dao.get_temp_ban(user_id, guild_id)
+        return self._convert_to_entity(row)
+
     def create_temp_ban(self, user_id: int, guild_id: int, expiration: datetime):
         """Create a new temporary ban
         Args:
