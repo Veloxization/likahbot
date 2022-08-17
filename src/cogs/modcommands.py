@@ -1,6 +1,6 @@
 """Houses the cog that handles moderation commands"""
 
-from datetime import timedelta
+from datetime import datetime, timedelta
 import discord
 from discord.ext import commands
 from discord.ui import View, Button
@@ -9,6 +9,7 @@ from helpers.embed_pager import EmbedPager
 from helpers.temp_channel_creator import TempChannelCreator
 from helpers.messager import Messager
 from services.punishment_service import PunishmentService
+from services.temp_ban_service import TempBanService
 from time_handler.time import TimeStringConverter, EpochConverter
 
 class ModCommands(commands.Cog):
@@ -25,6 +26,7 @@ class ModCommands(commands.Cog):
 
         self.bot = bot
         self.punishment_service = PunishmentService(db_address)
+        self.temp_ban_service = TempBanService(db_address)
 
     @commands.slash_command(name="ban",
                             description="Ban a member or a user",
@@ -63,6 +65,54 @@ class ModCommands(commands.Cog):
     @ban.error
     async def ban_error(self, ctx: discord.ApplicationContext, error):
         """Run when the ban command encounters an error"""
+
+        await ctx.respond(f"{error}", ephemeral=True)
+
+    @commands.slash_command(name="tempban",
+                            description="Temporarily ban a member or a user",
+                            guild_ids=Constants.DEBUG_GUILDS.value)
+    @commands.has_permissions(ban_members=True)
+    async def temp_ban(self,
+        ctx: discord.ApplicationContext,
+        member: discord.Option(discord.User,
+                               "The user to temporarily ban from the guild. Can also be the ID of a non-member."),
+        days: discord.Option(int, "How many days to ban the user for",
+                             min_value=1, max_value=1095),
+        reason: discord.Option(str, "An optional reason for the temporary ban", required=False),
+        delete_message_days: discord.Option(int,
+                                            "How many days worth of messages to delete from the member",
+                                            min_value=0, max_value=7, default=0, required=False),
+        notify: discord.Option(bool, "Whether the bot should attempt to notify the member about the temporary ban",
+                               default=False, required=False)):
+        """Temporarily ban a member from the guild"""
+
+        if isinstance(member, discord.Member):
+            if ctx.author.top_role <= member.top_role:
+                await ctx.respond("You cannot ban this member. Insufficient role hierarchy.",
+                                  ephemeral=True)
+                return
+        send_success = ""
+        ban_expiration = datetime.utcnow() + timedelta(days=days)
+        time_converter = TimeStringConverter()
+        db_ban_expiration = time_converter.datetime_to_string(ban_expiration)
+        epoch_converter = EpochConverter()
+        ban_expiration_epoch = epoch_converter.convert_to_epoch(ban_expiration)
+        if notify:
+            messager = Messager(member)
+            send_success = await messager.send_message("You have been temporarily banned from " \
+                                                       f"**{ctx.guild.name}**.\n" \
+                                                       f"Your ban will expire on <t:{ban_expiration_epoch}:D>\n" \
+                                                       f"Provided reason: `{reason}`")
+        await ctx.guild.ban(member, reason=reason, delete_message_days=delete_message_days)
+        self.temp_ban_service.create_temp_ban(member.id, ctx.guild.id, db_ban_expiration)
+        self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
+                                               punishment_type="temporary ban", reason=reason)
+        await ctx.respond(f"**{member}** was temporarily banned from **{ctx.guild.name}**. " \
+                          f"Ban expires <t:{ban_expiration_epoch}:D>. {send_success}")
+
+    @temp_ban.error
+    async def temp_ban_error(self, ctx: discord.ApplicationContext, error):
+        """Run when the tempban command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
 
