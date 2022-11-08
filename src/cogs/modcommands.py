@@ -93,6 +93,9 @@ class ModCommands(commands.Cog):
             ban = await ctx.guild.fetch_ban(member)
         except discord.NotFound:
             ban = None
+    
+        if not ban and self.temp_ban_service.get_temp_ban(member.id, ctx.guild.id):
+            self.temp_ban_service.delete_temp_ban(member.id, ctx.guild.id)
 
         async def modify_button_callback(interaction: discord.Interaction):
             if interaction.user != ctx.author:
@@ -177,7 +180,7 @@ class ModCommands(commands.Cog):
         await ctx.respond(f"**{member}** was temporarily banned from **{ctx.guild.name}**. " \
                           f"Ban expires <t:{ban_expiration_epoch}:D>. {send_success}")
 
-    #@temp_ban.error
+    @temp_ban.error
     async def temp_ban_error(self, ctx: discord.ApplicationContext, error):
         """Run when the tempban command encounters an error"""
 
