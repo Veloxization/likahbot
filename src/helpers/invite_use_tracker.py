@@ -33,6 +33,9 @@ class InviteUseTracker:
 
         for invite in self.original_invites:
             new_invite = self._get_invite_by_code(self.new_invites, invite.code)
-            if invite.uses != new_invite.uses:
-                return new_invite
+            try:
+                if invite.uses != new_invite.uses:
+                    return new_invite
+            except:
+                return None
         return None
