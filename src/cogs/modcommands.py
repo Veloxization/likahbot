@@ -86,6 +86,75 @@ class ModCommands(commands.Cog):
                                default=False, required=False)):
         """Temporarily ban a member from the guild"""
 
+        time_converter = TimeStringConverter()
+        epoch_converter = EpochConverter()
+
+        try:
+            ban = await ctx.guild.fetch_ban(member)
+        except discord.NotFound:
+            ban = None
+
+        async def modify_button_callback(interaction: discord.Interaction):
+            if interaction.user != ctx.author:
+                await interaction.response.send_message("You cannot interact with this response.",
+                                                        ephemeral=True)
+                return
+            expiration_date = datetime.utcnow() + timedelta(days=days)
+            expiration_date_str = time_converter.datetime_to_string(expiration_date)
+            expiration_date_epoch = epoch_converter.convert_to_epoch(expiration_date)
+            temp_ban = self.temp_ban_service.get_temp_ban(member.id, ctx.guild.id)
+            if not temp_ban:
+                self.temp_ban_service.create_temp_ban(member.id, ctx.guild.id, expiration_date_str)
+            else:
+                self.temp_ban_service.edit_temp_ban(member.id, ctx.guild.id, expiration_date_str)
+            await interaction.response.edit_message(content=f"**{member}**'s ban was edited. " \
+                                                            f"The ban will expire <t:{expiration_date_epoch}:D>.",
+                                                    view=None)
+
+        async def unban_button_callback(interaction: discord.Interaction):
+            if interaction.user != ctx.author:
+                await interaction.response.send_message("You cannot interact with this response.",
+                                                        ephemeral=True)
+                return
+            await ctx.guild.unban(member, reason=reason)
+            self.temp_ban_service.delete_temp_ban(member.id, ctx.guild.id)
+            await interaction.response.edit_message(content=f"**{member}** has been unbanned. " \
+                                                            "Consider using the `unban` command next time.",
+                                                    view=None)
+
+        async def cancel_button_callback(interaction: discord.Interaction):
+            if interaction.user != ctx.author:
+                await interaction.response.send_message("You cannot interact with this response.",
+                                                        ephemeral=True)
+                return
+
+            await interaction.response.edit_message(content=f"**{member}**'s ban was not changed.",
+                                                    view=None)
+
+        if ban:
+            button_modify = Button(label="Modify", style=discord.ButtonStyle.blurple, emoji="🛠️")
+            button_modify.callback = modify_button_callback
+            button_unban = Button(label="Unban", style=discord.ButtonStyle.red)
+            button_unban.callback = unban_button_callback
+            button_cancel = Button(label="Cancel", style=discord.ButtonStyle.gray)
+            button_cancel.callback = cancel_button_callback
+            view = View(button_modify, button_unban, button_cancel)
+            temp_ban = self.temp_ban_service.get_temp_ban(member.id, ctx.guild.id)
+            if temp_ban:
+                unban_datetime = time_converter.string_to_datetime(temp_ban.unban_date)
+                expiration_epoch = epoch_converter.convert_to_epoch(unban_datetime)
+                await ctx.respond(content="This user already has a temporary ban that will expire " \
+                                          f"<t:{expiration_epoch}:D>. "
+                                          "Do you want to edit the temporary ban " \
+                                          "or were you trying to unban?",
+                                          view=view)
+            else:
+                await ctx.respond(content="This user already has an active ban. " \
+                                          "Do you want to convert it to a temporary ban " \
+                                          "or were you trying to unban?",
+                                          view=view)
+            return
+
         if isinstance(member, discord.Member):
             if ctx.author.top_role <= member.top_role:
                 await ctx.respond("You cannot ban this member. Insufficient role hierarchy.",
@@ -93,9 +162,7 @@ class ModCommands(commands.Cog):
                 return
         send_success = ""
         ban_expiration = datetime.utcnow() + timedelta(days=days)
-        time_converter = TimeStringConverter()
         db_ban_expiration = time_converter.datetime_to_string(ban_expiration)
-        epoch_converter = EpochConverter()
         ban_expiration_epoch = epoch_converter.convert_to_epoch(ban_expiration)
         if notify:
             messager = Messager(member)
@@ -110,7 +177,7 @@ class ModCommands(commands.Cog):
         await ctx.respond(f"**{member}** was temporarily banned from **{ctx.guild.name}**. " \
                           f"Ban expires <t:{ban_expiration_epoch}:D>. {send_success}")
 
-    @temp_ban.error
+    #@temp_ban.error
     async def temp_ban_error(self, ctx: discord.ApplicationContext, error):
         """Run when the tempban command encounters an error"""
 
