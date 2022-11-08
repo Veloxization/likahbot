@@ -49,7 +49,7 @@ class Logging(commands.Cog):
                               title="Message edited",
                               description=f"Message by {after.author.mention} edited in {after.channel.mention}",
                               url=after.jump_url)
-        embed.set_author(name=after.author, icon_url=after.author.avatar.url)
+        embed.set_author(name=after.author, icon_url=after.author.display_avatar.url)
         embed.set_footer(text=f"ID: {after.id}")
         before_content = before.content
         after_content = after.content
@@ -79,7 +79,7 @@ class Logging(commands.Cog):
         embed = discord.Embed(color=discord.Color.dark_orange(),
                               title="Message deleted",
                               description=f"Message by {message.author.mention} deleted in {message.channel.mention}")
-        embed.set_author(name=message.author, icon_url=message.author.avatar.url)
+        embed.set_author(name=message.author, icon_url=message.author.display_avatar.url)
         embed.set_footer(text=f"ID: {message.id}")
         content = message.content
         if not content:
@@ -145,7 +145,7 @@ class Logging(commands.Cog):
         embed = discord.Embed(color=discord.Color.red(),
                               title="Member banned",
                               description=f"{user.mention} was banned from **{guild.name}**")
-        embed.set_author(name=user, icon_url=user.avatar.url)
+        embed.set_author(name=user, icon_url=user.display_avatar.url)
         embed.set_footer(text=f"ID: {user.id}")
         for channel in log_channels:
             await channel.send(embed=embed)
@@ -158,7 +158,7 @@ class Logging(commands.Cog):
         embed = discord.Embed(color=discord.Color.purple(),
                               title="Member unbanned",
                               description=f"{user.mention} was unbanned in **{guild.name}**")
-        embed.set_author(name=user, icon_url=user.avatar.url)
+        embed.set_author(name=user, icon_url=user.display_avatar.url)
         embed.set_footer(text=f"ID: {user.id}")
         for channel in log_channels:
             await channel.send(embed=embed)
