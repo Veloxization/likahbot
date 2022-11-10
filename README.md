@@ -21,21 +21,27 @@ Do note that the bot is in a very very early stage of development currently and 
   - Note that making a slash command public may take a while to register
 8. Create a new application and bot user through [Discord Developer Portal](https://discord.com/developers/applications)
 9. Invite the bot to your Discord server
-  - e.g. use link: `https://discord.com/oauth2/authorize?client_id=[your client id here]&scope=applications.commands&permissions=[your permission integer here]`
+  - e.g. use link: `https://discord.com/oauth2/authorize?client_id=[your client id here]&scope=bot%20applications.commands&permissions=[your permission integer here]`
   - Select your server from the list
 10. Get your bot's secret token from the developer portal and keep it safe
 11. Launch the bot
   - `python3 src/bot.py [your secret token here]`
-  - Optional way to launch in the next steps
-12. Install `gnupg` on your system
-13. Create an extensionless file to store your token
+  - Optional ways to launch in the next steps
+#### Option 1: Environmental variables
+1. Create a new environmental variable
+  - e.g. `export BOT_TOKEN=[your secret token here]`
+2. Launch the bot using the environmental variable
+  - e.g. `python3 src/bot.py $BOT_TOKEN`
+#### Option 2: Encrypted file and the `run.sh` script
+1. Install `gnupg` on your system
+2. Create an extensionless file to store your token
   - `echo [insert your token] > token`
-14. Encrypt your token file
+3. Encrypt your token file
   - `gpg -c token`
   - Come up with a strong enough password. You'll be needing it to launch the bot in the future.
   - A file called token.gpg should be created in the root directory
-15. Delete the original token file
-16. To run the bot, use `./run.sh` (make sure you give it permission to execute)
+4. Delete the original token file
+5. To run the bot, use `./run.sh` (make sure you give it permission to execute)
   - Type in the password if asked
 ## Planned features
 * Dashboard
