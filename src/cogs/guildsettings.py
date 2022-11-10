@@ -25,6 +25,7 @@ class GuildSettings(commands.Cog):
         self.bot = bot
         self.utility_channel_service = UtilityChannelService(db_address)
 
+
     @settings_group.command(name="addchannelutility",
                             description="Add a new utility for a channel in the guild",
                             guild_ids=DEBUG_GUILDS)
@@ -43,6 +44,7 @@ class GuildSettings(commands.Cog):
             await ctx.respond(f"{channel.mention} is now a rules channel. If you've specified any rules, they will be posted and maintained there.")
         if utility == "verification":
             await ctx.respond(f"{channel.mention} is now a verification channel. New members can verify through this channel from now on.")
+
 
     @settings_group.command(name="removechannelutility",
                             description="Remove an established utility from a channel",
@@ -66,6 +68,7 @@ class GuildSettings(commands.Cog):
         self.utility_channel_service.delete_utility_from_channel(channel.id, ctx.guild.id, utility)
         await ctx.respond(f"{channel.mention} no longer has the utility `{utility}`.")
 
+
     @settings_group.command(name="removeallchannelutilities",
                             description="Remove all utilities from a single channel",
                             guild_ids=DEBUG_GUILDS)
@@ -85,6 +88,7 @@ class GuildSettings(commands.Cog):
             return
         self.utility_channel_service.delete_utility_channel(channel.id, ctx.guild.id)
         await ctx.respond(f"{channel.mention} is no longer used as a utility channel.")
+
 
     @settings_group.command(name="removeguildutilitychannels",
                             description="Clear all channel utilities from the guild",
@@ -118,6 +122,7 @@ class GuildSettings(commands.Cog):
         view = View(confirm_button, cancel_button)
         await ctx.respond(f"Are you sure? This will delete **{len(channels)}** utilities from the guild.",
                           view=view)
+
 
     @settings_group.command(name="listchannelutilities",
                             description="List the channels used as utility channels",

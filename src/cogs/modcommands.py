@@ -30,6 +30,7 @@ class ModCommands(commands.Cog):
         self.punishment_service = PunishmentService(db_address)
         self.temp_ban_service = TempBanService(db_address)
 
+
     @mod_group.command(name="ban",
                        description="Ban a member or a user",
                        guild_ids=DEBUG_GUILDS)
@@ -69,6 +70,7 @@ class ModCommands(commands.Cog):
         """Run when the ban command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
 
     @mod_group.command(name="tempban",
                        description="Temporarily ban a member or a user",
@@ -188,6 +190,7 @@ class ModCommands(commands.Cog):
 
         await ctx.respond(f"{error}", ephemeral=True)
 
+
     @mod_group.command(name="unban",
                        description="Unban a user",
                        guild_ids=DEBUG_GUILDS)
@@ -209,6 +212,7 @@ class ModCommands(commands.Cog):
         """Run when the unban command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
 
     @mod_group.command(name="kick",
                        description="Kick a member",
@@ -248,6 +252,7 @@ class ModCommands(commands.Cog):
 
         await ctx.respond(f"{error}", ephemeral=True)
 
+
     @mod_group.command(name="warn",
                        description="Warn a member",
                        guild_ids=DEBUG_GUILDS)
@@ -282,6 +287,7 @@ class ModCommands(commands.Cog):
         """Run when the warn command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
 
     @mod_group.command(name="timeout",
                        description="Time out a member or modify or end an existing timeout. " \
@@ -381,6 +387,7 @@ class ModCommands(commands.Cog):
 
         await ctx.respond(f"{error}", ephemeral=True)
 
+
     @mod_group.command(name="removetimeout",
                        description="Remove a timeout from a member",
                        guild_ids=DEBUG_GUILDS)
@@ -419,6 +426,7 @@ class ModCommands(commands.Cog):
 
         await ctx.respond(f"{error}", ephemeral=True)
 
+
     @mod_group.command(name="listpunishments",
                        description="List punishments for a user",
                        guild_ids=DEBUG_GUILDS)
@@ -456,6 +464,7 @@ class ModCommands(commands.Cog):
 
         await ctx.respond(f"{error}", ephemeral=True)
 
+
     @mod_group.command(name="listdeletedpunishments",
                        description="List deleted punishments for a user",
                        guild_ids=DEBUG_GUILDS)
@@ -492,6 +501,7 @@ class ModCommands(commands.Cog):
         """Run when the listdeteletedpunishments command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
 
     @mod_group.command(name="listallpunishments",
                        description="List all punishments the user has, " \
@@ -536,6 +546,7 @@ class ModCommands(commands.Cog):
         """Run when listallpunishments command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
 
     @mod_group.command(name="editpunishment",
                        description="Edit an existing punishment for a user.",
@@ -582,6 +593,7 @@ class ModCommands(commands.Cog):
         """Run when the editpunishment command encounters and error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
 
     @mod_group.command(name="deletepunishment",
                        description="Delete a punishment from a user. " \
@@ -632,6 +644,7 @@ class ModCommands(commands.Cog):
         """Run when the deletepunishment command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
 
     @mod_group.command(name="permadeletepunishment",
                        description="Permanently delete a punishment record. " \
@@ -704,6 +717,7 @@ class ModCommands(commands.Cog):
         """Run when the permadeletepunishment command encounters an error"""
 
         await ctx.respond(f"{error}", ephemeral=True)
+
 
     @mod_group.command(name="restorepunishment",
                        description="Restore a previously deleted punishment",

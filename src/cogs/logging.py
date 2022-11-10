@@ -24,6 +24,7 @@ class Logging(commands.Cog):
         self._utility_channel_service = UtilityChannelService(db_address)
         self.invites = invites
 
+
     async def _get_guild_log_channels(self, guild: discord.Guild):
         """Get the channels used for logs for a specific guild
         Args:
@@ -36,6 +37,7 @@ class Logging(commands.Cog):
             return None
         log_channels = [await channel.get_discord_channel(self.bot) for channel in channels]
         return log_channels
+
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: discord.Message, after: discord.Message):
@@ -66,6 +68,7 @@ class Logging(commands.Cog):
         for channel in log_channels:
             await channel.send(embed=embed)
 
+
     @commands.Cog.listener()
     async def on_message_delete(self, message: discord.Message):
         """Log a deleted message"""
@@ -89,6 +92,7 @@ class Logging(commands.Cog):
         embed.add_field(name="Content", value=content)
         for channel in log_channels:
             await channel.send(embed=embed)
+
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
@@ -117,6 +121,7 @@ class Logging(commands.Cog):
         for channel in log_channels:
             await channel.send(embed=embed)
 
+
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
         """Log a leaving member"""
@@ -137,6 +142,7 @@ class Logging(commands.Cog):
         for channel in log_channels:
             await channel.send(embed=embed)
 
+
     @commands.Cog.listener()
     async def on_member_ban(self, guild: discord.Guild, user):
         """Log a banned user"""
@@ -150,6 +156,7 @@ class Logging(commands.Cog):
         for channel in log_channels:
             await channel.send(embed=embed)
 
+
     @commands.Cog.listener()
     async def on_member_unban(self, guild: discord.Guild, user):
         """Log an unbanned user"""
@@ -162,6 +169,7 @@ class Logging(commands.Cog):
         embed.set_footer(text=f"ID: {user.id}")
         for channel in log_channels:
             await channel.send(embed=embed)
+
 
     @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
@@ -188,11 +196,13 @@ class Logging(commands.Cog):
             for channel in log_channels:
                 await channel.send(embed=embed)
 
+
     @commands.Cog.listener()
     async def on_invite_create(self, invite: discord.Invite):
         """Log an invite creation"""
 
         self.invites[invite.guild].append(invite)
+
 
     @commands.Cog.listener()
     async def on_invite_delete(self, invite: discord.Invite):
