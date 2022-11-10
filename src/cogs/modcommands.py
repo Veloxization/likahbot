@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import discord
 from discord.ext import commands
 from discord.ui import View, Button
-from config.constants import Constants
+from config.constants import DEBUG_GUILDS
 from helpers.embed_pager import EmbedPager
 from helpers.temp_channel_creator import TempChannelCreator
 from helpers.messager import Messager
@@ -30,7 +30,7 @@ class ModCommands(commands.Cog):
 
     @commands.slash_command(name="ban",
                             description="Ban a member or a user",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(ban_members=True)
     async def ban(self,
         ctx: discord.ApplicationContext,
@@ -70,7 +70,7 @@ class ModCommands(commands.Cog):
 
     @commands.slash_command(name="tempban",
                             description="Temporarily ban a member or a user",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(ban_members=True)
     async def temp_ban(self,
         ctx: discord.ApplicationContext,
@@ -188,7 +188,7 @@ class ModCommands(commands.Cog):
 
     @commands.slash_command(name="unban",
                             description="Unban a user",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(ban_members=True)
     async def unban(self,
         ctx: discord.ApplicationContext,
@@ -210,7 +210,7 @@ class ModCommands(commands.Cog):
 
     @commands.slash_command(name="kick",
                             description="Kick a member",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(kick_members=True)
     async def kick(self,
         ctx: discord.ApplicationContext,
@@ -248,7 +248,7 @@ class ModCommands(commands.Cog):
 
     @commands.slash_command(name="warn",
                             description="Warn a member",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def warn(self,
         ctx: discord.ApplicationContext,
@@ -284,7 +284,7 @@ class ModCommands(commands.Cog):
     @commands.slash_command(name="timeout",
                             description="Time out a member or modify or end an existing timeout. " \
                                         "If no time is specified, defaults to 1 hour.",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def timeout(self,
         ctx: discord.ApplicationContext,
@@ -381,7 +381,7 @@ class ModCommands(commands.Cog):
 
     @commands.slash_command(name="removetimeout",
                             description="Remove a timeout from a member",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def remove_timeout(self,
         ctx: discord.ApplicationContext,
@@ -419,7 +419,7 @@ class ModCommands(commands.Cog):
 
     @commands.slash_command(name="listpunishments",
                             description="List punishments for a user",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def list_punishments(self,
         ctx: discord.ApplicationContext,
@@ -456,7 +456,7 @@ class ModCommands(commands.Cog):
 
     @commands.slash_command(name="listdeletedpunishments",
                             description="List deleted punishments for a user",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def list_deleted_punishments(self,
         ctx: discord.ApplicationContext,
@@ -494,7 +494,7 @@ class ModCommands(commands.Cog):
     @commands.slash_command(name="listallpunishments",
                             description="List all punishments the user has, " \
                                         "including deleted ones",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def list_all_punishments(self,
         ctx: discord.ApplicationContext,
@@ -537,7 +537,7 @@ class ModCommands(commands.Cog):
 
     @commands.slash_command(name="editpunishment",
                             description="Edit an existing punishment for a user.",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def edit_punishment(self,
         ctx: discord.ApplicationContext,
@@ -584,7 +584,7 @@ class ModCommands(commands.Cog):
     @commands.slash_command(name="deletepunishment",
                             description="Delete a punishment from a user. " \
                                         "Punishments deleted with this command can be recovered.",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def delete_punishment(self,
         ctx: discord.ApplicationContext,
@@ -634,7 +634,7 @@ class ModCommands(commands.Cog):
     @commands.slash_command(name="permadeletepunishment",
                             description="Permanently delete a punishment record. " \
                                         "Punishments deleted like this cannot be recovered.",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(administrator=True)
     async def permadelete_punishment(self,
         ctx: discord.ApplicationContext,
@@ -705,7 +705,7 @@ class ModCommands(commands.Cog):
 
     @commands.slash_command(name="restorepunishment",
                             description="Restore a previously deleted punishment",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def restore_punishment(self,
         ctx: discord.ApplicationContext,

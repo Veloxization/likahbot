@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 from discord.ui import View, Button
-from config.constants import Constants
+from config.constants import DEBUG_GUILDS
 from helpers.embed_pager import EmbedPager
 from services.utility_channel_service import UtilityChannelService
 
@@ -25,7 +25,7 @@ class GuildSettings(commands.Cog):
 
     @commands.slash_command(name="addchannelutility",
                             description="Add a new utility for a channel in the guild",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     async def add_channel_utility(self,
         ctx: discord.ApplicationContext,
         utility: discord.Option(str,
@@ -44,7 +44,7 @@ class GuildSettings(commands.Cog):
 
     @commands.slash_command(name="removechannelutility",
                             description="Remove an established utility from a channel",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     async def remove_channel_utility(self,
         ctx: discord.ApplicationContext,
         utility: discord.Option(str,
@@ -66,7 +66,7 @@ class GuildSettings(commands.Cog):
 
     @commands.slash_command(name="removeallchannelutilities",
                             description="Remove all utilities from a single channel",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     async def remove_all_channel_utilities(self,
         ctx: discord.ApplicationContext,
         channel: discord.Option(discord.TextChannel,
@@ -86,7 +86,7 @@ class GuildSettings(commands.Cog):
 
     @commands.slash_command(name="removeguildutilitychannels",
                             description="Clear all channel utilities from the guild",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     async def remove_guild_utility_channels(self,
         ctx: discord.ApplicationContext):
         """Remove all utility channels from a given guild"""
@@ -119,7 +119,7 @@ class GuildSettings(commands.Cog):
 
     @commands.slash_command(name="listchannelutilities",
                             description="List the channels used as utility channels",
-                            guild_ids=Constants.DEBUG_GUILDS.value)
+                            guild_ids=DEBUG_GUILDS)
     async def list_channel_utilities(self,
         ctx: discord.ApplicationContext,
         channel: discord.Option(discord.TextChannel,

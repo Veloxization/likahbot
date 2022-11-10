@@ -6,12 +6,11 @@ decrypted value as an argument."""
 
 import sys
 import discord
-from config.constants import Constants
+from config.constants import DB_ADDRESS, DEBUG_GUILDS
 from cogs.guildsettings import GuildSettings
 from cogs.logging import Logging
 from cogs.modcommands import ModCommands
 
-DB_ADDRESS = Constants.DB_ADDRESS.value
 intents = discord.Intents.all()
 bot = discord.Bot(intents=intents)
 
