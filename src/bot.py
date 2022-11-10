@@ -10,6 +10,7 @@ from config.constants import DB_ADDRESS, DEBUG_GUILDS
 from cogs.guildsettings import GuildSettings
 from cogs.logging import Logging
 from cogs.modcommands import ModCommands
+from cogs.tasks import Tasks
 
 intents = discord.Intents.all()
 bot = discord.Bot(intents=intents)
@@ -26,6 +27,7 @@ async def on_ready():
         invites[guild] = await guild.invites()
     bot.add_cog(Logging(bot, DB_ADDRESS, invites))
     bot.add_cog(ModCommands(bot, DB_ADDRESS))
+    bot.add_cog(Tasks(bot, DB_ADDRESS))
     await bot.sync_commands()
 
 bot.run(str(sys.argv[1]))
