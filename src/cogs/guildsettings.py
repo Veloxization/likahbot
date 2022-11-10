@@ -14,6 +14,8 @@ class GuildSettings(commands.Cog):
         bot: The bot these settings apply to
         utility_channel_service: The service used to apply settings in utility channels"""
 
+    settings_group = discord.SlashCommandGroup(name="settings", description="Commands for setting up the bot for the guild.")
+
     def __init__(self, bot: discord.Bot, db_address):
         """Activate the guild settings cog
         Args:
@@ -23,7 +25,7 @@ class GuildSettings(commands.Cog):
         self.bot = bot
         self.utility_channel_service = UtilityChannelService(db_address)
 
-    @commands.slash_command(name="addchannelutility",
+    @settings_group.command(name="addchannelutility",
                             description="Add a new utility for a channel in the guild",
                             guild_ids=DEBUG_GUILDS)
     async def add_channel_utility(self,
@@ -42,7 +44,7 @@ class GuildSettings(commands.Cog):
         if utility == "verification":
             await ctx.respond(f"{channel.mention} is now a verification channel. New members can verify through this channel from now on.")
 
-    @commands.slash_command(name="removechannelutility",
+    @settings_group.command(name="removechannelutility",
                             description="Remove an established utility from a channel",
                             guild_ids=DEBUG_GUILDS)
     async def remove_channel_utility(self,
@@ -64,7 +66,7 @@ class GuildSettings(commands.Cog):
         self.utility_channel_service.delete_utility_from_channel(channel.id, ctx.guild.id, utility)
         await ctx.respond(f"{channel.mention} no longer has the utility `{utility}`.")
 
-    @commands.slash_command(name="removeallchannelutilities",
+    @settings_group.command(name="removeallchannelutilities",
                             description="Remove all utilities from a single channel",
                             guild_ids=DEBUG_GUILDS)
     async def remove_all_channel_utilities(self,
@@ -84,7 +86,7 @@ class GuildSettings(commands.Cog):
         self.utility_channel_service.delete_utility_channel(channel.id, ctx.guild.id)
         await ctx.respond(f"{channel.mention} is no longer used as a utility channel.")
 
-    @commands.slash_command(name="removeguildutilitychannels",
+    @settings_group.command(name="removeguildutilitychannels",
                             description="Clear all channel utilities from the guild",
                             guild_ids=DEBUG_GUILDS)
     async def remove_guild_utility_channels(self,
@@ -117,7 +119,7 @@ class GuildSettings(commands.Cog):
         await ctx.respond(f"Are you sure? This will delete **{len(channels)}** utilities from the guild.",
                           view=view)
 
-    @commands.slash_command(name="listchannelutilities",
+    @settings_group.command(name="listchannelutilities",
                             description="List the channels used as utility channels",
                             guild_ids=DEBUG_GUILDS)
     async def list_channel_utilities(self,
