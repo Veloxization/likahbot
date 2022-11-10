@@ -6,7 +6,7 @@ decrypted value as an argument."""
 
 import sys
 import discord
-from config.constants import DB_ADDRESS, DEBUG_GUILDS
+from config.constants import DB_ADDRESS
 from cogs.guildsettings import GuildSettings
 from cogs.logging import Logging
 from cogs.modcommands import ModCommands
