@@ -4,6 +4,7 @@ import discord
 import datetime
 from discord.ext import commands
 from services.utility_channel_service import UtilityChannelService
+from entities.punishment_entity import PunishmentEntity
 from helpers.invite_use_tracker import InviteUseTracker
 
 class Logging(commands.Cog):
@@ -195,6 +196,20 @@ class Logging(commands.Cog):
             embed.set_footer(text=f"ID: {after.id}")
             for channel in log_channels:
                 await channel.send(embed=embed)
+
+
+    async def on_member_warn(self, member: discord.Member, warning: PunishmentEntity):
+        """Log warnings given to members"""
+
+        log_channels = await self._get_guild_log_channels(member.guild)
+        embed = discord.Embed(color=discord.Color.yellow(),
+                              title="Member warned",
+                              description=f"**{member.mention}** was warned in **{member.guild}**")
+        embed.set_author(name=member, icon_url=member.display_avatar.url)
+        embed.set_footer(text=f"ID: {member.id}")
+        embed.add_field(name="Warning", value=warning.reason)
+        for channel in log_channels:
+            await channel.send(embed=embed)
 
 
     @commands.Cog.listener()

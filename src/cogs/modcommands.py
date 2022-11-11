@@ -282,6 +282,8 @@ class ModCommands(commands.Cog):
             await ctx.respond(f"A new warning channel was created for **{member}**: " \
                               f"{channel.mention}")
 
+        await self.bot.cogs["Logging"].on_member_warn(member, punishment)
+
     @warn.error
     async def warn_error(self, ctx: discord.ApplicationContext, error):
         """Run when the warn command encounters an error"""
