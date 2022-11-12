@@ -5,13 +5,12 @@ from db_connection.db_connector import DBConnection
 class TempBansDAO:
     """A data access object for temporary bans
     Attributes:
-        db_connection: An object that handles database connections
-        time_convert: An object that handles conversion between datetime and string"""
+        db_connection: An object that handles database connections"""
 
     def __init__(self, db_address):
         """Create a new data access object for temporary bans
         Args:
-            db_address: The address for the database file where the reminders table resides"""
+            db_address: The address for the database file where the temp bans table resides"""
 
         self.db_connection = DBConnection(db_address)
 
