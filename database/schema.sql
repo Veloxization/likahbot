@@ -1,3 +1,5 @@
+PRAGMA user_version = 1;
+
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
