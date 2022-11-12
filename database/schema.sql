@@ -196,20 +196,21 @@ CREATE TABLE IF NOT EXISTS store_products (
     FOREIGN KEY (product_id) REFERENCES products (id)
 );
 CREATE TABLE IF NOT EXISTS user_products (
-    id INTEGER NOT NULL,
+    id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
     FOREIGN KEY (product_id) REFERENCES products (id)
 );
 CREATE TABLE IF NOT EXISTS settings (
-    id INTEGER NOT NULL,
-    name TEXT NOT NULL,
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
     default_status TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS guild_settings (
-    id INTEGER NOT NULL,
+    id INTEGER PRIMARY KEY,
     guild_id INTEGER NOT NULL,
     setting_id INTEGER NOT NULL,
     setting_status TEXT,
-    FOREIGN KEY (setting_id) REFERENCES settings (id)
+    FOREIGN KEY (setting_id) REFERENCES settings (id),
+    CONSTRAINT unq UNIQUE (guild_id, setting_id)
 );
