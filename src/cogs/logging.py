@@ -1,7 +1,7 @@
 """Houses the cog that handles logging"""
 
-import discord
 import datetime
+import discord
 from discord.ext import commands
 from services.utility_channel_service import UtilityChannelService
 from entities.punishment_entity import PunishmentEntity
@@ -50,7 +50,8 @@ class Logging(commands.Cog):
         log_channels = await self._get_guild_log_channels(after.guild)
         embed = discord.Embed(color=discord.Color.orange(),
                               title="Message edited",
-                              description=f"Message by {after.author.mention} edited in {after.channel.mention}",
+                              description=f"Message by {after.author.mention} edited in "\
+                                          f"{after.channel.mention}",
                               url=after.jump_url)
         embed.set_author(name=after.author, icon_url=after.author.display_avatar.url)
         embed.set_footer(text=f"ID: {after.id}")
@@ -82,7 +83,8 @@ class Logging(commands.Cog):
         log_channels = await self._get_guild_log_channels(message.guild)
         embed = discord.Embed(color=discord.Color.dark_orange(),
                               title="Message deleted",
-                              description=f"Message by {message.author.mention} deleted in {message.channel.mention}")
+                              description=f"Message by {message.author.mention} deleted in "\
+                                          f"{message.channel.mention}")
         embed.set_author(name=message.author, icon_url=message.author.display_avatar.url)
         embed.set_footer(text=f"ID: {message.id}")
         content = message.content
@@ -204,7 +206,7 @@ class Logging(commands.Cog):
         log_channels = await self._get_guild_log_channels(member.guild)
         embed = discord.Embed(color=discord.Color.yellow(),
                               title="Member warned",
-                              description=f"**{member.mention}** was warned in **{member.guild}**")
+                              description=f"{member.mention} was warned in **{member.guild}**")
         embed.set_author(name=member, icon_url=member.display_avatar.url)
         embed.set_footer(text=f"ID: {member.id}")
         embed.add_field(name="Warning", value=warning.reason)
