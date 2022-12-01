@@ -58,7 +58,8 @@ class NicknamesDAO:
             self._delete_earlier_user_nicknames(user_id, guild_id, this_nickname["id"])
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "INSERT INTO nicknames (user_id, nickname, guild_id, time) VALUES (?, ?, ?, datetime())"
+        sql = "INSERT INTO nicknames (user_id, nickname, guild_id, time) "\
+              "VALUES (?, ?, ?, datetime())"
         cursor.execute(sql, (user_id, nickname, guild_id))
         self.db_connection.commit_and_close(connection)
 
