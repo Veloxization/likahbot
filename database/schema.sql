@@ -1,4 +1,4 @@
-PRAGMA user_version = 2;
+PRAGMA user_version = 3;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -214,3 +214,17 @@ CREATE TABLE IF NOT EXISTS guild_settings (
     FOREIGN KEY (setting_id) REFERENCES settings (id),
     CONSTRAINT unq UNIQUE (guild_id, setting_id)
 );
+INSERT INTO settings (name, default_status) VALUES ("log_edited_messages", "1");
+INSERT INTO settings (name, default_status) VALUES ("log_deleted_messages", "1");
+INSERT INTO settings (name, default_status) VALUES ("log_membership_changes", "1");
+INSERT INTO settings (name, default_status) VALUES ("log_bans", "1");
+INSERT INTO settings (name, default_status) VALUES ("log_timeouts", "1");
+INSERT INTO settings (name, default_status) VALUES ("log_warnings", "1");
+INSERT INTO settings (name, default_status) VALUES ("log_name_changes", "0");
+INSERT INTO settings (name, default_status) VALUES ("log_member_role_changes", "0");
+INSERT INTO settings (name, default_status) VALUES ("log_avatar_changes", "0");
+INSERT INTO settings (name, default_status) VALUES ("log_channel_changes", "0");
+INSERT INTO settings (name, default_status) VALUES ("log_guild_role_changes", "0");
+INSERT INTO settings (name, default_status) VALUES ("log_invites", "0");
+INSERT INTO settings (name, default_status) VALUES ("log_message_reactions", "0");
+INSERT INTO settings (name, default_status) VALUES ("log_webhook_changes", "0");
