@@ -1,4 +1,4 @@
-PRAGMA user_version = 3;
+PRAGMA user_version = 4;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -214,6 +214,7 @@ CREATE TABLE IF NOT EXISTS guild_settings (
     FOREIGN KEY (setting_id) REFERENCES settings (id),
     CONSTRAINT unq UNIQUE (guild_id, setting_id)
 );
+DELETE FROM settings;
 INSERT INTO settings (name, default_status) VALUES ("log_edited_messages", "1");
 INSERT INTO settings (name, default_status) VALUES ("log_deleted_messages", "1");
 INSERT INTO settings (name, default_status) VALUES ("log_membership_changes", "1");
