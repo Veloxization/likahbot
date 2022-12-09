@@ -17,7 +17,7 @@ class ModCommands(commands.Cog):
     Attributes:
         bot: The bot these settings apply to
         punishment_service: The service used to log punishments"""
-    
+
     mod_group = discord.SlashCommandGroup(name="mod", description="Commands for moderation purposes.")
 
     def __init__(self, bot: discord.Bot, db_address):
