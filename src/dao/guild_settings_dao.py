@@ -36,13 +36,13 @@ class GuildSettingsDAO:
         Returns: A Row object containing the setting status, or None if not found"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT setting_status FROM guild_settings "\
+        sql = "SELECT gs.setting_status FROM guild_settings AS gs "\
               "LEFT JOIN settings AS s ON setting_id=s.id WHERE guild_id=? AND s.name=?"
         cursor.execute(sql, (guild_id, setting_name))
         row = cursor.fetchone()
-        if not row:
-            self.settings_dao.get_setting_default_value(setting_name)
         self.db_connection.close_connection(connection)
+        if not row:
+            row = self.settings_dao.get_setting_default_value(setting_name)
         return row
 
     def get_guild_setting_status_by_setting_id(self, guild_id: int, setting_id: int):
@@ -56,9 +56,9 @@ class GuildSettingsDAO:
         sql = "SELECT setting_status FROM guild_settings WHERE guild_id=? AND setting_id=?"
         cursor.execute(sql, (guild_id, setting_id))
         row = cursor.fetchone()
+        self.db_connection.close_connection(connection)
         if not row:
             row = self.settings_dao.get_setting_default_value_by_id(setting_id)
-        self.db_connection.close_connection(connection)
         return row
 
     def add_guild_setting_by_setting_id(self, guild_id: int, setting_id: int, setting_status: str):
