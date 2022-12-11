@@ -20,7 +20,7 @@ class SettingsDAO:
         Returns: A Row object containing the default value of the given setting"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT default_status FROM settings WHERE name=?"
+        sql = "SELECT setting_status FROM settings WHERE name=?"
         cursor.execute(sql, (setting_name,))
         row = cursor.fetchone()
         self.db_connection.close_connection(connection)
@@ -33,7 +33,7 @@ class SettingsDAO:
         Returns: A Row object containing the default value of the given setting"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT default_status FROM settings WHERE id=?"
+        sql = "SELECT setting_status FROM settings WHERE id=?"
         cursor.execute(sql, (setting_id,))
         row = cursor.fetchone()
         self.db_connection.close_connection(connection)
@@ -48,7 +48,7 @@ class SettingsDAO:
         Returns: A Row object with the ID of the newly created setting"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "INSERT INTO settings (name, default_status) VALUES (?, ?) RETURNING id"
+        sql = "INSERT INTO settings (name, setting_status) VALUES (?, ?) RETURNING id"
         cursor.execute(sql, (setting_name, default_value))
         row = cursor.fetchone()
         self.db_connection.commit_and_close(connection)
@@ -61,7 +61,7 @@ class SettingsDAO:
             default_value: The new default status for the setting"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "UPDATE settings SET default_status=? WHERE name=?"
+        sql = "UPDATE settings SET setting_status=? WHERE name=?"
         cursor.execute(sql, (default_value, setting_name))
         self.db_connection.commit_and_close(connection)
 
@@ -72,7 +72,7 @@ class SettingsDAO:
             default_value: The new default status for the setting"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "UPDATE settings SET default_status=? WHERE id=?"
+        sql = "UPDATE settings SET setting_status=? WHERE id=?"
         cursor.execute(sql, (default_value, setting_id))
         self.db_connection.commit_and_close(connection)
 
