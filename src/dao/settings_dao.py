@@ -20,7 +20,7 @@ class SettingsDAO:
         Returns: A Row object containing the default value of the given setting"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT setting_status FROM settings WHERE name=?"
+        sql = "SELECT name, setting_status FROM settings WHERE name=?"
         cursor.execute(sql, (setting_name,))
         row = cursor.fetchone()
         self.db_connection.close_connection(connection)
@@ -33,7 +33,7 @@ class SettingsDAO:
         Returns: A Row object containing the default value of the given setting"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT setting_status FROM settings WHERE id=?"
+        sql = "SELECT name, setting_status FROM settings WHERE id=?"
         cursor.execute(sql, (setting_id,))
         row = cursor.fetchone()
         self.db_connection.close_connection(connection)
