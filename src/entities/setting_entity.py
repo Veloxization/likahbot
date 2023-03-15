@@ -6,15 +6,15 @@ class SettingEntity(MasterEntity):
     Attributes:
         db_id: The database ID of the setting
         name: The name of the setting
-        status: The status of the setting"""
+        value: The default value of the setting"""
 
-    def __init__(self, db_id: int, name: str, status: str):
+    def __init__(self, db_id: int, name: str, value: str):
         """Create a new Setting entity
         Args:
             db_id: The database ID of the setting
             name: The name of the setting
-            status: The status of the setting"""
+            value: The default value of the setting"""
 
         self.db_id = db_id
         self.name = name
-        self.status = status
+        self.value = value
