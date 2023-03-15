@@ -23,7 +23,7 @@ class SettingService:
 
         if not row:
             return None
-        return SettingEntity(row["id"], row["name"], row["setting_status"])
+        return SettingEntity(row["id"], row["name"], row["setting_value"])
 
     def get_setting_default_value(self, setting_name: str):
         """Get a setting of a given name
