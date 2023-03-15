@@ -1,4 +1,4 @@
-PRAGMA user_version = 8;
+PRAGMA user_version = 9;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -206,13 +206,13 @@ CREATE TABLE IF NOT EXISTS user_products (
 CREATE TABLE IF NOT EXISTS settings (
     id INTEGER PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
-    setting_status TEXT NOT NULL
+    setting_value TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS guild_settings (
     id INTEGER PRIMARY KEY,
     guild_id INTEGER NOT NULL,
     setting_id INTEGER NOT NULL,
-    setting_status TEXT NOT NULL,
+    setting_value TEXT NOT NULL,
     FOREIGN KEY (setting_id) REFERENCES settings (id),
     CONSTRAINT unq UNIQUE (guild_id, setting_id)
 );
