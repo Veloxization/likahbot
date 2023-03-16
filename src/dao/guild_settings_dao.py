@@ -41,9 +41,12 @@ class GuildSettingsDAO:
               "LEFT JOIN settings AS s ON setting_id=s.id WHERE guild_id=? AND s.name=?"
         cursor.execute(sql, (guild_id, setting_name))
         row = cursor.fetchone()
-        self.db_connection.close_connection(connection)
         if not row:
-            row = self.settings_dao.get_setting_default_value(setting_name)
+            sql = "SELECT NULL as id, ? AS guild_id, id AS setting_id, setting_value "\
+                  "FROM settings WHERE name=?;"
+            cursor.execute(sql, (guild_id, setting_name))
+            row = cursor.fetchone()
+        self.db_connection.close_connection(connection)
         return row
 
     def get_guild_setting_value_by_setting_id(self, guild_id: int, setting_id: int):
@@ -57,9 +60,12 @@ class GuildSettingsDAO:
         sql = "SELECT * FROM guild_settings WHERE guild_id=? AND setting_id=?"
         cursor.execute(sql, (guild_id, setting_id))
         row = cursor.fetchone()
-        self.db_connection.close_connection(connection)
         if not row:
-            row = self.settings_dao.get_setting_default_value_by_id(setting_id)
+            sql = "SELECT NULL AS id, ? AS guild_id, id AS setting_id, setting_value "\
+                  "FROM settings WHERE id=?"
+            cursor.execute(sql, (guild_id, setting_id))
+            row = cursor.fetchone()
+        self.db_connection.close_connection(connection)
         return row
 
     def add_guild_setting_by_setting_id(self, guild_id: int, setting_id: int, setting_value: str):
