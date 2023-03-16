@@ -22,7 +22,7 @@ class GuildSettingsDAO:
         Returns: A Row object containing the guild setting status, None if not found"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT setting_value FROM guild_settings WHERE id=?"
+        sql = "SELECT * FROM guild_settings WHERE id=?"
         cursor.execute(sql, (guild_setting_id,))
         row = cursor.fetchone()
         self.db_connection.close_connection(connection)
@@ -36,7 +36,8 @@ class GuildSettingsDAO:
         Returns: A Row object containing the setting status, or None if not found"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT gs.setting_value FROM guild_settings AS gs "\
+        sql = "SELECT gs.id, gs.guild_id, gs.setting_id, gs.setting_value "\
+              "FROM guild_settings AS gs "\
               "LEFT JOIN settings AS s ON setting_id=s.id WHERE guild_id=? AND s.name=?"
         cursor.execute(sql, (guild_id, setting_name))
         row = cursor.fetchone()
@@ -53,7 +54,7 @@ class GuildSettingsDAO:
         Returns: A Row object containing the setting status, None if not found"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT setting_value FROM guild_settings WHERE guild_id=? AND setting_id=?"
+        sql = "SELECT * FROM guild_settings WHERE guild_id=? AND setting_id=?"
         cursor.execute(sql, (guild_id, setting_id))
         row = cursor.fetchone()
         self.db_connection.close_connection(connection)
