@@ -1,4 +1,4 @@
-PRAGMA user_version = 11;
+PRAGMA user_version = 12;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS user_reminders (
 );
 CREATE TABLE IF NOT EXISTS time_zones (
     id INTEGER PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL UNIQUE,
     time_zone TEXT
 );
 CREATE TABLE IF NOT EXISTS birthdays (
