@@ -1,4 +1,4 @@
-PRAGMA user_version = 10;
+PRAGMA user_version = 11;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -217,17 +217,17 @@ CREATE TABLE IF NOT EXISTS guild_settings (
     CONSTRAINT unq UNIQUE (guild_id, setting_id)
 );
 DELETE FROM settings;
-INSERT INTO settings (name, setting_value) VALUES ("log_edited_messages", "1");
-INSERT INTO settings (name, setting_value) VALUES ("log_deleted_messages", "1");
-INSERT INTO settings (name, setting_value) VALUES ("log_membership_changes", "1");
-INSERT INTO settings (name, setting_value) VALUES ("log_bans", "1");
-INSERT INTO settings (name, setting_value) VALUES ("log_timeouts", "1");
-INSERT INTO settings (name, setting_value) VALUES ("log_warnings", "1");
-INSERT INTO settings (name, setting_value) VALUES ("log_name_changes", "0");
-INSERT INTO settings (name, setting_value) VALUES ("log_member_role_changes", "0");
-INSERT INTO settings (name, setting_value) VALUES ("log_avatar_changes", "0");
-INSERT INTO settings (name, setting_value) VALUES ("log_channel_changes", "0");
-INSERT INTO settings (name, setting_value) VALUES ("log_guild_role_changes", "0");
-INSERT INTO settings (name, setting_value) VALUES ("log_invites", "0");
-INSERT INTO settings (name, setting_value) VALUES ("log_message_reactions", "0");
-INSERT INTO settings (name, setting_value) VALUES ("log_webhook_changes", "0");
+INSERT INTO settings (name, setting_value) VALUES ('log_edited_messages', '1');
+INSERT INTO settings (name, setting_value) VALUES ('log_deleted_messages', '1');
+INSERT INTO settings (name, setting_value) VALUES ('log_membership_changes', '1');
+INSERT INTO settings (name, setting_value) VALUES ('log_bans', '1');
+INSERT INTO settings (name, setting_value) VALUES ('log_timeouts', '1');
+INSERT INTO settings (name, setting_value) VALUES ('log_warnings', '1');
+INSERT INTO settings (name, setting_value) VALUES ('log_name_changes', '0');
+INSERT INTO settings (name, setting_value) VALUES ('log_member_role_changes', '0');
+INSERT INTO settings (name, setting_value) VALUES ('log_avatar_changes', '0');
+INSERT INTO settings (name, setting_value) VALUES ('log_channel_changes', '0');
+INSERT INTO settings (name, setting_value) VALUES ('log_guild_role_changes', '0');
+INSERT INTO settings (name, setting_value) VALUES ('log_invites', '0');
+INSERT INTO settings (name, setting_value) VALUES ('log_message_reactions', '0');
+INSERT INTO settings (name, setting_value) VALUES ('log_webhook_changes', '0');
