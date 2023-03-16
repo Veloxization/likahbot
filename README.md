@@ -12,7 +12,7 @@ Do note that the bot is in a very very early stage of development currently and 
 4. Launch the virtual environment
   - e.g. `source botenv/bin/activate`
 5. Install the required dependencies
-  - `python3 -m pip install -U requirements.txt`
+  - `python3 -m pip install -r requirements.txt -U`
 6. Initialize the bot's database
   - `sqlite3 database/database.db < database/schema.sql`
   - Change the DB_ADDRESS constant in [constants.py](https://github.com/Veloxization/likahbot/blob/main/src/config/constants.py) to reflect whatever name you gave the database
