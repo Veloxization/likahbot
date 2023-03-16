@@ -12,7 +12,7 @@ class GuildSettingEntity(MasterEntity):
         value: The value of the setting"""
 
     def __init__(self, db_id: int, guild_id: int, setting_id: int, value: str):
-        """Create a new Setting entity
+        """Create a new Guild Setting entity
         Args:
             db_id: The database ID of the setting
             guild_id: The Discord ID of the guild this setting is associated with
