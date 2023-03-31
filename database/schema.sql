@@ -1,4 +1,4 @@
-PRAGMA user_version = 12;
+PRAGMA user_version = 13;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS utility_channels (
     id INTEGER PRIMARY KEY,
     channel_id INTEGER NOT NULL,
     guild_id INTEGER NOT NULL,
-    channel_purpose, /*LOG, RULES, PASSPHRASE*/
+    channel_purpose TEXT NOT NULL, /*LOG, RULES, PASSPHRASE*/
     CONSTRAINT unq UNIQUE (channel_id, guild_id, channel_purpose)
 );
 CREATE TABLE IF NOT EXISTS currencies (
