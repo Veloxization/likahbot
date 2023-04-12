@@ -51,7 +51,7 @@ class TimeZoneService:
                        Defaults to UTC.
         Returns: The database ID of the newly created time zone"""
 
-        return self.time_zones_dao.add_user_time_zone(user_id, time_zone)
+        return self.time_zones_dao.add_user_time_zone(user_id, time_zone)["id"]
 
     def edit_user_time_zone(self, user_id: int, time_zone: str = "UTC"):
         """Edit an existing user time zone
