@@ -1,4 +1,4 @@
-PRAGMA user_version = 13;
+PRAGMA user_version = 14;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -57,7 +57,6 @@ CREATE TABLE IF NOT EXISTS reminders (
     id INTEGER PRIMARY KEY,
     creator_id INTEGER NOT NULL,
     creator_guild_id INTEGER,
-    message_id INTEGER NOT NULL,
     content TEXT NOT NULL,
     reminder_date DATETIME NOT NULL,
     public BOOLEAN NOT NULL, /*Anyone can add themselves to a public reminder*/
