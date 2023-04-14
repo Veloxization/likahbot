@@ -1,5 +1,6 @@
 """The classes and functions handling data access objects for the reminders table"""
 from db_connection.db_connector import DBConnection
+from datetime import datetime
 
 class RemindersDAO:
     """A data access object for reminders
@@ -49,7 +50,7 @@ class RemindersDAO:
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "SELECT * FROM reminders " \
-              "WHERE creator_id=? AND creator_guild_id=? AND creator_guild_id<>NULL " \
+              "WHERE creator_id=? AND creator_guild_id=? AND creator_guild_id IS NOT NULL " \
               "ORDER BY reminder_date ASC"
         cursor.execute(sql, (user_id, guild_id))
         rows = cursor.fetchall()
@@ -66,7 +67,7 @@ class RemindersDAO:
         connection, cursor = self.db_connection.connect_to_db()
         sql = "SELECT * FROM reminders " \
               "WHERE creator_id=? AND creator_guild_id=? AND public=TRUE " \
-              "AND creator_guild_id<>NULL " \
+              "AND creator_guild_id IS NOT NULL " \
               "ORDER BY reminder_date ASC"
         cursor.execute(sql, (user_id, guild_id))
         rows = cursor.fetchall()
@@ -80,7 +81,7 @@ class RemindersDAO:
         Returns: A list of Row objects containing the reminders of the guild"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "SELECT * FROM reminders WHERE creator_guild_id=? AND guild_id<>NULL " \
+        sql = "SELECT * FROM reminders WHERE creator_guild_id=? AND creator_guild_id IS NOT NULL " \
               "ORDER BY reminder_date ASC"
         cursor.execute(sql, (guild_id,))
         rows = cursor.fetchall()
@@ -95,7 +96,7 @@ class RemindersDAO:
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "SELECT * FROM reminders WHERE creator_guild_id=? AND public=TRUE " \
-              "AND guild_id<>NULL " \
+              "AND creator_guild_id IS NOT NULL " \
               "ORDER BY reminder_date ASC"
         cursor.execute(sql, (guild_id,))
         rows = cursor.fetchall()
@@ -126,7 +127,7 @@ class RemindersDAO:
         self.db_connection.close_connection(connection)
         return row
 
-    def add_new_reminder(self, user_id: int, guild_id: int, content: str, reminder_date: str,
+    def add_new_reminder(self, user_id: int, guild_id: int, content: str, reminder_date: datetime,
                          is_public: bool = False, interval: int = 60, repeats: int = 1):
         """Create a new reminder
         Args:
@@ -142,7 +143,7 @@ class RemindersDAO:
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO reminders (creator_id, creator_guild_id, content, reminder_date, " \
-                                     "public, interval, repeats) " \
+                                     "public, interval, repeats_left) " \
               "VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id"
         cursor.execute(sql, (user_id, guild_id, content, reminder_date, is_public, interval,
                              repeats))
@@ -150,7 +151,7 @@ class RemindersDAO:
         self.db_connection.commit_and_close(connection)
         return row
 
-    def edit_reminder(self, reminder_id: int, content: str, reminder_date: str, is_public: bool,
+    def edit_reminder(self, reminder_id: int, content: str, reminder_date: datetime, is_public: bool,
                       interval: int, repeats: int):
         """Edit an existing reminder
         Args:
@@ -162,8 +163,8 @@ class RemindersDAO:
             repeats: How many times the reminder repeats before getting deleted"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "UPDATE reminders SET content=?, reminder_date=?, public=?, interval=?, repeats=? " \
-              "WHERE id=?"
+        sql = "UPDATE reminders SET content=?, reminder_date=?, public=?, interval=?, " \
+              "repeats_left=? WHERE id=?"
         cursor.execute(sql, (content, reminder_date, is_public, interval, repeats, reminder_id))
         self.db_connection.commit_and_close(connection)
 
@@ -174,7 +175,7 @@ class RemindersDAO:
             reminder_id: The database ID of the reminder whose repeats to update"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "UPDATE reminders SET repeats=repeats-1 WHERE id=? AND repeats>0"
+        sql = "UPDATE reminders SET repeats_left=repeats_left-1 WHERE id=? AND repeats_left>0"
         cursor.execute(sql, (reminder_id,))
         self.db_connection.commit_and_close(connection)
 
@@ -223,7 +224,7 @@ class RemindersDAO:
         """Delete all reminders that have reached 0 repeats"""
 
         connection, cursor = self.db_connection.connect_to_db()
-        sql = "DELETE FROM reminders WHERE repeats=0"
+        sql = "DELETE FROM reminders WHERE repeats_left=0"
         cursor.execute(sql)
         self.db_connection.commit_and_close(connection)
 
