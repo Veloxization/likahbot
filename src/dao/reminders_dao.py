@@ -128,7 +128,8 @@ class RemindersDAO:
         return row
 
     def add_new_reminder(self, user_id: int, guild_id: int, content: str, reminder_date: datetime,
-                         is_public: bool = False, interval: int = 60, repeats: int = 1):
+                         reminder_type: str, is_public: bool = False, interval: int = 0,
+                         repeats: int = 1):
         """Create a new reminder
         Args:
             user_id: The Discord ID of the user creating the reminder
@@ -138,21 +139,22 @@ class RemindersDAO:
             is_public: Whether users other than the creator can opt in to get reminded,
                        defaults to False
             interval: How often the reminder repeats, in seconds. Defaults to 60.
+            reminder_type: The type of the reminder. Can be weekday, day, time or after.
             repeats: How many times the reminder repeats before getting deleted. Defaults to 1.
         Returns: A Row object containing the database ID of the newly created reminder."""
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "INSERT INTO reminders (creator_id, creator_guild_id, content, reminder_date, " \
-                                     "public, interval, repeats_left) " \
-              "VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id"
+                                     "public, interval, reminder_type, repeats_left) " \
+              "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id"
         cursor.execute(sql, (user_id, guild_id, content, reminder_date, is_public, interval,
-                             repeats))
+                             reminder_type, repeats))
         row = cursor.fetchone()
         self.db_connection.commit_and_close(connection)
         return row
 
-    def edit_reminder(self, reminder_id: int, content: str, reminder_date: datetime, is_public: bool,
-                      interval: int, repeats: int):
+    def edit_reminder(self, reminder_id: int, content: str, reminder_date: datetime,
+                      is_public: bool, interval: int, reminder_type: str, repeats: int):
         """Edit an existing reminder
         Args:
             reminder_id: The database ID of the reminder to edit
@@ -164,8 +166,9 @@ class RemindersDAO:
 
         connection, cursor = self.db_connection.connect_to_db()
         sql = "UPDATE reminders SET content=?, reminder_date=?, public=?, interval=?, " \
-              "repeats_left=? WHERE id=?"
-        cursor.execute(sql, (content, reminder_date, is_public, interval, repeats, reminder_id))
+              "reminder_type=?, repeats_left=? WHERE id=?"
+        cursor.execute(sql, (content, reminder_date, is_public, interval, reminder_type, repeats,
+                             reminder_id))
         self.db_connection.commit_and_close(connection)
 
     def update_reminder_repeats(self, reminder_id: int):
