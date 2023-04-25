@@ -138,7 +138,7 @@ class RemindersDAO:
             reminder_date: The date when the reminder will expire and the reminders will be sent out
             is_public: Whether users other than the creator can opt in to get reminded,
                        defaults to False
-            interval: How often the reminder repeats, in seconds. Defaults to 60.
+            interval: How often the reminder repeats, in seconds. Defaults to 0.
             reminder_type: The type of the reminder. Can be weekday, day, time or after.
             repeats: How many times the reminder repeats before getting deleted. Defaults to 1.
         Returns: A Row object containing the database ID of the newly created reminder."""
