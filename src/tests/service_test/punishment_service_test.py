@@ -32,6 +32,13 @@ class TestPunishmentService(unittest.TestCase):
         self.assertEqual(punishment1.user_id, punishment2.user_id)
         self.assertEqual(punishment1.guild_id, punishment2.guild_id)
 
+    def test_censored_punishments_are_found_correctly(self):
+        self.punishment_service.add_punishment(1234, 2345, 9876)
+        self.punishment_service.delete_user_id_from_punishments(1234)
+        punishments = self.punishment_service.get_censored_punishments(9876)
+        self.assertEqual(len(punishments), 1)
+        self.assertEqual(punishments[0].user_id, 0)
+
     def test_user_punishments_are_marked_deleted_correctly(self):
         self.punishment_service.add_punishment(1234, 3456, 9876)
         punishments = self.punishment_service.get_all_user_punishments(1234, 9876)
@@ -67,6 +74,15 @@ class TestPunishmentService(unittest.TestCase):
     def test_deleted_user_punishments_are_not_returned_with_regular_search(self):
         self.punishment_service.add_punishment(1234, 3456, 9876, deleted=True)
         punishments = self.punishment_service.get_user_punishments(1234, 9876)
+        self.assertEqual(len(punishments), 0)
+
+    def test_punishments_for_user_are_censored_correctly(self):
+        self.punishment_service.add_punishment(1234, 2345, 9876)
+        self.punishment_service.add_punishment(1234, 3456, 8765)
+        self.punishment_service.delete_user_id_from_punishments(1234)
+        punishments = self.punishment_service.get_user_punishments(1234, 9876)
+        self.assertEqual(len(punishments), 0)
+        punishments = self.punishment_service.get_user_punishments(1234, 8765)
         self.assertEqual(len(punishments), 0)
 
     def test_punishments_are_permanently_deleted_correctly(self):
