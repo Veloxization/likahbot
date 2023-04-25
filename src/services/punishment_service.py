@@ -55,6 +55,15 @@ class PunishmentService:
         row = self.punishments_dao.get_punishment_by_id(punishment_id)
         return self._convert_to_entity(row)
 
+    def get_censored_punishments(self, guild_id: int):
+        """Get the punishments within a given guild where the user ID has been removed
+        Args:
+            guild_id: The Discord Guild ID of the fuild where the punishments were issued
+        Returns: A list of Rows containing all the found punishments"""
+
+        rows = self.punishments_dao.get_censored_punishments(guild_id)
+        return [self._convert_to_entity(row) for row in rows]
+
     def get_deleted_punishments(self, user_id: int, guild_id: int):
         """Get a list of punishments marked deleted a user has within a given guild
         Args:
@@ -102,6 +111,13 @@ class PunishmentService:
             reason: The new reason for the punishment"""
 
         self.punishments_dao.edit_punishment_reason(punishment_id, reason)
+
+    def delete_user_id_from_punishments(self, user_id: int):
+        """Delete the mention of a given user's ID within punishments
+        Args:
+            user_id: The Discord ID of the user whose ID to delete"""
+
+        self.punishments_dao.delete_user_id_from_punishments(user_id)
 
     def delete_punishment(self, punishment_id: int):
         """Permanently delete a punishment
