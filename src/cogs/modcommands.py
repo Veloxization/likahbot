@@ -267,8 +267,11 @@ class ModCommands(commands.Cog):
             await ctx.respond("You cannot send a warning. Insufficient role hierarchy.",
                               ephemeral=True)
             return
-        punishment = await self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
-                                                                  punishment_type="warn", reason=reason)
+        punishment_id = await self.punishment_service.add_punishment(member.id, ctx.author.id,
+                                                                     ctx.guild.id,
+                                                                     punishment_type="warn",
+                                                                     reason=reason)
+        punishment = await self.punishment_service.get_punishment_by_id(punishment_id)
         try:
             await member.send(f"You have been issued a warning on **{ctx.guild.name}**\n" \
                               f"Provided reason:\n`{reason}`")

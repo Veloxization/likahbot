@@ -100,14 +100,14 @@ class PunishmentsDAO:
             punishment_type: The type of the punishment, e.g. BAN, KICK, TIMEOUT
             reason: The reason for the punishment
             deleted: Whether the punishment is deleted
-        Returns: The Row for the newly created punishment"""
+        Returns: A Row containing the database ID of the newly created punishment"""
 
         connection, cursor = await self.db_connection.connect_to_db()
         sql = "INSERT INTO punishments " \
                     "(user_id, issuer_id, guild_id, type, reason, time, deleted) " \
                "VALUES " \
                     "(?, ?, ?, ?, ?, datetime(), ?) " \
-               "RETURNING *"
+               "RETURNING id"
         await cursor.execute(sql, (user_id, issuer_id, guild_id, punishment_type, reason, deleted))
         punishment = await cursor.fetchone()
         await self.db_connection.commit_and_close(connection)

@@ -84,11 +84,11 @@ class PunishmentService:
             punishment_type: The type of the punishment, e.g. BAN, KICK, TIMEOUT
             reason: The reason for the punishment
             deleted: Whether the punishment is deleted
-        Returns: The newly created punishment entity"""
+        Returns: The database ID of the newly created punishment"""
 
         row = await self.punishments_dao.add_punishment(user_id, issuer_id, guild_id,
                                                         punishment_type, reason, deleted)
-        return self._convert_to_entity(row)
+        return row["id"]
 
     async def mark_deleted(self, punishment_id: int):
         """Mark a punishment as deleted

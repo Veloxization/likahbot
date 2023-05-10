@@ -20,18 +20,11 @@ class TestPunishmentsDAO(unittest.TestCase):
         self.assertEqual(len(punishments), 1)
 
     def test_added_punishments_are_returned_correctly(self):
-        punishment = asyncio.run(self.punishments_dao.add_punishment(1234, 2345, 9876))
+        punishment_id = asyncio.run(self.punishments_dao.add_punishment(1234, 2345, 9876))["id"]
+        punishment = asyncio.run(self.punishments_dao.get_punishment_by_id(punishment_id))
         self.assertEqual(punishment["user_id"], 1234)
         self.assertEqual(punishment["issuer_id"], 2345)
         self.assertEqual(punishment["guild_id"], 9876)
-
-    def test_punishments_are_found_correctly_by_id(self):
-        punishment1 = asyncio.run(self.punishments_dao.add_punishment(1234, 2345, 9876))
-        punishment2 = asyncio.run(self.punishments_dao.get_punishment_by_id(punishment1["id"]))
-        self.assertEqual(punishment1["id"], punishment2["id"])
-        self.assertEqual(punishment1["issuer_id"], punishment2["issuer_id"])
-        self.assertEqual(punishment1["user_id"], punishment2["user_id"])
-        self.assertEqual(punishment1["guild_id"], punishment2["guild_id"])
 
     def test_censored_punishments_are_found_correctly(self):
         asyncio.run(self.punishments_dao.add_punishment(1234, 2345, 9876))
