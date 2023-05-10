@@ -58,7 +58,7 @@ class TempBansDAO:
             user_id: The Discord ID of the user to temporarily ban
             guild_id: The Discord ID of the guild in which the user was banned
             expiration: The date when the temporary bans ends
-        Returns: The database ID of the newly created temporary ban"""
+        Returns: A Row object containing the database ID of the newly created temporary ban"""
 
         connection, cursor = await self.db_connection.connect_to_db()
         sql = "INSERT INTO temporary_bans (user_id, guild_id, unban_date) VALUES (?, ?, ?) " \

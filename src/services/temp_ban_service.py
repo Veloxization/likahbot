@@ -60,8 +60,8 @@ class TempBanService:
             expiration: The date when the temporary bans ends
         Returns: The database ID of the newly created temporary ban"""
 
-        temp_ban_id = await self.temp_bans_dao.create_temp_ban(user_id, guild_id, expiration)
-        return temp_ban_id
+        row = await self.temp_bans_dao.create_temp_ban(user_id, guild_id, expiration)
+        return row["id"]
 
     async def edit_temp_ban(self, user_id: int, guild_id: int, expiration: datetime):
         """Edit an existing temporary ban
