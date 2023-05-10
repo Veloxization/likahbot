@@ -1,4 +1,5 @@
 """Houses the class used to control database connections."""
+import asyncio
 import aiosqlite as sqlite3
 
 class DBConnection:
@@ -17,7 +18,16 @@ class DBConnection:
         """Make a new connection to a database
         Returns: A Connection object and a Cursor object for database commands"""
 
-        connection = await sqlite3.connect(self.db_address)
+        retries = 0
+        while retries <= 10:
+            try:
+                connection = await sqlite3.connect(self.db_address)
+                break
+            except sqlite3.DatabaseError:
+                await asyncio.sleep(0.1)
+                retries += 1
+        if retries > 10:
+            raise sqlite3.DatabaseError("Database connection failed")
         connection.row_factory = sqlite3.Row
         return connection, await connection.cursor()
 
