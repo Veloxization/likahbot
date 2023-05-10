@@ -32,8 +32,8 @@ class Logging(commands.Cog):
             guild: The Discord Guild whose log channel to get
         Returns: A list of discord.Channel objects if log channels were found"""
 
-        channels = self._utility_channel_service.get_guild_utility_channel_by_purpose(guild.id,
-                                                                                      "log")
+        channels = await self._utility_channel_service.get_guild_utility_channel_by_purpose(guild.id,
+                                                                                            "log")
         if not channels:
             return None
         log_channels = [await channel.get_discord_channel(self.bot) for channel in channels]

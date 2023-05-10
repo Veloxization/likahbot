@@ -18,43 +18,43 @@ class RafflesAndPollsDAO:
         self.db_connection = DBConnection(db_address)
         self.time_convert = TimeStringConverter()
 
-    def get_raffles(self):
+    async def get_raffles(self):
         """Get all raffles
         Returns: A list of Rows containing the raffle information"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "SELECT * FROM raffles_and_polls WHERE type='RAFFLE' ORDER BY end_date ASC"
-        cursor.execute(sql)
-        raffles = cursor.fetchall()
-        self.db_connection.close_connection(connection)
+        await cursor.execute(sql)
+        raffles = await cursor.fetchall()
+        await self.db_connection.close_connection(connection)
         return raffles
 
-    def get_polls(self):
+    async def get_polls(self):
         """Get all polls
         Returns: A list of Rows containing the poll information"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "SELECT * FROM raffles_and_polls WHERE type='POLL' ORDER BY end_date ASC"
-        cursor.execute(sql)
-        raffles = cursor.fetchall()
-        self.db_connection.close_connection(connection)
+        await cursor.execute(sql)
+        raffles = await cursor.fetchall()
+        await self.db_connection.close_connection(connection)
         return raffles
 
-    def find_raffle_or_poll(self, channel_id: int, message_id: int):
+    async def find_raffle_or_poll(self, channel_id: int, message_id: int):
         """Find a raffle or poll by channel and message IDs
         Args:
             channel_id: The ID of the channel where the raffle or poll is held
             message_id: The ID of the message that contains the raffle or poll information
         Returns: A Row object containing the found raffle, None if none are found"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "SELECT * FROM raffles_and_polls WHERE channel_id=? AND message_id=?"
-        cursor.execute(sql, (channel_id, message_id))
-        raffle = cursor.fetchone()
-        self.db_connection.close_connection(connection)
+        await cursor.execute(sql, (channel_id, message_id))
+        raffle = await cursor.fetchone()
+        await self.db_connection.close_connection(connection)
         return raffle
 
-    def add_raffle(self, organizer_id: int, channel_id: int, message_id: int, guild_id: int,
+    async def add_raffle(self, organizer_id: int, channel_id: int, message_id: int, guild_id: int,
                    name: str, end_date: datetime, description: str = None):
         """Create a new raffle
         Args:
@@ -66,16 +66,16 @@ class RafflesAndPollsDAO:
             end_date: The date and time this raffle ends
             description: The description for this raffle"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         end_date = self.time_convert.datetime_to_string(end_date)
         sql = "INSERT INTO raffles_and_polls " \
               "(organizer_id, channel_id, message_id, guild_id, type, name, description, end_date) " \
               "VALUES (?, ?, ?, ?, 'RAFFLE', ?, ?, ?)"
-        cursor.execute(sql, (organizer_id, channel_id, message_id, guild_id,
-                             name, description, end_date))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (organizer_id, channel_id, message_id, guild_id,
+                                   name, description, end_date))
+        await self.db_connection.commit_and_close(connection)
 
-    def add_poll(self, organizer_id: int, channel_id: int, message_id: int, guild_id: int,
+    async def add_poll(self, organizer_id: int, channel_id: int, message_id: int, guild_id: int,
                  name: str, end_date: datetime, description: str = None):
         """Create a new poll
         Args:
@@ -87,31 +87,31 @@ class RafflesAndPollsDAO:
             end_date: The date and time this poll ends
             description: The description for this poll"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         end_date = self.time_convert.datetime_to_string(end_date)
         sql = "INSERT INTO raffles_and_polls " \
               "(organizer_id, channel_id, message_id, guild_id, type, name, description, end_date) " \
               "VALUES (?, ?, ?, ?, 'POLL', ?, ?, ?)"
-        cursor.execute(sql, (organizer_id, channel_id, message_id, guild_id,
-                             name, description, end_date))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (organizer_id, channel_id, message_id, guild_id,
+                                   name, description, end_date))
+        await self.db_connection.commit_and_close(connection)
 
-    def remove_raffle_or_poll(self, raffle_poll_id: int):
+    async def remove_raffle_or_poll(self, raffle_poll_id: int):
         """Remove the selected raffle or poll
         Args:
             raffle_poll_id: The database ID of the raffle or poll to delete"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM raffles_and_polls WHERE id=?"
-        cursor.execute(sql, (raffle_poll_id,))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (raffle_poll_id,))
+        await self.db_connection.commit_and_close(connection)
 
-    def delete_guild_raffles_and_polls(self, guild_id: int):
+    async def delete_guild_raffles_and_polls(self, guild_id: int):
         """Delete all raffles and polls of a given guild
         Args:
             guild_id: The Discord ID of the guild whose raffles and polls to delete"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM raffles_and_polls WHERE guild_id=?"
-        cursor.execute(sql, (guild_id,))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (guild_id,))
+        await self.db_connection.commit_and_close(connection)

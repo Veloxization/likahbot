@@ -16,54 +16,54 @@ class GuildRoleCategoriesDAO():
 
         self.db_connection = DBConnection(db_address)
 
-    def get_all_guild_role_categories(self, guild_id: int):
+    async def get_all_guild_role_categories(self, guild_id: int):
         """Get all guild role categories of a given guild
         Args:
             guild_id: The Discord ID of the guild whose role categories to get
         Returns: A list of Rows containing the found categories"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "SELECT * FROM guild_role_categories WHERE guild_id=?"
-        cursor.execute(sql, (guild_id,))
-        categories = cursor.fetchall()
-        self.db_connection.close_connection(connection)
+        await cursor.execute(sql, (guild_id,))
+        categories = await cursor.fetchall()
+        await self.db_connection.close_connection(connection)
         return categories
 
-    def add_guild_role_category(self, guild_id: int, category: str):
+    async def add_guild_role_category(self, guild_id: int, category: str):
         """Add a new guild role category for a given guild
         Args:
             guild_id: The Discord ID of the guild that gets the new category
             category: The type of category, e.g. MODERATOR or ADMIN"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "INSERT INTO guild_role_categories (guild_id, category) VALUES (?, ?)"
-        cursor.execute(sql, (guild_id, category))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (guild_id, category))
+        await self.db_connection.commit_and_close(connection)
 
-    def remove_guild_role_category(self, category_id: int):
+    async def remove_guild_role_category(self, category_id: int):
         """Remove a guild role category by its database ID
         Args:
             category_id: The database ID of the category to remove"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM guild_role_categories WHERE id=?"
-        cursor.execute(sql, (category_id,))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (category_id,))
+        await self.db_connection.commit_and_close(connection)
 
-    def remove_all_guild_role_categories(self, guild_id: int):
+    async def remove_all_guild_role_categories(self, guild_id: int):
         """Remove all guild role categories of a given guild
         Args:
             guild_id: The Discord ID of the guild whose guild role categories to remove"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM guild_role_categories WHERE guild_id=?"
-        cursor.execute(sql, (guild_id,))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (guild_id,))
+        await self.db_connection.commit_and_close(connection)
 
-    def clear_guild_role_categories_table(self):
+    async def clear_guild_role_categories_table(self):
         """Delete every single guild role category from the table"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM guild_role_categories"
-        cursor.execute(sql)
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql)
+        await self.db_connection.commit_and_close(connection)

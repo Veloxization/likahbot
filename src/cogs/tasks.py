@@ -27,13 +27,13 @@ class Tasks(commands.Cog):
         """Checks the temp ban table for expired bans and automatically unbans applicable users"""
 
         print("Checking for expired bans...")
-        temp_bans = self.temp_ban_service.get_expired_temp_bans()
+        temp_bans = await self.temp_ban_service.get_expired_temp_bans()
         for ban in temp_bans:
             guild = await ban.get_discord_guild(self.bot)
             user = await ban.get_discord_user(self.bot)
             try:
                 await guild.unban(user, reason="Expired temp ban")
-                self.temp_ban_service.delete_temp_ban(user.id, guild.id)
+                await self.temp_ban_service.delete_temp_ban(user.id, guild.id)
             except discord.Forbidden:
                 print(f"Missing permissions to unban {user} in {guild}. Skipping.")
             except discord.HTTPException:

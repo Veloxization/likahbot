@@ -1,5 +1,5 @@
 """Houses the class used to control database connections."""
-import sqlite3
+import aiosqlite as sqlite3
 
 class DBConnection:
     """A class for controlling database connections
@@ -13,32 +13,32 @@ class DBConnection:
 
         self.db_address = db_address
 
-    def connect_to_db(self):
+    async def connect_to_db(self):
         """Make a new connection to a database
         Returns: A Connection object and a Cursor object for database commands"""
 
-        connection = sqlite3.connect(self.db_address)
+        connection = await sqlite3.connect(self.db_address)
         connection.row_factory = sqlite3.Row
-        return connection, connection.cursor()
+        return connection, await connection.cursor()
 
-    def close_connection(self, connection: sqlite3.Connection):
+    async def close_connection(self, connection: sqlite3.Connection):
         """Close the connection to a database without commiting changes
         Args:
             connection: The database connection to close"""
 
-        connection.close()
+        await connection.close()
 
-    def commit_changes(self, connection: sqlite3.Connection):
+    async def commit_changes(self, connection: sqlite3.Connection):
         """Commit changes without closing the connection
         Args:
             connection: The database connection to commit changes to"""
 
-        connection.commit()
+        await connection.commit()
 
-    def commit_and_close(self, connection: sqlite3.Connection):
+    async def commit_and_close(self, connection: sqlite3.Connection):
         """Close the connection and commit the changes
         Args:
             connection: The database connection to close"""
 
-        self.commit_changes(connection)
-        self.close_connection(connection)
+        await self.commit_changes(connection)
+        await self.close_connection(connection)

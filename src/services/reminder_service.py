@@ -28,35 +28,35 @@ class ReminderService:
                               row["content"], row["reminder_date"], row["public"], row["interval"],
                               row["reminder_type"], row["repeats_left"])
 
-    def get_reminders_by_user(self, user_id: int):
+    async def get_reminders_by_user(self, user_id: int):
         """Get all reminders made by a given user
         Args:
             user_id: The Discord ID of the user whose reminders to get
         Returns: A list of ReminderEntity objects containing the user's reminders"""
 
-        rows = self.reminders_dao.get_reminders_by_user(user_id)
+        rows = await self.reminders_dao.get_reminders_by_user(user_id)
         return [self._convert_to_entity(row) for row in rows]
 
-    def get_public_reminders_by_user(self, user_id: int):
+    async def get_public_reminders_by_user(self, user_id: int):
         """Get all public reminders made by a given user
         Args:
             user_id: The Discord ID of the user whose public reminders to get
         Returns: A list of ReminderEntity objects containing the user's public reminders"""
 
-        rows = self.reminders_dao.get_public_reminders_by_user(user_id)
+        rows = await self.reminders_dao.get_public_reminders_by_user(user_id)
         return [self._convert_to_entity(row) for row in rows]
 
-    def get_reminders_by_user_in_guild(self, user_id: int, guild_id: int):
+    async def get_reminders_by_user_in_guild(self, user_id: int, guild_id: int):
         """Get all reminders made by a given user in a given guild
         Args:
             user_id: The Discord ID of the user whose reminders to get
             guild_id: The Discord ID of the guild in which the reminders were created
         Returns: A list of ReminderEntity objects containing the user's reminders in the guild"""
 
-        rows = self.reminders_dao.get_reminders_by_user_in_guild(user_id, guild_id)
+        rows = await self.reminders_dao.get_reminders_by_user_in_guild(user_id, guild_id)
         return [self._convert_to_entity(row) for row in rows]
 
-    def get_public_reminders_by_user_in_guild(self, user_id: int, guild_id: int):
+    async def get_public_reminders_by_user_in_guild(self, user_id: int, guild_id: int):
         """Get all public reminders made by a given user in a given guild
         Args:
             user_id: The Discord ID of the user whose public reminders to get
@@ -64,46 +64,46 @@ class ReminderService:
         Returns: A list of ReminderEntity objects containing the user's public reminders in the
                  guild"""
 
-        rows = self.reminders_dao.get_public_reminders_by_user_in_guild(user_id, guild_id)
+        rows = await self.reminders_dao.get_public_reminders_by_user_in_guild(user_id, guild_id)
         return [self._convert_to_entity(row) for row in rows]
 
-    def get_reminders_in_guild(self, guild_id: int):
+    async def get_reminders_in_guild(self, guild_id: int):
         """Get all reminders in a given guild
         Args:
             guild_id: The Discord ID of the guild in which the reminders were created
         Returns: A list of ReminderEntity objects containing the reminders of the guild"""
 
-        rows = self.reminders_dao.get_reminders_in_guild(guild_id)
+        rows = await self.reminders_dao.get_reminders_in_guild(guild_id)
         return [self._convert_to_entity(row) for row in rows]
 
-    def get_public_reminders_in_guild(self, guild_id: int):
+    async def get_public_reminders_in_guild(self, guild_id: int):
         """Get all public reminders in a given guild
         Args:
             guild_id: The Discord ID of the guild in which the public reminders were created
         Returns: A list of ReminderEntity objects containing the public reminders of the guild"""
 
-        rows = self.reminders_dao.get_public_reminders_in_guild(guild_id)
+        rows = await self.reminders_dao.get_public_reminders_in_guild(guild_id)
         return [self._convert_to_entity(row) for row in rows]
 
-    def get_expired_reminders(self):
+    async def get_expired_reminders(self):
         """Get all reminders that have expired
         Returns: A list of ReminderEntity objects containing all the expired reminders"""
 
-        rows = self.reminders_dao.get_expired_reminders()
+        rows = await self.reminders_dao.get_expired_reminders()
         return [self._convert_to_entity(row) for row in rows]
 
-    def get_reminder_by_id(self, reminder_id: int):
+    async def get_reminder_by_id(self, reminder_id: int):
         """Get a reminder by its database ID
         Args:
             reminder_id: The database ID of the reminder to get
         Returns: A ReminderEntity object containing the found reminder, None if not found"""
 
-        row = self.reminders_dao.get_reminder_by_id(reminder_id)
+        row = await self.reminders_dao.get_reminder_by_id(reminder_id)
         return self._convert_to_entity(row)
 
-    def add_new_reminder(self, user_id: int, guild_id: int, content: str, reminder_date: datetime,
-                         reminder_type: str, is_public: bool = False, interval: int = 0,
-                         repeats: int = 1):
+    async def add_new_reminder(self, user_id: int, guild_id: int, content: str,
+                               reminder_date: datetime, reminder_type: str,
+                               is_public: bool = False, interval: int = 0, repeats: int = 1):
         """Create a new reminder
         Args:
             user_id: The Discord ID of the user creating the reminder
@@ -117,11 +117,12 @@ class ReminderService:
             repeats: How many times the reminder repeats before getting deleted. Defaults to 1.
         Returns: The database ID of the newly created reminder."""
 
-        return self.reminders_dao.add_new_reminder(user_id, guild_id, content, reminder_date,
-                                                   reminder_type, is_public, interval, 
-                                                   repeats)["id"]
+        row = await self.reminders_dao.add_new_reminder(user_id, guild_id, content, reminder_date,
+                                                        reminder_type, is_public, interval,
+                                                        repeats)
+        return row["id"]
 
-    def edit_reminder(self, reminder_id: int, content: str, reminder_date: datetime,
+    async def edit_reminder(self, reminder_id: int, content: str, reminder_date: datetime,
                       is_public: bool, interval: int, reminder_type: str, repeats: int):
         """Edit an existing reminder
         Args:
@@ -132,52 +133,52 @@ class ReminderService:
             interval: How often the reminder repeats, in seconds
             repeats: How many times the reminder repeats before getting deleted"""
 
-        self.reminders_dao.edit_reminder(reminder_id, content, reminder_date, is_public, interval,
-                                         reminder_type, repeats)
+        await self.reminders_dao.edit_reminder(reminder_id, content, reminder_date, is_public,
+                                               interval, reminder_type, repeats)
 
-    def update_reminder_repeats(self, reminder_id: int):
+    async def update_reminder_repeats(self, reminder_id: int):
         """Update the repeats in a given reminder if it hasn't reached 0. This method will not
            delete a reminder whose repeats fall to 0 so make sure to delete those separately.
         Args:
             reminder_id: The database ID of the reminder whose repeats to update"""
 
-        self.reminders_dao.update_reminder_repeats(reminder_id)
+        await self.reminders_dao.update_reminder_repeats(reminder_id)
 
-    def delete_user_reminders(self, user_id: int):
+    async def delete_user_reminders(self, user_id: int):
         """Delete all reminders made by a given user
         Args:
             user_id: The Discord ID of the user whose reminders to delete"""
 
-        self.reminders_dao.delete_user_reminders(user_id)
+        await self.reminders_dao.delete_user_reminders(user_id)
 
-    def delete_user_reminders_in_guild(self, user_id: int, guild_id: int):
+    async def delete_user_reminders_in_guild(self, user_id: int, guild_id: int):
         """Delete all reminders made by a given user in a given guild
         Args:
             user_id: The Discord ID of the user whose reminders to delete
             guild_id: The Discord ID of the guild in which the reminders were created"""
 
-        self.reminders_dao.delete_user_reminders_in_guild(user_id, guild_id)
+        await self.reminders_dao.delete_user_reminders_in_guild(user_id, guild_id)
 
-    def delete_guild_reminders(self, guild_id: int):
+    async def delete_guild_reminders(self, guild_id: int):
         """Delete all reminders made in a given guild
         Args:
             guild_id: The Discord ID of the guild in which the reminders were created"""
 
-        self.reminders_dao.delete_guild_reminders(guild_id)
+        await self.reminders_dao.delete_guild_reminders(guild_id)
 
-    def delete_reminder_by_id(self, reminder_id: int):
+    async def delete_reminder_by_id(self, reminder_id: int):
         """Delete a reminder by its database ID
         Args:
             reminder_id: The database ID of the reminder to delete"""
 
-        self.reminders_dao.delete_reminder_by_id(reminder_id)
+        await self.reminders_dao.delete_reminder_by_id(reminder_id)
 
-    def delete_reminders_with_no_repeats(self):
+    async def delete_reminders_with_no_repeats(self):
         """Delete all reminders that have reached 0 repeats"""
 
-        self.reminders_dao.delete_reminders_with_no_repeats()
+        await self.reminders_dao.delete_reminders_with_no_repeats()
 
-    def clear_reminders(self):
+    async def clear_reminders(self):
         """Delete every single reminder"""
 
-        self.reminders_dao.clear_reminders_table()
+        await self.reminders_dao.clear_reminders_table()

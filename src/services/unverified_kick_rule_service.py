@@ -27,41 +27,41 @@ class UnverifiedKickRuleService:
             return None
         return UnverifiedKickRuleEntity(row["timedelta"])
 
-    def get_guild_unverified_kick_rules(self, guild_id: int):
+    async def get_guild_unverified_kick_rules(self, guild_id: int):
         """Get the rules for kicking unverified members from specified guild
         Args:
             guild_id: The Discord ID of the guild whose kick rules to get
         Returns: An unverified kick rule entity"""
 
-        row = self.unverified_kick_rules_dao.get_guild_unverified_kick_rules(guild_id)
+        row = await self.unverified_kick_rules_dao.get_guild_unverified_kick_rules(guild_id)
         return self._convert_to_entity(row)
 
-    def add_guild_unverified_kick_rules(self, guild_id: int, kick_timing: int):
+    async def add_guild_unverified_kick_rules(self, guild_id: int, kick_timing: int):
         """Create a new unverified kick rule for a guild
         Args:
             guild_id: The Discord ID of the guild which will be getting this kick rule
             kick_timing: The time, in seconds, it takes before an unverified member is kicked,
                          counted from the time of joining the guild."""
 
-        self.unverified_kick_rules_dao.add_guild_unverified_kick_rules(guild_id, kick_timing)
+        await self.unverified_kick_rules_dao.add_guild_unverified_kick_rules(guild_id, kick_timing)
 
-    def edit_guild_unverified_kick_rules(self, guild_id: int, kick_timing: int):
+    async def edit_guild_unverified_kick_rules(self, guild_id: int, kick_timing: int):
         """Edit the timing for a guild's unverified kick timing
         Args:
             guild_id: The Discord ID of the guild whose kick rules to edit
             kick_timing: The new time, in seconds, it takes before and unverified member is
                          kicked"""
 
-        self.unverified_kick_rules_dao.edit_guild_unverified_kick_rules(guild_id, kick_timing)
+        await self.unverified_kick_rules_dao.edit_guild_unverified_kick_rules(guild_id, kick_timing)
 
-    def remove_guild_unverified_kick_rules(self, guild_id: int):
+    async def remove_guild_unverified_kick_rules(self, guild_id: int):
         """Remove the kick rules of a specific guild
         Args:
             guild_id: The Discord ID of the guild whose kick rules to remove"""
 
-        self.unverified_kick_rules_dao.remove_guild_unverified_kick_rules(guild_id)
+        await self.unverified_kick_rules_dao.remove_guild_unverified_kick_rules(guild_id)
 
-    def clear_unverified_kick_rules(self):
+    async def clear_unverified_kick_rules(self):
         """Delete every single unverified kick rule"""
 
-        self.unverified_kick_rules_dao.clear_unverified_kick_rules_table()
+        await self.unverified_kick_rules_dao.clear_unverified_kick_rules_table()

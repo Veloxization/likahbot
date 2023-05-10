@@ -27,53 +27,53 @@ class VerificationAnswerService:
             return None
         return VerificationAnswerEntity(row["id"], row["question_id"], row["answer"])
 
-    def get_answers_for_question(self, question_id: int):
+    async def get_answers_for_question(self, question_id: int):
         """Get a list of possible answer for a specific question
         Args:
             question_id: The database ID of the question whose answers to get
         Returns: A list of verification answer entities"""
 
-        rows = self.verification_answers_dao.get_answers_for_question(question_id)
+        rows = await self.verification_answers_dao.get_answers_for_question(question_id)
         return [self._convert_to_entity(row) for row in rows]
 
-    def add_verification_answer(self, question_id: int, answer: str):
+    async def add_verification_answer(self, question_id: int, answer: str):
         """Add a new answer for a specific question
         Args:
             question_id: The database ID of the question this is an answer to
             answer: An expected answer for the question"""
 
-        self.verification_answers_dao.add_verification_answer(question_id, answer)
+        await self.verification_answers_dao.add_verification_answer(question_id, answer)
 
-    def edit_verification_answer(self, answer_id: int, answer: str):
+    async def edit_verification_answer(self, answer_id: int, answer: str):
         """Edit a specific verification answer
         Args:
             answer_id: The database ID of the answer to edit
             answer: The new answer"""
 
-        self.verification_answers_dao.edit_verification_answer(answer_id, answer)
+        await self.verification_answers_dao.edit_verification_answer(answer_id, answer)
 
-    def delete_verification_answer(self, answer_id: int):
+    async def delete_verification_answer(self, answer_id: int):
         """Delete a specific verification answer
         Args:
             answer_id: The database ID of the answer to delete"""
 
-        self.verification_answers_dao.delete_verification_answer(answer_id)
+        await self.verification_answers_dao.delete_verification_answer(answer_id)
 
-    def delete_all_answers_to_question(self, question_id: int):
+    async def delete_all_answers_to_question(self, question_id: int):
         """Delete all answers to a specific question
         Args:
             question_id: The database ID of the question whose answers to delete"""
 
-        self.verification_answers_dao.delete_all_answers_to_question(question_id)
+        await self.verification_answers_dao.delete_all_answers_to_question(question_id)
 
-    def delete_all_guild_answers(self, guild_id: int):
+    async def delete_all_guild_answers(self, guild_id: int):
         """Delete all verification answers of a specific guild
         Args:
             guild_id: The Discord ID of the guild whose answers to delete"""
 
-        self.verification_answers_dao.delete_all_guild_answers(guild_id)
+        await self.verification_answers_dao.delete_all_guild_answers(guild_id)
 
-    def clear_verification_answers(self):
+    async def clear_verification_answers(self):
         """Delete every single verification answer"""
 
-        self.verification_answers_dao.clear_verification_answers_table()
+        await self.verification_answers_dao.clear_verification_answers_table()

@@ -25,25 +25,25 @@ class TimeZoneService:
             return None
         return TimeZoneEntity(row["id"], row["user_id"], row["time_zone"])
 
-    def get_user_time_zone(self, user_id: int):
+    async def get_user_time_zone(self, user_id: int):
         """Get a user's time zone
         Args:
             user_id: The Discord ID of the user whose time zone to get
         Returns: A TimeZoneEntity containing the user's time zone information. Defaults to UTC."""
 
-        row = self.time_zones_dao.get_user_time_zone(user_id)
+        row = await self.time_zones_dao.get_user_time_zone(user_id)
         return self._convert_to_entity(row)
 
-    def get_time_zone_by_id(self, time_zone_id: int):
+    async def get_time_zone_by_id(self, time_zone_id: int):
         """Get a time zone by its database ID
         Args:
             time_zone_id: The database ID of the time zone to get
         Returns: A TimeZoneEntity containing the time zone information. None if not found."""
 
-        row = self.time_zones_dao.get_time_zone_by_id(time_zone_id)
+        row = await self.time_zones_dao.get_time_zone_by_id(time_zone_id)
         return self._convert_to_entity(row)
 
-    def add_user_time_zone(self, user_id: int, time_zone: str = "UTC"):
+    async def add_user_time_zone(self, user_id: int, time_zone: str = "UTC"):
         """Add a new time zone for a user
         Args:
             user_id: The Discord ID of the user whose time zone to add
@@ -51,41 +51,42 @@ class TimeZoneService:
                        Defaults to UTC.
         Returns: The database ID of the newly created time zone"""
 
-        return self.time_zones_dao.add_user_time_zone(user_id, time_zone)["id"]
+        row = await self.time_zones_dao.add_user_time_zone(user_id, time_zone)
+        return row["id"]
 
-    def edit_user_time_zone(self, user_id: int, time_zone: str = "UTC"):
+    async def edit_user_time_zone(self, user_id: int, time_zone: str = "UTC"):
         """Edit an existing user time zone
         Args:
             user_id: The Discord ID of the user whose time zone to edit
             time_zone: IANA time zone database compatible representation of time zone.
                        Defaults to UTC."""
 
-        self.time_zones_dao.edit_user_time_zone(user_id, time_zone)
+        await self.time_zones_dao.edit_user_time_zone(user_id, time_zone)
 
-    def edit_time_zone_by_id(self, time_zone_id: int, time_zone: str = "UTC"):
+    async def edit_time_zone_by_id(self, time_zone_id: int, time_zone: str = "UTC"):
         """Edit an existing time zone by its database ID
         Args:
             time_zone_id: The database ID of the time zone to edit
             time_zone: IANA time zone database compatible representation of time zone.
                        Defaults to UTC."""
 
-        self.time_zones_dao.edit_time_zone_by_id(time_zone_id, time_zone)
+        await self.time_zones_dao.edit_time_zone_by_id(time_zone_id, time_zone)
 
-    def delete_user_time_zone(self, user_id: int):
+    async def delete_user_time_zone(self, user_id: int):
         """Delete the time zone associated with a user
         Args:
             user_id: The Discord ID of the user whose time zone to delete"""
 
-        self.time_zones_dao.delete_user_time_zone(user_id)
+        await self.time_zones_dao.delete_user_time_zone(user_id)
 
-    def delete_time_zone_by_id(self, time_zone_id: int):
+    async def delete_time_zone_by_id(self, time_zone_id: int):
         """Delete a time zone by its database ID
         Args:
             time_zone_id: The database ID of the time zone to delete"""
 
-        self.time_zones_dao.delete_time_zone_by_id(time_zone_id)
+        await self.time_zones_dao.delete_time_zone_by_id(time_zone_id)
 
-    def clear_time_zones(self):
+    async def clear_time_zones(self):
         """Delete every single user time zone record"""
 
-        self.time_zones_dao.clear_time_zones_table()
+        await self.time_zones_dao.clear_time_zones_table()

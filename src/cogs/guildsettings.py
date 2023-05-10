@@ -38,7 +38,7 @@ class GuildSettings(commands.Cog):
         channel: discord.Option(discord.TextChannel, "The channel to apply the utility to")):
         """Assign a channel for a specified utility"""
 
-        self.utility_channel_service.create_guild_utility_channel(channel.id, ctx.guild.id, utility)
+        await self.utility_channel_service.create_guild_utility_channel(channel.id, ctx.guild.id, utility)
         if utility == "log":
             await ctx.respond(f"{channel.mention} is now a log channel. Future logs will be posted there.")
         if utility == "rules":
@@ -59,7 +59,7 @@ class GuildSettings(commands.Cog):
         channel: discord.Option(discord.TextChannel, "The channel to remove the the utility from")):
         """Remove a utility from a certain channel"""
 
-        channels = self.utility_channel_service.get_guild_utility_channel_by_id(ctx.guild.id, channel.id)
+        channels = await self.utility_channel_service.get_guild_utility_channel_by_id(ctx.guild.id, channel.id)
         utilities = [chan.channel_purpose for chan in channels]
         if utility not in utilities:
             await ctx.respond(f"{channel.mention} does not have the utility `{utility}` applied to it.\n" \
@@ -67,7 +67,7 @@ class GuildSettings(commands.Cog):
                               ephemeral=True)
             return
 
-        self.utility_channel_service.delete_utility_from_channel(channel.id, ctx.guild.id, utility)
+        await self.utility_channel_service.delete_utility_from_channel(channel.id, ctx.guild.id, utility)
         await ctx.respond(f"{channel.mention} no longer has the utility `{utility}`.")
 
 
@@ -81,7 +81,7 @@ class GuildSettings(commands.Cog):
                                 "The channel to remove utilities from")):
         """Remove all utilities from a single channel"""
 
-        channels = self.utility_channel_service.get_guild_utility_channel_by_id(ctx.guild.id,
+        channels = await self.utility_channel_service.get_guild_utility_channel_by_id(ctx.guild.id,
                                                                                 channel.id)
         if not channels:
             await ctx.respond(f"{channel.mention} does not have any utilities applied. " \
@@ -89,7 +89,7 @@ class GuildSettings(commands.Cog):
                               "`listchannelutilities` command.",
                               ephemeral=True)
             return
-        self.utility_channel_service.delete_utility_channel(channel.id, ctx.guild.id)
+        await self.utility_channel_service.delete_utility_channel(channel.id, ctx.guild.id)
         await ctx.respond(f"{channel.mention} is no longer used as a utility channel.")
 
 
@@ -101,13 +101,13 @@ class GuildSettings(commands.Cog):
         ctx: discord.ApplicationContext):
         """Remove all utility channels from a given guild"""
 
-        channels = self.utility_channel_service.get_all_guild_utility_channels(ctx.guild.id)
+        channels = await self.utility_channel_service.get_all_guild_utility_channels(ctx.guild.id)
         async def confirm_button_callback(interaction: discord.Interaction):
             if interaction.user != ctx.author:
                 await interaction.response.send_message("You cannot interact with this response.",
                                                         ephemeral=True)
                 return
-            self.utility_channel_service.delete_guild_utility_channels(ctx.guild.id)
+            await self.utility_channel_service.delete_guild_utility_channels(ctx.guild.id)
             await interaction.response.edit_message(content=f"Removed **{len(channels)}** " \
                                                             f"channel utilities from {ctx.guild.name}.",
                                                     view=None)
@@ -141,11 +141,11 @@ class GuildSettings(commands.Cog):
 
         embed = discord.Embed(title=f"{ctx.guild.name} utility channels")
         if channel:
-            channels = self.utility_channel_service.get_guild_utility_channel_by_id(ctx.guild.id,
-                                                                                    channel.id)
+            channels = await self.utility_channel_service.get_guild_utility_channel_by_id(ctx.guild.id,
+                                                                                          channel.id)
             embed.title = f"#{channel.name} utilities"
         else:
-            channels = self.utility_channel_service.get_all_guild_utility_channels(ctx.guild.id)
+            channels = await self.utility_channel_service.get_all_guild_utility_channels(ctx.guild.id)
         if not channels:
             if channel:
                 embed.add_field(name="No utilities",

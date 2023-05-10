@@ -17,34 +17,34 @@ class ExperienceDAO:
         self.db_connection = DBConnection(db_address)
         self.time_convert = TimeStringConverter()
 
-    def get_guild_leaderboard(self, guild_id: int):
+    async def get_guild_leaderboard(self, guild_id: int):
         """Get all experience in a Guild
         Args:
             guild_id: The ID of the Guild whose experience points to list
         Returns: A list of Rows containing the experience points of the selected Guild"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "SELECT * FROM experience WHERE guild_id=? ORDER BY amount DESC"
-        cursor.execute(sql, (guild_id,))
-        experience = cursor.fetchall()
-        self.db_connection.close_connection(connection)
+        await cursor.execute(sql, (guild_id,))
+        experience = await cursor.fetchall()
+        await self.db_connection.close_connection(connection)
         return experience
 
-    def get_user_experience(self, user_id: int, guild_id: int):
+    async def get_user_experience(self, user_id: int, guild_id: int):
         """Get the experience for a specific user on a specific Guild
         Args:
             user_id: The user whose experience to get
             guild_id: The ID of the Guild from which to get the experience
         Returns: A single Row with the user experience, None if no experience is found"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "SELECT * FROM experience WHERE user_id=? AND guild_id=?"
-        cursor.execute(sql, (user_id, guild_id))
-        experience = cursor.fetchone()
-        self.db_connection.close_connection(connection)
+        await cursor.execute(sql, (user_id, guild_id))
+        experience = await cursor.fetchone()
+        await self.db_connection.close_connection(connection)
         return experience
 
-    def add_user_experience(self, user_id: int, guild_id: int, amount: int, interval: int):
+    async def add_user_experience(self, user_id: int, guild_id: int, amount: int, interval: int):
         """Give the user of a specific guild a specific amount of experience.
         Experience will not be awarded if time to last_experience is less than the specified
         interval.
@@ -55,48 +55,48 @@ class ExperienceDAO:
             interval: The interval, in seconds, after which the user is eligible for more
                       experience"""
 
-        experience = self.get_user_experience(user_id, guild_id)
-        connection, cursor = self.db_connection.connect_to_db()
+        experience = await self.get_user_experience(user_id, guild_id)
+        connection, cursor = await self.db_connection.connect_to_db()
         if not experience:
             sql = "INSERT INTO experience (user_id, guild_id, last_experience, amount) " \
                    "VALUES (?, ?, datetime(), ?)"
-            cursor.execute(sql, (user_id, guild_id, amount))
+            await cursor.execute(sql, (user_id, guild_id, amount))
         else:
-            last_experience = self.time_convert.string_to_datetime(experience["last_experience"])
+            last_experience = await self.time_convert.string_to_datetime(experience["last_experience"])
             time_difference = TimeDifference().time_difference(last_experience, datetime.utcnow())
             if time_difference > interval:
                 sql = "UPDATE experience SET amount=amount+?, last_experience=datetime() WHERE user_id=? AND guild_id=?"
-                cursor.execute(sql, (amount, user_id, guild_id))
-        self.db_connection.commit_and_close(connection)
+                await cursor.execute(sql, (amount, user_id, guild_id))
+        await self.db_connection.commit_and_close(connection)
 
-    def reset_user_experience(self, user_id: int, guild_id: int):
+    async def reset_user_experience(self, user_id: int, guild_id: int):
         """Reset a user's experience in a Guild back to 0
         Args:
             user_id: The Discord ID of the user whose experience to reset
             guild_id: The ID of the guild in which the experience is reset"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "UPDATE experience SET amount=0, last_experience=datetime() WHERE user_id=? AND guild_id=?"
-        cursor.execute(sql, (user_id, guild_id))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (user_id, guild_id))
+        await self.db_connection.commit_and_close(connection)
 
-    def delete_user_experience(self, user_id: int, guild_id: int):
+    async def delete_user_experience(self, user_id: int, guild_id: int):
         """Delete the database entry for a user's experience
         Args:
             user_id: The Discord ID of the user whose experience to delete
             guild_id: The ID of the guild from which to delete"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM experience WHERE user_id=? AND guild_id=?"
-        cursor.execute(sql, (user_id, guild_id))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (user_id, guild_id))
+        await self.db_connection.commit_and_close(connection)
 
-    def delete_guild_experience(self, guild_id: int):
+    async def delete_guild_experience(self, guild_id: int):
         """Delete all experience records for a given guild
         Args:
             guild_id: The Discord ID of the guild whose experience records to delete"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM experience WHERE guild_id=?"
-        cursor.execute(sql, (guild_id,))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (guild_id,))
+        await self.db_connection.commit_and_close(connection)

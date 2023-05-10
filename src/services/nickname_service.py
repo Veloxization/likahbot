@@ -26,26 +26,26 @@ class NicknameService:
         return NicknameEntity(row["id"], row["user_id"], row["nickname"], row["guild_id"],
                               row["time"])
 
-    def find_nickname(self, nickname: str):
+    async def find_nickname(self, nickname: str):
         """Find the instances of a given nickname
         Args:
             nickname: The nickname to find
         Returns: A list of Nickname entities"""
 
-        rows = self.nicknames_dao.find_nickname(nickname)
+        rows = await self.nicknames_dao.find_nickname(nickname)
         return [self._convert_to_entity(row) for row in rows]
 
-    def find_user_nicknames(self, user_id: int, guild_id: int):
+    async def find_user_nicknames(self, user_id: int, guild_id: int):
         """Find all nicknames for a given user
         Args:
             user_id: The Discord ID of the user whose previous nicknames to find
             guild_id: The ID of the Discord Guild the nickname is associated with
         Returns: A list of Nickname entities"""
 
-        rows = self.nicknames_dao.find_user_nicknames(user_id, guild_id)
+        rows = await self.nicknames_dao.find_user_nicknames(user_id, guild_id)
         return [self._convert_to_entity(row) for row in rows]
 
-    def add_nickname(self, nickname: str, user_id: int, guild_id: int, nickname_limit: int = 5):
+    async def add_nickname(self, nickname: str, user_id: int, guild_id: int, nickname_limit: int = 5):
         """Add a new nickname. If more than limit names exist already, the oldest are deleted.
         Args:
             nickname: The nickname to add
@@ -53,31 +53,31 @@ class NicknameService:
             guild_id: The ID of the Discord Guild the nickname is associated with
             nickname_limit: How many nicknames for one user are allowed to be saved at a time"""
 
-        self.nicknames_dao.add_nickname(nickname, user_id, guild_id, nickname_limit)
+        await self.nicknames_dao.add_nickname(nickname, user_id, guild_id, nickname_limit)
 
-    def delete_nickname(self, nickname_id: int):
+    async def delete_nickname(self, nickname_id: int):
         """Delete a nickname record
         Args:
             nickname_id: The database ID for the nickname to delete"""
 
-        self.nicknames_dao.delete_nickname(nickname_id)
+        await self.nicknames_dao.delete_nickname(nickname_id)
 
-    def delete_user_nicknames(self, user_id: int, guild_id: int):
+    async def delete_user_nicknames(self, user_id: int, guild_id: int):
         """Delete all nickname records associated with a specific user
         Args:
             user_id: The Discord ID for the user whose nickname records to delete
             guild_id: The ID of the Discord Guild the deleted nicknames are associated with"""
 
-        self.nicknames_dao.delete_user_nicknames(user_id, guild_id)
+        await self.nicknames_dao.delete_user_nicknames(user_id, guild_id)
 
-    def delete_guild_nicknames(self, guild_id: int):
+    async def delete_guild_nicknames(self, guild_id: int):
         """Delete the entire nickname record of a given guild
         Args:
             guild_id: The Discord ID of the guild whose nickname records to delete"""
 
-        self.nicknames_dao.delete_guild_nicknames(guild_id)
+        await self.nicknames_dao.delete_guild_nicknames(guild_id)
 
-    def clear_nicknames(self):
+    async def clear_nicknames(self):
         """Delete every single nickname record"""
 
-        self.nicknames_dao.clear_nicknames_table()
+        await self.nicknames_dao.clear_nicknames_table()

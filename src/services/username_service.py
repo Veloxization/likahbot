@@ -25,48 +25,48 @@ class UsernameService:
             return None
         return UsernameEntity(row["id"], row["user_id"], row["username"], row["time"])
 
-    def find_username(self, username: str):
+    async def find_username(self, username: str):
         """Find the instances of a given username
         Args:
             username: The username to find
         Returns: A list of username entities"""
 
-        rows = self.usernames_dao.find_username(username)
+        rows = await self.usernames_dao.find_username(username)
         return [self._convert_to_entity(row) for row in rows]
 
-    def find_user_usernames(self, user_id: int):
+    async def find_user_usernames(self, user_id: int):
         """Find all usernames for a given user
         Args:
             user_id: The Discord ID of the user whose previous usernames to find
         Returns: A list of username entities"""
 
-        rows = self.usernames_dao.find_user_usernames(user_id)
+        rows = await self.usernames_dao.find_user_usernames(user_id)
         return [self._convert_to_entity(row) for row in rows]
 
-    def add_username(self, username: str, user_id: int, username_limit: int = 5):
+    async def add_username(self, username: str, user_id: int, username_limit: int = 5):
         """Add a new username. If more than limit names exist already, the oldest are deleted.
         Args:
             username: The username to add
             user_id: The Discord ID of the user this username is associated with
             username_limit: How many usernames for one user are allowed to be saved at a time"""
 
-        self.usernames_dao.add_username(username, user_id, username_limit)
+        await self.usernames_dao.add_username(username, user_id, username_limit)
 
-    def delete_username(self, username_id: int):
+    async def delete_username(self, username_id: int):
         """Delete a username record
         Args:
             username_id: The database ID for the username to delete"""
 
-        self.usernames_dao.delete_username(username_id)
+        await self.usernames_dao.delete_username(username_id)
 
-    def delete_user_usernames(self, user_id: int):
+    async def delete_user_usernames(self, user_id: int):
         """Delete all username records associated with a specific user
         Args:
             user_id: The Discord ID for the user whose username history to delete"""
 
-        self.usernames_dao.delete_user_usernames(user_id)
+        await self.usernames_dao.delete_user_usernames(user_id)
 
-    def clear_usernames(self):
+    async def clear_usernames(self):
         """Delete every single username record"""
 
-        self.usernames_dao.clear_usernames_table()
+        await self.usernames_dao.clear_usernames_table()

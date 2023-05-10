@@ -15,60 +15,61 @@ class GuildSettingsDAO:
         self.db_connection = DBConnection(db_address)
         self.settings_dao = SettingsDAO(db_address)
 
-    def get_guild_setting_value_by_id(self, guild_setting_id: int):
+    async def get_guild_setting_value_by_id(self, guild_setting_id: int):
         """Get a guild setting by its database ID
         Args:
             guild_setting_id: The database ID of the guild setting
         Returns: A Row object containing the guild setting status, None if not found"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "SELECT * FROM guild_settings WHERE id=?"
-        cursor.execute(sql, (guild_setting_id,))
-        row = cursor.fetchone()
-        self.db_connection.close_connection(connection)
+        await cursor.execute(sql, (guild_setting_id,))
+        row = await cursor.fetchone()
+        await self.db_connection.close_connection(connection)
         return row
 
-    def get_guild_setting_value_by_name(self, guild_id: int, setting_name: str):
+    async def get_guild_setting_value_by_name(self, guild_id: int, setting_name: str):
         """Get a guild setting by its name
         Args:
             guild_id: The Discord ID of the guild whose setting to get
             setting_name: The name of the setting to get
         Returns: A Row object containing the setting status, or None if not found"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "SELECT gs.id, gs.guild_id, gs.setting_id, gs.setting_value "\
               "FROM guild_settings AS gs "\
               "LEFT JOIN settings AS s ON setting_id=s.id WHERE guild_id=? AND s.name=?"
-        cursor.execute(sql, (guild_id, setting_name))
-        row = cursor.fetchone()
+        await cursor.execute(sql, (guild_id, setting_name))
+        row = await cursor.fetchone()
         if not row:
             sql = "SELECT NULL as id, ? AS guild_id, id AS setting_id, setting_value "\
                   "FROM settings WHERE name=?;"
-            cursor.execute(sql, (guild_id, setting_name))
-            row = cursor.fetchone()
-        self.db_connection.close_connection(connection)
+            await cursor.execute(sql, (guild_id, setting_name))
+            row = await cursor.fetchone()
+        await self.db_connection.close_connection(connection)
         return row
 
-    def get_guild_setting_value_by_setting_id(self, guild_id: int, setting_id: int):
+    async def get_guild_setting_value_by_setting_id(self, guild_id: int, setting_id: int):
         """Get a guild setting by the setting ID associated with it
         Args:
             guild_id: The Discord ID of the guild whose setting to get
             setting_id: The database ID of the setting to get (from the settings table)
         Returns: A Row object containing the setting status, None if not found"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "SELECT * FROM guild_settings WHERE guild_id=? AND setting_id=?"
-        cursor.execute(sql, (guild_id, setting_id))
-        row = cursor.fetchone()
+        await cursor.execute(sql, (guild_id, setting_id))
+        row = await cursor.fetchone()
         if not row:
             sql = "SELECT NULL AS id, ? AS guild_id, id AS setting_id, setting_value "\
                   "FROM settings WHERE id=?"
-            cursor.execute(sql, (guild_id, setting_id))
-            row = cursor.fetchone()
-        self.db_connection.close_connection(connection)
+            await cursor.execute(sql, (guild_id, setting_id))
+            row = await cursor.fetchone()
+        await self.db_connection.close_connection(connection)
         return row
 
-    def add_guild_setting_by_setting_id(self, guild_id: int, setting_id: int, setting_value: str):
+    async def add_guild_setting_by_setting_id(self, guild_id: int, setting_id: int,
+                                              setting_value: str):
         """Add a new guild setting by a setting ID
         Args:
             guild_id: The Discord ID of the guild to add the setting to
@@ -76,15 +77,15 @@ class GuildSettingsDAO:
             setting_value: The value to set the setting to
         Returns: A Row object containing the ID of the newly created guild setting"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "INSERT INTO guild_settings (guild_id, setting_id, setting_value) VALUES (?, ?, ?) "\
               "RETURNING id"
-        cursor.execute(sql, (guild_id, setting_id, setting_value))
-        row = cursor.fetchone()
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (guild_id, setting_id, setting_value))
+        row = await cursor.fetchone()
+        await self.db_connection.commit_and_close(connection)
         return row
 
-    def add_guild_setting_by_setting_name(self,
+    async def add_guild_setting_by_setting_name(self,
         guild_id: int,
         setting_name: str,
         setting_value: str):
@@ -95,38 +96,39 @@ class GuildSettingsDAO:
             setting_value: The value to set the setting to
         Returns: A Row object containing the ID of the newly created guild setting"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "INSERT INTO guild_settings (guild_id, setting_id, setting_value) "\
               "VALUES (?, (SELECT id FROM settings WHERE name=?), ?) RETURNING id"
-        cursor.execute(sql, (guild_id, setting_name, setting_value))
-        row = cursor.fetchone()
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (guild_id, setting_name, setting_value))
+        row = await cursor.fetchone()
+        await self.db_connection.commit_and_close(connection)
         return row
 
-    def edit_guild_setting_by_id(self, guild_setting_id: int, setting_value: str):
+    async def edit_guild_setting_by_id(self, guild_setting_id: int, setting_value: str):
         """Edit a guild setting by its ID
         Args:
             guild_setting_id: The database ID of the guild setting to edit
             setting_value: The value to change to"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "UPDATE guild_settings SET setting_value=? WHERE id=?"
-        cursor.execute(sql, (setting_value, guild_setting_id))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (setting_value, guild_setting_id))
+        await self.db_connection.commit_and_close(connection)
 
-    def edit_guild_setting_by_setting_id(self, guild_id: int, setting_id: int, setting_value: str):
+    async def edit_guild_setting_by_setting_id(self, guild_id: int, setting_id: int,
+                                               setting_value: str):
         """Edit a guild setting by the setting's ID
         Args:
             guild_id: The Discord ID of the guild whose setting to edit
             setting_id: The database ID of the setting from the settings table
             setting_value: The value to change to"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "UPDATE guild_settings SET setting_value=? WHERE guild_id=? AND setting_id=?"
-        cursor.execute(sql, (setting_value, guild_id, setting_id))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (setting_value, guild_id, setting_id))
+        await self.db_connection.commit_and_close(connection)
 
-    def edit_guild_setting_by_setting_name(self,
+    async def edit_guild_setting_by_setting_name(self,
         guild_id: int,
         setting_name: str,
         setting_value: str):
@@ -136,60 +138,60 @@ class GuildSettingsDAO:
             setting_name: The name of the setting
             setting_value: The value to change to"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "UPDATE guild_settings SET setting_value=? WHERE guild_id=? "\
               "AND setting_id=(SELECT id FROM settings WHERE name=?)"
-        cursor.execute(sql, (setting_value, guild_id, setting_name))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (setting_value, guild_id, setting_name))
+        await self.db_connection.commit_and_close(connection)
 
-    def delete_guild_setting_by_id(self, guild_setting_id: int):
+    async def delete_guild_setting_by_id(self, guild_setting_id: int):
         """Delete a guild setting by its ID
         Args:
             guild_setting_id: The database ID of the guild setting to delete"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM guild_settings WHERE id=?"
-        cursor.execute(sql, (guild_setting_id,))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (guild_setting_id,))
+        await self.db_connection.commit_and_close(connection)
 
-    def delete_guild_setting_by_setting_id(self, guild_id: int, setting_id: int):
+    async def delete_guild_setting_by_setting_id(self, guild_id: int, setting_id: int):
         """Delete a guild setting by the setting's ID
         Args:
             guild_id: The Discord ID of the guild whose setting to delete
             setting_id: The database ID of the setting corresponding to the guild setting to
                         delete"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM guild_settings WHERE guild_id=? AND setting_id=?"
-        cursor.execute(sql, (guild_id, setting_id))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (guild_id, setting_id))
+        await self.db_connection.commit_and_close(connection)
 
-    def delete_guild_setting_by_setting_name(self, guild_id: int, setting_name: str):
+    async def delete_guild_setting_by_setting_name(self, guild_id: int, setting_name: str):
         """Delete a guild setting by the setting's name
         Args:
             guild_id: The Discord ID of the guild whose setting to delete
             setting_name: The name of the setting to delete"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM guild_settings WHERE guild_id=? "\
               "AND setting_id=(SELECT id FROM settings WHERE name=?)"
-        cursor.execute(sql, (guild_id, setting_name))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (guild_id, setting_name))
+        await self.db_connection.commit_and_close(connection)
 
-    def delete_guild_settings(self, guild_id: int):
+    async def delete_guild_settings(self, guild_id: int):
         """Delete all settings associated with a given guild
         Args:
             guild_id: The Discord ID of the guild whose settings to delete"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM guild_settings WHERE guild_id=?"
-        cursor.execute(sql, (guild_id,))
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql, (guild_id,))
+        await self.db_connection.commit_and_close(connection)
 
-    def clear_guild_settings_table(self):
+    async def clear_guild_settings_table(self):
         """Delete every single guild setting from the table"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM guild_settings"
-        cursor.execute(sql)
-        self.db_connection.commit_and_close(connection)
+        await cursor.execute(sql)
+        await self.db_connection.commit_and_close(connection)

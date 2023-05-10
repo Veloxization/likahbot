@@ -62,8 +62,8 @@ class ModCommands(commands.Cog):
                                                        f"Provided reason: `{reason}`")
         await ctx.guild.ban(member, reason=reason, delete_message_days=delete_message_days)
         await ctx.respond(f"**{member}** was banned from **{ctx.guild.name}**. {send_success}")
-        self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
-                                               punishment_type="ban", reason=reason)
+        await self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
+                                                     punishment_type="ban", reason=reason)
 
     @ban.error
     async def ban_error(self, ctx: discord.ApplicationContext, error):
@@ -98,8 +98,8 @@ class ModCommands(commands.Cog):
         except discord.NotFound:
             ban = None
     
-        if not ban and self.temp_ban_service.get_temp_ban(member.id, ctx.guild.id):
-            self.temp_ban_service.delete_temp_ban(member.id, ctx.guild.id)
+        if not ban and await self.temp_ban_service.get_temp_ban(member.id, ctx.guild.id):
+            await self.temp_ban_service.delete_temp_ban(member.id, ctx.guild.id)
 
         async def modify_button_callback(interaction: discord.Interaction):
             if interaction.user != ctx.author:
@@ -109,11 +109,11 @@ class ModCommands(commands.Cog):
             expiration_date = datetime.utcnow() + timedelta(days=days)
             expiration_date_str = time_converter.datetime_to_string(expiration_date)
             expiration_date_epoch = epoch_converter.convert_to_epoch(expiration_date)
-            temp_ban = self.temp_ban_service.get_temp_ban(member.id, ctx.guild.id)
+            temp_ban = await self.temp_ban_service.get_temp_ban(member.id, ctx.guild.id)
             if not temp_ban:
-                self.temp_ban_service.create_temp_ban(member.id, ctx.guild.id, expiration_date_str)
+                await self.temp_ban_service.create_temp_ban(member.id, ctx.guild.id, expiration_date_str)
             else:
-                self.temp_ban_service.edit_temp_ban(member.id, ctx.guild.id, expiration_date_str)
+                await self.temp_ban_service.edit_temp_ban(member.id, ctx.guild.id, expiration_date_str)
             await interaction.response.edit_message(content=f"**{member}**'s ban was edited. " \
                                                             f"The ban will expire <t:{expiration_date_epoch}:D>.",
                                                     view=None)
@@ -124,7 +124,7 @@ class ModCommands(commands.Cog):
                                                         ephemeral=True)
                 return
             await ctx.guild.unban(member, reason=reason)
-            self.temp_ban_service.delete_temp_ban(member.id, ctx.guild.id)
+            await self.temp_ban_service.delete_temp_ban(member.id, ctx.guild.id)
             await interaction.response.edit_message(content=f"**{member}** has been unbanned. " \
                                                             "Consider using the `unban` command next time.",
                                                     view=None)
@@ -146,7 +146,7 @@ class ModCommands(commands.Cog):
             button_cancel = Button(label="Cancel", style=discord.ButtonStyle.gray)
             button_cancel.callback = cancel_button_callback
             view = View(button_modify, button_unban, button_cancel)
-            temp_ban = self.temp_ban_service.get_temp_ban(member.id, ctx.guild.id)
+            temp_ban = await self.temp_ban_service.get_temp_ban(member.id, ctx.guild.id)
             if temp_ban:
                 unban_datetime = time_converter.string_to_datetime(temp_ban.unban_date)
                 expiration_epoch = epoch_converter.convert_to_epoch(unban_datetime)
@@ -178,9 +178,9 @@ class ModCommands(commands.Cog):
                                                        f"Your ban will expire on <t:{ban_expiration_epoch}:D>\n" \
                                                        f"Provided reason: `{reason}`")
         await ctx.guild.ban(member, reason=reason, delete_message_days=delete_message_days)
-        self.temp_ban_service.create_temp_ban(member.id, ctx.guild.id, db_ban_expiration)
-        self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
-                                               punishment_type="temporary ban", reason=reason)
+        await self.temp_ban_service.create_temp_ban(member.id, ctx.guild.id, db_ban_expiration)
+        await self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
+                                                     punishment_type="temporary ban", reason=reason)
         await ctx.respond(f"**{member}** was temporarily banned from **{ctx.guild.name}**. " \
                           f"Ban expires <t:{ban_expiration_epoch}:D>. {send_success}")
 
@@ -243,8 +243,8 @@ class ModCommands(commands.Cog):
         await member.kick(reason=reason)
         await ctx.respond(f"**{member}** was kicked from **{ctx.guild.name}**. {send_success}")
         if log_as_punishment:
-            self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
-                                                   punishment_type="kick", reason=reason)
+            await self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
+                                                         punishment_type="kick", reason=reason)
 
     @kick.error
     async def kick_error(self, ctx: discord.ApplicationContext, error):
@@ -267,8 +267,8 @@ class ModCommands(commands.Cog):
             await ctx.respond("You cannot send a warning. Insufficient role hierarchy.",
                               ephemeral=True)
             return
-        punishment = self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
-                                                            punishment_type="warn", reason=reason)
+        punishment = await self.punishment_service.add_punishment(member.id, ctx.author.id, ctx.guild.id,
+                                                                  punishment_type="warn", reason=reason)
         try:
             await member.send(f"You have been issued a warning on **{ctx.guild.name}**\n" \
                               f"Provided reason:\n`{reason}`")
@@ -334,10 +334,10 @@ class ModCommands(commands.Cog):
             await interaction.response.edit_message(content=f"{member}'s timeout modified with new parameters. {success}",
                                                     view=None)
             if log_as_punishment:
-                self.punishment_service.add_punishment(member.id, interaction.user.id,
-                                                       interaction.guild.id,
-                                                       punishment_type="timeout",
-                                                       reason=f"Timeout modified with reason: {reason}")
+                await self.punishment_service.add_punishment(member.id, interaction.user.id,
+                                                             interaction.guild.id,
+                                                             punishment_type="timeout",
+                                                             reason=f"Timeout modified with reason: {reason}")
 
         async def end_timeout_button_callback(interaction: discord.Interaction):
             if interaction.user != ctx.author:
@@ -378,10 +378,10 @@ class ModCommands(commands.Cog):
                                                       f"Provided reason: `{reason}`")
             await ctx.respond(f"**{member.name}** was timed out. {success}")
             if log_as_punishment:
-                self.punishment_service.add_punishment(member.id, ctx.author.id,
-                                                       ctx.guild.id,
-                                                       punishment_type="timeout",
-                                                       reason=reason)
+                await self.punishment_service.add_punishment(member.id, ctx.author.id,
+                                                             ctx.guild.id,
+                                                             punishment_type="timeout",
+                                                             reason=reason)
 
     @timeout.error
     async def timeout_error(self, ctx: discord.ApplicationContext, error):
@@ -438,7 +438,7 @@ class ModCommands(commands.Cog):
         user: discord.Option(discord.User, "The user whose punishment history to view")):
         """List a user's punishments"""
 
-        punishments = self.punishment_service.get_user_punishments(user.id, ctx.guild.id)
+        punishments = await self.punishment_service.get_user_punishments(user.id, ctx.guild.id)
         punishment_fields = []
         time_converter = TimeStringConverter()
         epoch_converter = EpochConverter()
@@ -476,7 +476,7 @@ class ModCommands(commands.Cog):
         user: discord.Option(discord.User, "The user whose deleted punishments to view")):
         """List a user's deleted punishments"""
 
-        punishments = self.punishment_service.get_deleted_punishments(user.id, ctx.guild.id)
+        punishments = await self.punishment_service.get_deleted_punishments(user.id, ctx.guild.id)
         punishment_fields = []
         time_converter = TimeStringConverter()
         epoch_converter = EpochConverter()
@@ -515,7 +515,7 @@ class ModCommands(commands.Cog):
         user: discord.Option(discord.User, "The user whose punishments to view")):
         """List a user's punishments regardless of deletion status"""
 
-        punishments = self.punishment_service.get_all_user_punishments(user.id, ctx.guild.id)
+        punishments = await self.punishment_service.get_all_user_punishments(user.id, ctx.guild.id)
         punishment_fields = []
         time_converter = TimeStringConverter()
         epoch_converter = EpochConverter()
@@ -560,7 +560,7 @@ class ModCommands(commands.Cog):
         new_reason: discord.Option(str, "The new reason for this punishment")):
         """Edit a specific punishment"""
 
-        punishment = self.punishment_service.get_punishment_by_id(punishment_id)
+        punishment = await self.punishment_service.get_punishment_by_id(punishment_id)
 
         if not punishment:
             await ctx.respond(f"No punishment with ID {punishment_id} found.\n" \
@@ -573,7 +573,7 @@ class ModCommands(commands.Cog):
                               ephemeral=True)
             return
 
-        self.punishment_service.edit_punishment_reason(punishment_id, new_reason)
+        await self.punishment_service.edit_punishment_reason(punishment_id, new_reason)
         time_converter = TimeStringConverter()
         punishment_timestamp = time_converter.string_to_datetime(punishment.time)
         embed = discord.Embed(title=f"Punishment {punishment_id}", timestamp=punishment_timestamp,
@@ -607,7 +607,7 @@ class ModCommands(commands.Cog):
         punishment_id: discord.Option(int, "The ID of the punishment to delete")):
         """Delete a specific punishment"""
 
-        punishment = self.punishment_service.get_punishment_by_id(punishment_id)
+        punishment = await self.punishment_service.get_punishment_by_id(punishment_id)
 
         if not punishment:
             await ctx.respond(f"No punishment with ID {punishment_id} found.\n" \
@@ -625,7 +625,7 @@ class ModCommands(commands.Cog):
                               ephemeral=True)
             return
 
-        self.punishment_service.mark_deleted(punishment_id)
+        await self.punishment_service.mark_deleted(punishment_id)
         time_converter = TimeStringConverter()
         punishment_timestamp = time_converter.string_to_datetime(punishment.time)
         embed = discord.Embed(title=f"Punishment {punishment_id}", timestamp=punishment_timestamp,
@@ -658,7 +658,7 @@ class ModCommands(commands.Cog):
         punishment_id: discord.Option(int, "The ID of the punishment to permanently delete")):
         """Permanently delete a punishment from a user"""
 
-        punishment = self.punishment_service.get_punishment_by_id(punishment_id)
+        punishment = await self.punishment_service.get_punishment_by_id(punishment_id)
 
         if not punishment:
             await ctx.respond(f"No punishment with ID {punishment_id} found.\n" \
@@ -693,7 +693,7 @@ class ModCommands(commands.Cog):
                 return
             embed.description = f"Punishment ID {punishment_id} has been permanently " \
                                 "deleted."
-            self.punishment_service.delete_punishment(punishment_id)
+            await self.punishment_service.delete_punishment(punishment_id)
             await interaction.response.edit_message(content=None, view=None, embed=embed)
         async def cancel_button_callback(interaction: discord.Interaction):
             if interaction.user != ctx.author:
@@ -730,7 +730,7 @@ class ModCommands(commands.Cog):
         punishment_id: discord.Option(int, "The ID of the punishment to restore")):
         """Restore a deleted punishment"""
 
-        punishment = self.punishment_service.get_punishment_by_id(punishment_id)
+        punishment = await self.punishment_service.get_punishment_by_id(punishment_id)
 
         if not punishment:
             await ctx.respond(f"No punishment with ID {punishment_id} found.\n" \
@@ -749,7 +749,7 @@ class ModCommands(commands.Cog):
                               ephemeral=True)
             return
 
-        self.punishment_service.unmark_deleted(punishment_id)
+        await self.punishment_service.unmark_deleted(punishment_id)
         time_converter = TimeStringConverter()
         punishment_timestamp = time_converter.string_to_datetime(punishment.time)
         embed = discord.Embed(title=f"Punishment {punishment_id}", timestamp=punishment_timestamp,
