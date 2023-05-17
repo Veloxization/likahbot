@@ -1,4 +1,4 @@
-PRAGMA user_version = 17;
+PRAGMA user_version = 18;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -216,6 +216,14 @@ CREATE TABLE IF NOT EXISTS guild_settings (
     FOREIGN KEY (setting_id) REFERENCES settings (id) ON DELETE CASCADE,
     CONSTRAINT unq UNIQUE (guild_id, setting_id)
 );
+CREATE TRIGGER update_price_currency_to_null
+BEFORE DELETE ON currencies
+FOR EACH ROW
+BEGIN
+    UPDATE store_products
+    SET price_currency_id = NULL
+    WHERE price_currency_id = OLD.id;
+END;
 DELETE FROM settings;
 INSERT INTO settings (name, setting_value) VALUES ('log_edited_messages', '1');
 INSERT INTO settings (name, setting_value) VALUES ('log_deleted_messages', '1');
