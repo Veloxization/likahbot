@@ -1,4 +1,4 @@
-PRAGMA user_version = 16;
+PRAGMA user_version = 17;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS verification_answers (
     id INTEGER PRIMARY KEY,
     question_id INTEGER NOT NULL,
     answer TEXT,
-    FOREIGN KEY (question_id) REFERENCES verification_questions (id)
+    FOREIGN KEY (question_id) REFERENCES verification_questions (id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS experience (
     id INTEGER PRIMARY KEY,
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS guild_roles (
     id INTEGER PRIMARY KEY,
     role_id INTEGER NOT NULL,
     category_id INTEGER NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES guild_role_categories (id)
+    FOREIGN KEY (category_id) REFERENCES guild_role_categories (id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS level_reward_roles (
     id INTEGER PRIMARY KEY,
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS unverified_reminder_history (
     id INTEGER PRIMARY KEY,
     reminder_message_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    FOREIGN KEY (reminder_message_id) REFERENCES unverified_reminder_messages (id)
+    FOREIGN KEY (reminder_message_id) REFERENCES unverified_reminder_messages (id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS text_contents (
     id INTEGER PRIMARY KEY,
@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS user_currencies (
     user_id INTEGER NOT NULL,
     currency_id INTEGER NOT NULL,
     amount INTEGER,
-    FOREIGN KEY (currency_id) REFERENCES currencies (id)
+    FOREIGN KEY (currency_id) REFERENCES currencies (id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS products (
     id INTEGER PRIMARY KEY,
@@ -195,13 +195,13 @@ CREATE TABLE IF NOT EXISTS store_products (
     price_currency_id INTEGER NOT NULL,
     price INTEGER,
     FOREIGN KEY (price_currency_id) REFERENCES currencies (id),
-    FOREIGN KEY (product_id) REFERENCES products (id)
+    FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS user_products (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
-    FOREIGN KEY (product_id) REFERENCES products (id)
+    FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS settings (
     id INTEGER PRIMARY KEY,
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS guild_settings (
     guild_id INTEGER NOT NULL,
     setting_id INTEGER NOT NULL,
     setting_value TEXT NOT NULL,
-    FOREIGN KEY (setting_id) REFERENCES settings (id),
+    FOREIGN KEY (setting_id) REFERENCES settings (id) ON DELETE CASCADE,
     CONSTRAINT unq UNIQUE (guild_id, setting_id)
 );
 DELETE FROM settings;
