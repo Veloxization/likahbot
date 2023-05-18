@@ -1,4 +1,4 @@
-PRAGMA user_version = 18;
+PRAGMA user_version = 19;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS guild_settings (
     FOREIGN KEY (setting_id) REFERENCES settings (id) ON DELETE CASCADE,
     CONSTRAINT unq UNIQUE (guild_id, setting_id)
 );
-CREATE TRIGGER update_price_currency_to_null
+CREATE TRIGGER IF NOT EXISTS update_price_currency_to_null
 BEFORE DELETE ON currencies
 FOR EACH ROW
 BEGIN
