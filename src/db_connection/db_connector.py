@@ -29,7 +29,9 @@ class DBConnection:
         if retries > 10:
             raise sqlite3.DatabaseError("Database connection failed")
         connection.row_factory = sqlite3.Row
-        return connection, await connection.cursor()
+        cursor = await connection.cursor()
+        await cursor.execute("PRAGMA foreign_keys = ON;")
+        return connection, cursor
 
     async def close_connection(self, connection: sqlite3.Connection):
         """Close the connection to a database without commiting changes
