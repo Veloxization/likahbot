@@ -119,8 +119,8 @@ class UserRemindersDAO:
             guild_id: The Discord ID of the guild where the reminders are"""
 
         connection, cursor = await self.db_connection.connect_to_db()
-        sql = "DELETE FROM user_reminders AS ur LEFT JOIN reminders AS r ON ur.reminder_id=r.id " \
-              "WHERE ur.user_id=? AND r.creator_guild_id=?"
+        sql = "DELETE FROM user_reminders WHERE user_id=? " \
+              "AND reminder_id IN (SELECT id FROM reminders WHERE creator_guild_id=?)"
         await cursor.execute(sql, (user_id, guild_id))
         await self.db_connection.commit_and_close(connection)
 
