@@ -75,7 +75,8 @@ class UserReminderService:
         Returns: A UserReminderEntity object containing the database ID of the newly created
                  user reminder"""
 
-        await self.user_reminders_dao.create_user_reminder(user_id, reminder_id)
+        row = await self.user_reminders_dao.create_user_reminder(user_id, reminder_id)
+        return row["id"]
 
     async def delete_user_reminders_of_reminder_id(self, reminder_id: int):
         """Delete all user reminders linked to a specific reminder
