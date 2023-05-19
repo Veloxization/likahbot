@@ -10,11 +10,11 @@ class TestGuildSettingService(unittest.TestCase):
         os.popen(f"sqlite3 {db_address} < database/schema.sql")
         self.guild_setting_service = GuildSettingService(db_address)
         self.setting_service = SettingService(db_address)
+        asyncio.run(self.setting_service.clear_settings())
         self.setting_id = asyncio.run(self.setting_service.add_setting("test", "testing"))
         self.setting = asyncio.run(self.setting_service.get_setting_default_value_by_id(self.setting_id))
 
     def tearDown(self):
-        asyncio.run(self.guild_setting_service.clear_guild_settings())
         asyncio.run(self.setting_service.clear_settings())
 
     def test_guild_setting_is_found_correctly_by_id(self):

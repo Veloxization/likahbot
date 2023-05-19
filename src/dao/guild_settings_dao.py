@@ -42,8 +42,8 @@ class GuildSettingsDAO:
         await cursor.execute(sql, (guild_id, setting_name))
         row = await cursor.fetchone()
         if not row:
-            sql = "SELECT NULL as id, ? AS guild_id, id AS setting_id, setting_value "\
-                  "FROM settings WHERE name=?;"
+            sql = "SELECT NULL as id, ? AS guild_id, settings.id AS setting_id, setting_value "\
+                  "FROM settings WHERE name=?"
             await cursor.execute(sql, (guild_id, setting_name))
             row = await cursor.fetchone()
         await self.db_connection.close_connection(connection)
@@ -61,8 +61,8 @@ class GuildSettingsDAO:
         await cursor.execute(sql, (guild_id, setting_id))
         row = await cursor.fetchone()
         if not row:
-            sql = "SELECT NULL AS id, ? AS guild_id, id AS setting_id, setting_value "\
-                  "FROM settings WHERE id=?"
+            sql = "SELECT NULL AS id, ? AS guild_id, settings.id AS setting_id, setting_value "\
+                  "FROM settings WHERE settings.id=?"
             await cursor.execute(sql, (guild_id, setting_id))
             row = await cursor.fetchone()
         await self.db_connection.close_connection(connection)

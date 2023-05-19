@@ -15,7 +15,6 @@ class TestGuildSettingsDAO(unittest.TestCase):
         self.setting_id2 = asyncio.run(self.settings_dao.add_setting("testing", "test0"))["id"]
 
     def tearDown(self):
-        asyncio.run(self.guild_settings_dao.clear_guild_settings_table())
         asyncio.run(self.settings_dao.clear_settings_table())
 
     def test_guild_setting_is_added_correctly_by_setting_id(self):
