@@ -43,6 +43,14 @@ Do note that the bot is in a very very early stage of development currently and 
 4. Delete the original token file
 5. To run the bot, use `./run.sh` (make sure you give it permission to execute)
   - Type in the password if asked
+## Updating the database
+If your bot uses an old version of the database, some features may not work correctly, or you may experience bugs that later versions of the database fixed.
+
+To update your database to the latest version, change `DB_ADDR` near the top of [db_updater.py](https://github.com/Veloxization/likahbot/blob/main/database/db_updater.py) to point to your database file and then run this in the root directory: `python3 database/db_updater.py`
+
+This will update your database to the latest version.
+
+Do note that the updater is currently untested in practical applications of the bot so it is recommended to make a backup of your database before running the updater to prevent any loss of data. If you encounter issues, make sure to [create an issue](https://github.com/Veloxization/likahbot/issues/new/choose).
 ## Planned features
 * Dashboard
 * Automod
