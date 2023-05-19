@@ -1,4 +1,4 @@
-PRAGMA user_version = 19;
+PRAGMA user_version = 20;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -68,7 +68,8 @@ CREATE TABLE IF NOT EXISTS user_reminders (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
     reminder_id INTEGER NOT NULL,
-    FOREIGN KEY (reminder_id) REFERENCES reminders (id) ON DELETE CASCADE
+    FOREIGN KEY (reminder_id) REFERENCES reminders (id) ON DELETE CASCADE,
+    CONSTRAINT unq UNIQUE (user_id, reminder_id)
 );
 CREATE TABLE IF NOT EXISTS time_zones (
     id INTEGER PRIMARY KEY,

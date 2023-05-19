@@ -505,6 +505,31 @@ def updater(cursor, current_version):
         # Set the new user_version
         cursor.execute("PRAGMA user_version = 19")
         print("Updated database to version 19")
+        return False
+    elif current_version == 19:
+        cursor.execute("ALTER TABLE user_reminders RENAME TO user_reminders_backup")
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS user_reminders (
+            id INTEGER PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            reminder_id INTEGER NOT NULL,
+            FOREIGN KEY (reminder_id) REFERENCES reminders (id) ON DELETE CASCADE,
+            CONSTRAINT unq UNIQUE (user_id, reminder_id)
+        );
+        """)
+        cursor.execute("""
+            INSERT INTO user_reminders (
+                id, user_id, reminder_id
+            )
+            SELECT
+                id, user_id, reminder_id
+            FROM user_reminders_backup
+        """)
+        cursor.execute("DROP TABLE IF EXISTS user_reminders_backup")
+
+        # Set the new user_version
+        cursor.execute("PRAGMA user_version = 20")
+        print("Updated database to version 20")
         return True
     else:
         print("No new updates found for your database version")
