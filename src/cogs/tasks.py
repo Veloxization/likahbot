@@ -26,7 +26,6 @@ class Tasks(commands.Cog):
     async def unban_expired_temp_bans(self):
         """Checks the temp ban table for expired bans and automatically unbans applicable users"""
 
-        print("Checking for expired bans...")
         temp_bans = await self.temp_ban_service.get_expired_temp_bans()
         for ban in temp_bans:
             guild = await ban.get_discord_guild(self.bot)
