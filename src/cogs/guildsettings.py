@@ -15,6 +15,8 @@ class GuildSettings(commands.Cog):
         utility_channel_service: The service used to apply settings in utility channels"""
 
     settings_group = discord.SlashCommandGroup(name="settings", description="Commands for setting up the bot for the guild.")
+    utility_channel_group = settings_group.create_subgroup(name="utilitychannel",
+                                                           description="Settings related to guild utility channels")
 
     def __init__(self, bot: discord.Bot, db_address):
         """Activate the guild settings cog
@@ -26,36 +28,46 @@ class GuildSettings(commands.Cog):
         self.utility_channel_service = UtilityChannelService(db_address)
 
 
-    @settings_group.command(name="addchannelutility",
-                            description="Add a new utility for a channel in the guild",
-                            guild_ids=DEBUG_GUILDS)
+    @utility_channel_group.command(name="add",
+                                   description="Add a new utility for a channel in the guild",
+                                   guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(administrator=True)
     async def add_channel_utility(self,
         ctx: discord.ApplicationContext,
         utility: discord.Option(str,
                                 "The utility to add for a channel",
-                                choices=["log", "rules", "verification"]),
+                                choices=["log", "message log", "moderation log", "member log",
+                                         "server log", "rules", "verification"]),
         channel: discord.Option(discord.TextChannel, "The channel to apply the utility to")):
         """Assign a channel for a specified utility"""
 
         await self.utility_channel_service.create_guild_utility_channel(channel.id, ctx.guild.id, utility)
         if utility == "log":
-            await ctx.respond(f"{channel.mention} is now a log channel. Future logs will be posted there.")
+            await ctx.respond(f"{channel.mention} is now a log channel. All future logs will be posted there.")
+        if utility == "message log":
+            await ctx.respond(f"{channel.mention} is now a message log channel. Message edits, deletions and reactions will be posted there.")
+        if utility == "moderation log":
+            await ctx.respond(f"{channel.mention} is now a moderation log channel. Bans, unbans, timeouts and warnings will be posted there.")
+        if utility == "member log":
+            await ctx.respond(f"{channel.mention} is now a member log channel. Changes to membership and members' names and avatars will be posted there.")
+        if utility == "guild log":
+            await ctx.respond(f"{channel.mention} is now a guild log channel. Changes to the guild's channels, roles etc. will be posted there.")
         if utility == "rules":
             await ctx.respond(f"{channel.mention} is now a rules channel. If you've specified any rules, they will be posted and maintained there.")
         if utility == "verification":
             await ctx.respond(f"{channel.mention} is now a verification channel. New members can verify through this channel from now on.")
 
 
-    @settings_group.command(name="removechannelutility",
-                            description="Remove an established utility from a channel",
-                            guild_ids=DEBUG_GUILDS)
+    @utility_channel_group.command(name="remove",
+                                   description="Remove an established utility from a channel",
+                                   guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(administrator=True)
     async def remove_channel_utility(self,
         ctx: discord.ApplicationContext,
         utility: discord.Option(str,
                                 "The utility to remove from the channel",
-                                choices=["log", "rules", "verification"]),
+                                choices=["log", "message log", "moderation log", "member log",
+                                         "server log", "rules", "verification"]),
         channel: discord.Option(discord.TextChannel, "The channel to remove the the utility from")):
         """Remove a utility from a certain channel"""
 
@@ -71,9 +83,9 @@ class GuildSettings(commands.Cog):
         await ctx.respond(f"{channel.mention} no longer has the utility `{utility}`.")
 
 
-    @settings_group.command(name="removeallchannelutilities",
-                            description="Remove all utilities from a single channel",
-                            guild_ids=DEBUG_GUILDS)
+    @utility_channel_group.command(name="removeallfromchannel",
+                                   description="Remove all utilities from a single channel",
+                                   guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(administrator=True)
     async def remove_all_channel_utilities(self,
         ctx: discord.ApplicationContext,
@@ -93,9 +105,9 @@ class GuildSettings(commands.Cog):
         await ctx.respond(f"{channel.mention} is no longer used as a utility channel.")
 
 
-    @settings_group.command(name="removeguildutilitychannels",
-                            description="Clear all channel utilities from the guild",
-                            guild_ids=DEBUG_GUILDS)
+    @utility_channel_group.command(name="removeallfromguild",
+                                   description="Clear all channel utilities from the guild",
+                                   guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(administrator=True)
     async def remove_guild_utility_channels(self,
         ctx: discord.ApplicationContext):
@@ -128,9 +140,9 @@ class GuildSettings(commands.Cog):
                           view=view)
 
 
-    @settings_group.command(name="listchannelutilities",
-                            description="List the channels used as utility channels",
-                            guild_ids=DEBUG_GUILDS)
+    @utility_channel_group.command(name="list",
+                                   description="List the channels used as utility channels",
+                                   guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(administrator=True)
     async def list_channel_utilities(self,
         ctx: discord.ApplicationContext,
