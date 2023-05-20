@@ -40,7 +40,7 @@ class UtilityChannelsDAO:
 
         connection, cursor = await self.db_connection.connect_to_db()
         sql = "SELECT * FROM utility_channels WHERE guild_id=? " \
-              "ORDER BY channel_id ASC, channel_purpose ASC"
+              "ORDER BY channel_purpose ASC, channel_id ASC"
         await cursor.execute(sql, (guild_id,))
         channels = await cursor.fetchall()
         await self.db_connection.close_connection(connection)
