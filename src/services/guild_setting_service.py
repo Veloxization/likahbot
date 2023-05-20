@@ -1,5 +1,6 @@
 """The classes and functions handling data access objects for the guild_settings table"""
 from dao.guild_settings_dao import GuildSettingsDAO
+from entities.setting_entity import SettingEntity
 from entities.guild_setting_entity import GuildSettingEntity
 
 class GuildSettingService:
@@ -22,7 +23,8 @@ class GuildSettingService:
 
         if not row:
             return None
-        return GuildSettingEntity(row["id"], row["guild_id"], row["setting_id"],
+        setting = SettingEntity(row["setting_id"], row["name"], row["setting_value"])
+        return GuildSettingEntity(row["id"], row["guild_id"], setting,
                                   row["setting_value"])
 
     async def get_guild_setting_value_by_id(self, guild_setting_id: int):

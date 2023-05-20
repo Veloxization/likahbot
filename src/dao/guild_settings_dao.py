@@ -22,7 +22,8 @@ class GuildSettingsDAO:
         Returns: A Row object containing the guild setting status, None if not found"""
 
         connection, cursor = await self.db_connection.connect_to_db()
-        sql = "SELECT * FROM guild_settings WHERE id=?"
+        sql = "SELECT gs.*, s.name FROM guild_settings AS gs "\
+              "LEFT JOIN settings AS s ON gs.setting_id = s.id WHERE gs.id=?"
         await cursor.execute(sql, (guild_setting_id,))
         row = await cursor.fetchone()
         await self.db_connection.close_connection(connection)
@@ -36,14 +37,13 @@ class GuildSettingsDAO:
         Returns: A Row object containing the setting status, or None if not found"""
 
         connection, cursor = await self.db_connection.connect_to_db()
-        sql = "SELECT gs.id, gs.guild_id, gs.setting_id, gs.setting_value "\
-              "FROM guild_settings AS gs "\
+        sql = "SELECT gs.*, s.name FROM guild_settings AS gs "\
               "LEFT JOIN settings AS s ON setting_id=s.id WHERE guild_id=? AND s.name=?"
         await cursor.execute(sql, (guild_id, setting_name))
         row = await cursor.fetchone()
         if not row:
-            sql = "SELECT NULL as id, ? AS guild_id, settings.id AS setting_id, setting_value "\
-                  "FROM settings WHERE name=?"
+            sql = "SELECT NULL as id, ? AS guild_id, s.id AS setting_id, setting_value, s.name "\
+                  "FROM settings AS s WHERE s.name=?"
             await cursor.execute(sql, (guild_id, setting_name))
             row = await cursor.fetchone()
         await self.db_connection.close_connection(connection)
@@ -57,12 +57,14 @@ class GuildSettingsDAO:
         Returns: A Row object containing the setting status, None if not found"""
 
         connection, cursor = await self.db_connection.connect_to_db()
-        sql = "SELECT * FROM guild_settings WHERE guild_id=? AND setting_id=?"
+        sql = "SELECT gs.*, s.name FROM guild_settings AS gs "\
+              "LEFT JOIN settings AS s ON gs.setting_id = s.id "\
+              "WHERE gs.guild_id=? AND gs.setting_id=?"
         await cursor.execute(sql, (guild_id, setting_id))
         row = await cursor.fetchone()
         if not row:
-            sql = "SELECT NULL AS id, ? AS guild_id, settings.id AS setting_id, setting_value "\
-                  "FROM settings WHERE settings.id=?"
+            sql = "SELECT NULL AS id, ? AS guild_id, s.id AS setting_id, setting_value, s.name "\
+                  "FROM settings AS s WHERE s.id=?"
             await cursor.execute(sql, (guild_id, setting_id))
             row = await cursor.fetchone()
         await self.db_connection.close_connection(connection)
