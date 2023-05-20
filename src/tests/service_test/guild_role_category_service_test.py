@@ -6,7 +6,7 @@ from services.guild_role_category_service import GuildRoleCategoryService
 class TestGuildRoleCategoryService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.guild_role_category_service = GuildRoleCategoryService(db_address)
 
     def tearDown(self):

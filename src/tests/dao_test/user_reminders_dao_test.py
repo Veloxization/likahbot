@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 class TestUserRemindersDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {self.db_addr} < database/test_schema.sql")
         self.reminders_dao = RemindersDAO(self.db_addr)
         self.user_reminders_dao = UserRemindersDAO(self.db_addr)
         self.date1 = datetime.utcnow() + timedelta(days=1)

@@ -6,7 +6,7 @@ from dao.guild_role_categories_dao import GuildRoleCategoriesDAO
 class TestGuildRoleCategoriesDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {self.db_addr} < database/test_schema.sql")
         self.guild_role_categories_dao = GuildRoleCategoriesDAO(self.db_addr)
 
     def tearDown(self):

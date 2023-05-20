@@ -6,7 +6,7 @@ from dao.utility_channels_dao import UtilityChannelsDAO
 class TestUtilityChannelsDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {self.db_addr} < database/test_schema.sql")
         self.utility_channels_dao = UtilityChannelsDAO(self.db_addr)
 
     def tearDown(self):

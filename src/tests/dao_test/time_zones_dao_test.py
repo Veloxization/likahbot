@@ -6,7 +6,7 @@ from dao.time_zones_dao import TimeZonesDAO
 class TestTimeZonesDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {self.db_addr} < database/test_schema.sql")
         self.time_zones_dao = TimeZonesDAO(self.db_addr)
 
     def tearDown(self):

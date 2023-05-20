@@ -6,7 +6,7 @@ from dao.unverified_reminder_messages_dao import UnverifiedReminderMessagesDAO
 class TestUnverifiedReminderMessagesDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {self.db_addr} < database/test_schema.sql")
         self.unverified_reminder_messages_dao = UnverifiedReminderMessagesDAO(self.db_addr)
 
     def tearDown(self):

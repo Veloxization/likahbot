@@ -6,7 +6,7 @@ from dao.punishments_dao import PunishmentsDAO
 class TestPunishmentsDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {self.db_addr} < database/test_schema.sql")
         self.punishments_dao = PunishmentsDAO(self.db_addr)
 
     def tearDown(self):

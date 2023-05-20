@@ -7,7 +7,7 @@ from services.guild_role_category_service import GuildRoleCategoryService
 class TestGuildRoleService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.guild_role_service = GuildRoleService(db_address)
         self.guild_role_category_service = GuildRoleCategoryService(db_address)
         asyncio.run(self.guild_role_category_service.add_guild_role_category(1234, "Test1"))

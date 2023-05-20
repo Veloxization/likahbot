@@ -6,7 +6,7 @@ from dao.verification_questions_dao import VerificationQuestionsDAO
 class TestVerificationQuestionsDAO(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.verification_questions_dao = VerificationQuestionsDAO(db_address)
 
     def tearDown(self):

@@ -6,7 +6,7 @@ from services.utility_channel_service import UtilityChannelService
 class TestUtilityChannelService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.utility_channel_service = UtilityChannelService(db_address)
 
     def tearDown(self):

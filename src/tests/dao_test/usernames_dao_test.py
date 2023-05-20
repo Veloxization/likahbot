@@ -6,7 +6,7 @@ from dao.usernames_dao import UsernamesDAO
 class TestUsernamesDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {self.db_addr} < database/test_schema.sql")
         self.usernames_dao = UsernamesDAO(self.db_addr)
 
     def tearDown(self):

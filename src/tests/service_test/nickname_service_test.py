@@ -6,7 +6,7 @@ from services.nickname_service import NicknameService
 class TestNicknameService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.nickname_service = NicknameService(db_address)
 
     def tearDown(self):

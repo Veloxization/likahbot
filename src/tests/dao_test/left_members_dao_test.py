@@ -6,7 +6,7 @@ from dao.left_members_dao import LeftMembersDAO
 class TestTextContentsDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {self.db_addr} < database/test_schema.sql")
         self.left_members_dao = LeftMembersDAO(self.db_addr)
 
     def tearDown(self):

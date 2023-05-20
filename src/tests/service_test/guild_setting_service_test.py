@@ -7,7 +7,7 @@ from services.guild_setting_service import GuildSettingService
 class TestGuildSettingService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.guild_setting_service = GuildSettingService(db_address)
         self.setting_service = SettingService(db_address)
         asyncio.run(self.setting_service.clear_settings())

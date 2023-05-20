@@ -7,7 +7,7 @@ from services.temp_ban_service import TempBanService
 class TestTempBanService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.temp_ban_service = TempBanService(db_address)
         self.expiration1 = datetime.utcnow() + timedelta(days=1)
         self.expiration2 = datetime.utcnow() + timedelta(days=-1)

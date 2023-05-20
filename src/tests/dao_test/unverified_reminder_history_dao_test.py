@@ -7,7 +7,7 @@ from dao.unverified_reminder_messages_dao import UnverifiedReminderMessagesDAO
 class TestUnverifiedReminderHistoryDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {self.db_addr} < database/test_schema.sql")
         self.unverified_reminder_history_dao = UnverifiedReminderHistoryDAO(self.db_addr)
         self.unverified_reminder_messages_dao = UnverifiedReminderMessagesDAO(self.db_addr)
         asyncio.run(self.unverified_reminder_messages_dao.add_guild_unverified_reminder_message(1234, "Test", 0))

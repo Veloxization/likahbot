@@ -6,7 +6,7 @@ from services.setting_service import SettingService
 class TestSettingService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.setting_service = SettingService(db_address)
         asyncio.run(self.setting_service.clear_settings())
 

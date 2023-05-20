@@ -6,7 +6,7 @@ from services.unverified_kick_rule_service import UnverifiedKickRuleService
 class TestUnverifiedKickRuleService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.unverified_kick_rule_service = UnverifiedKickRuleService(db_address)
 
     def tearDown(self):

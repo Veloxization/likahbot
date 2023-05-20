@@ -8,7 +8,7 @@ from services.user_reminder_service import UserReminderService
 class TestUserReminderService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.user_reminder_service = UserReminderService(db_address)
         self.reminder_service = ReminderService(db_address)
         self.date1 = datetime.utcnow() + timedelta(days=1)

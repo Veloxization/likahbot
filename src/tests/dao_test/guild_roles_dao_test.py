@@ -7,7 +7,7 @@ from dao.guild_role_categories_dao import GuildRoleCategoriesDAO
 class TestGuildRolesDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {self.db_addr} < database/test_schema.sql")
         self.guild_roles_dao = GuildRolesDAO(self.db_addr)
         self.guild_role_categories_dao = GuildRoleCategoriesDAO(self.db_addr)
         asyncio.run(self.guild_role_categories_dao.add_guild_role_category(1234, "TEST"))

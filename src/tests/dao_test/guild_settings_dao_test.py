@@ -7,7 +7,7 @@ from dao.settings_dao import SettingsDAO
 class TestGuildSettingsDAO(unittest.TestCase):
     def setUp(self):
         self.db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {self.db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {self.db_addr} < database/test_schema.sql")
         self.guild_settings_dao = GuildSettingsDAO(self.db_addr)
         self.settings_dao = SettingsDAO(self.db_addr)
         asyncio.run(self.settings_dao.clear_settings_table())

@@ -7,7 +7,7 @@ from dao.temp_bans_dao import TempBansDAO
 class TestTempBansDAO(unittest.TestCase):
     def setUp(self):
         db_addr = "database/test_db.db"
-        os.popen(f"sqlite3 {db_addr} < database/schema.sql")
+        os.popen(f"sqlite3 {db_addr} < database/test_schema.sql")
         self.temp_bans_dao = TempBansDAO(db_addr)
         self.expiration1 = datetime.utcnow() + timedelta(days=1)
         self.expiration2 = datetime.utcnow() + timedelta(days=-1)

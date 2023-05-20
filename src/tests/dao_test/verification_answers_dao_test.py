@@ -7,7 +7,7 @@ from dao.verification_questions_dao import VerificationQuestionsDAO
 class TestVerificationAnswersDAO(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.verification_answers_dao = VerificationAnswersDAO(db_address)
         self.verification_questions_dao = VerificationQuestionsDAO(db_address)
         asyncio.run(self.verification_questions_dao.add_verification_question(1234, "Test1?"))

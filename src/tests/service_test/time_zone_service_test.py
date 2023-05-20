@@ -6,7 +6,7 @@ from services.time_zone_service import TimeZoneService
 class TestTimeZoneService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.time_zone_service = TimeZoneService(db_address)
 
     def tearDown(self):

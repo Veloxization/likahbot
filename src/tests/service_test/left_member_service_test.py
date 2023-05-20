@@ -6,7 +6,7 @@ from services.left_member_service import LeftMemberService
 class TestLeftMemberService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.left_member_service = LeftMemberService(db_address)
 
     def tearDown(self):

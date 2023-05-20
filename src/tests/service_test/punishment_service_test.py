@@ -6,7 +6,7 @@ from services.punishment_service import PunishmentService
 class TestPunishmentService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.punishment_service = PunishmentService(db_address)
 
     def tearDown(self):

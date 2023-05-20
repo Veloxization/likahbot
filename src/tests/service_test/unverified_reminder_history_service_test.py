@@ -7,7 +7,7 @@ from services.unverified_reminder_message_service import UnverifiedReminderMessa
 class TestUnverifiedReminderHistoryService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.unverified_reminder_history_service = UnverifiedReminderHistoryService(db_address)
         self.unverified_reminder_message_service = UnverifiedReminderMessageService(db_address)
         asyncio.run(self.unverified_reminder_message_service.add_guild_unverified_reminder_message(9876, "Test1", 60))

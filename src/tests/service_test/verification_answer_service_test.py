@@ -7,7 +7,7 @@ from services.verification_question_service import VerificationQuestionService
 class TestVerificationAnswerService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.verification_answer_service = VerificationAnswerService(db_address)
         self.verification_question_service = VerificationQuestionService(db_address)
         asyncio.run(self.verification_question_service.add_verification_question(1234, "Test1?"))

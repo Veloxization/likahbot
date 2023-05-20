@@ -6,7 +6,7 @@ from services.unverified_reminder_message_service import UnverifiedReminderMessa
 class TestUnverifiedReminderMessageService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.unverified_reminder_message_service = UnverifiedReminderMessageService(db_address)
 
     def tearDown(self):

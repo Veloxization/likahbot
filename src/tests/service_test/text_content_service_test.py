@@ -6,7 +6,7 @@ from services.text_content_service import TextContentService
 class TestTextContentService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.text_content_service = TextContentService(db_address)
 
     def tearDown(self):

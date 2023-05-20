@@ -6,7 +6,7 @@ from services.verification_question_service import VerificationQuestionService
 class TestVerificationQuestionService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.verification_question_service = VerificationQuestionService(db_address)
 
     def tearDown(self):

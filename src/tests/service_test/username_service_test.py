@@ -6,7 +6,7 @@ from services.username_service import UsernameService
 class TestUsernameService(unittest.TestCase):
     def setUp(self):
         db_address = "database/test_db.db"
-        os.popen(f"sqlite3 {db_address} < database/schema.sql")
+        os.popen(f"sqlite3 {db_address} < database/test_schema.sql")
         self.username_service = UsernameService(db_address)
 
     def tearDown(self):
