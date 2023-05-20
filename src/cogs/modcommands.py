@@ -19,6 +19,7 @@ class ModCommands(commands.Cog):
         punishment_service: The service used to log punishments"""
 
     mod_group = discord.SlashCommandGroup(name="mod", description="Commands for moderation purposes.")
+    punishment_group = mod_group.create_subgroup(name="punishment", description="Commands for managing memeber punishments.")
 
     def __init__(self, bot: discord.Bot, db_address):
         """Activate the mod commands cog
@@ -432,9 +433,9 @@ class ModCommands(commands.Cog):
         await ctx.respond(f"{error}", ephemeral=True)
 
 
-    @mod_group.command(name="listpunishments",
-                       description="List punishments for a user",
-                       guild_ids=DEBUG_GUILDS)
+    @punishment_group.command(name="list",
+                              description="List punishments for a user",
+                              guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def list_punishments(self,
         ctx: discord.ApplicationContext,
@@ -470,9 +471,9 @@ class ModCommands(commands.Cog):
         await ctx.respond(f"{error}", ephemeral=True)
 
 
-    @mod_group.command(name="listdeletedpunishments",
-                       description="List deleted punishments for a user",
-                       guild_ids=DEBUG_GUILDS)
+    @punishment_group.command(name="listdeleted",
+                              description="List deleted punishments for a user",
+                              guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def list_deleted_punishments(self,
         ctx: discord.ApplicationContext,
@@ -508,10 +509,10 @@ class ModCommands(commands.Cog):
         await ctx.respond(f"{error}", ephemeral=True)
 
 
-    @mod_group.command(name="listallpunishments",
-                       description="List all punishments the user has, " \
-                                   "including deleted ones",
-                       guild_ids=DEBUG_GUILDS)
+    @punishment_group.command(name="listall",
+                              description="List all punishments the user has, " \
+                                          "including deleted ones",
+                              guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def list_all_punishments(self,
         ctx: discord.ApplicationContext,
@@ -553,9 +554,9 @@ class ModCommands(commands.Cog):
         await ctx.respond(f"{error}", ephemeral=True)
 
 
-    @mod_group.command(name="editpunishment",
-                       description="Edit an existing punishment for a user.",
-                       guild_ids=DEBUG_GUILDS)
+    @punishment_group.command(name="edit",
+                              description="Edit an existing punishment for a user.",
+                              guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def edit_punishment(self,
         ctx: discord.ApplicationContext,
@@ -600,10 +601,10 @@ class ModCommands(commands.Cog):
         await ctx.respond(f"{error}", ephemeral=True)
 
 
-    @mod_group.command(name="deletepunishment",
-                       description="Delete a punishment from a user. " \
-                                   "Punishments deleted with this command can be recovered.",
-                       guild_ids=DEBUG_GUILDS)
+    @punishment_group.command(name="delete",
+                              description="Delete a punishment from a user. " \
+                                          "Punishments deleted with this command can be recovered.",
+                              guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def delete_punishment(self,
         ctx: discord.ApplicationContext,
@@ -651,10 +652,10 @@ class ModCommands(commands.Cog):
         await ctx.respond(f"{error}", ephemeral=True)
 
 
-    @mod_group.command(name="permadeletepunishment",
-                       description="Permanently delete a punishment record. " \
-                       "Punishments deleted like this cannot be recovered.",
-                       guild_ids=DEBUG_GUILDS)
+    @punishment_group.command(name="permadelete",
+                              description="Permanently delete a punishment record. " \
+                                          "Punishments deleted like this cannot be recovered.",
+                              guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(administrator=True)
     async def permadelete_punishment(self,
         ctx: discord.ApplicationContext,
@@ -724,9 +725,9 @@ class ModCommands(commands.Cog):
         await ctx.respond(f"{error}", ephemeral=True)
 
 
-    @mod_group.command(name="restorepunishment",
-                       description="Restore a previously deleted punishment",
-                       guild_ids=DEBUG_GUILDS)
+    @punishment_group.command(name="restore",
+                              description="Restore a previously deleted punishment",
+                              guild_ids=DEBUG_GUILDS)
     @commands.has_permissions(moderate_members=True)
     async def restore_punishment(self,
         ctx: discord.ApplicationContext,
