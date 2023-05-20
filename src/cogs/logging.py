@@ -24,6 +24,7 @@ class Logging(commands.Cog):
 
         self.bot = bot
         self._utility_channel_service = UtilityChannelService(db_address)
+        self._guild_setting_service = GuildSettingService(db_address)
         self.invites = invites
 
 
@@ -114,10 +115,12 @@ class Logging(commands.Cog):
             after_content = after_content[0:256] + "...\n..." + after_content[-256:]
         embed.add_field(name="Before", value=before_content)
         embed.add_field(name="After", value=after_content)
-        for channel in log_channels:
-            await channel.send(embed=embed)
-        for channel in message_log_channels:
-            await channel.send(embed=embed)
+        guild_setting = await self._guild_setting_service.get_guild_setting_value_by_name(after.guild.id, "log_edited_messages")
+        if guild_setting.value == "1":
+            for channel in log_channels:
+                await channel.send(embed=embed)
+            for channel in message_log_channels:
+                await channel.send(embed=embed)
 
 
     @commands.Cog.listener()
@@ -143,10 +146,12 @@ class Logging(commands.Cog):
         if len(content) > 512:
             content = content[:512] + "..."
         embed.add_field(name="Content", value=content)
-        for channel in log_channels:
-            await channel.send(embed=embed)
-        for channel in message_log_channels:
-            await channel.send(embed=embed)
+        guild_setting = await self._guild_setting_service.get_guild_setting_value_by_name(message.guild.id, "log_deleted_messages")
+        if guild_setting.value == "1":
+            for channel in log_channels:
+                await channel.send(embed=embed)
+            for channel in message_log_channels:
+                await channel.send(embed=embed)
 
 
     @commands.Cog.listener()
@@ -174,10 +179,12 @@ class Logging(commands.Cog):
         account_created = f"<t:{int(epoch)}:R>"
         embed.add_field(name="Account created", value=account_created)
         self.invites[member.guild] = await member.guild.invites()
-        for channel in log_channels:
-            await channel.send(embed=embed)
-        for channel in member_log_channels:
-            await channel.send(embed=embed)
+        guild_setting = await self._guild_setting_service.get_guild_setting_value_by_name(member.guild.id, "log_membership_changes")
+        if guild_setting.value == "1":
+            for channel in log_channels:
+                await channel.send(embed=embed)
+            for channel in member_log_channels:
+                await channel.send(embed=embed)
 
 
     @commands.Cog.listener()
@@ -198,10 +205,12 @@ class Logging(commands.Cog):
         else:
             roles = [role.mention for role in roles]
         embed.add_field(name="Roles", value=', '.join(roles))
-        for channel in log_channels:
-            await channel.send(embed=embed)
-        for channel in member_log_channels:
-            await channel.send(embed=embed)
+        guild_setting = await self._guild_setting_service.get_guild_setting_value_by_name(member.guild.id, "log_membership_changes")
+        if guild_setting.value == "1":
+            for channel in log_channels:
+                await channel.send(embed=embed)
+            for channel in member_log_channels:
+                await channel.send(embed=embed)
 
 
     @commands.Cog.listener()
@@ -215,10 +224,12 @@ class Logging(commands.Cog):
                               description=f"{user.mention} was banned from **{guild.name}**")
         embed.set_author(name=user, icon_url=user.display_avatar.url)
         embed.set_footer(text=f"ID: {user.id}")
-        for channel in log_channels:
-            await channel.send(embed=embed)
-        for channel in moderation_log_channels:
-            await channel.send(embed=embed)
+        guild_setting = await self._guild_setting_service.get_guild_setting_value_by_name(guild.id, "log_bans")
+        if guild_setting.value == "1":
+            for channel in log_channels:
+                await channel.send(embed=embed)
+            for channel in moderation_log_channels:
+                await channel.send(embed=embed)
 
 
     @commands.Cog.listener()
@@ -232,10 +243,12 @@ class Logging(commands.Cog):
                               description=f"{user.mention} was unbanned in **{guild.name}**")
         embed.set_author(name=user, icon_url=user.display_avatar.url)
         embed.set_footer(text=f"ID: {user.id}")
-        for channel in log_channels:
-            await channel.send(embed=embed)
-        for channel in moderation_log_channels:
-            await channel.send(embed=embed)
+        guild_setting = await self._guild_setting_service.get_guild_setting_value_by_name(guild.id, "log_bans")
+        if guild_setting.value == "1":
+            for channel in log_channels:
+                await channel.send(embed=embed)
+            for channel in moderation_log_channels:
+                await channel.send(embed=embed)
 
 
     @commands.Cog.listener()
@@ -251,10 +264,12 @@ class Logging(commands.Cog):
                                               f"**{after.guild.name}**")
             embed.set_author(name=after, icon_url=after.display_avatar.url)
             embed.set_footer(text=f"ID: {after.id}")
-            for channel in log_channels:
-                await channel.send(embed=embed)
-            for channel in moderation_log_channels:
-                await channel.send(embed=embed)
+            guild_setting = await self._guild_setting_service.get_guild_setting_value_by_name(after.guild.id, "log_timeouts")
+            if guild_setting.value == "1":
+                for channel in log_channels:
+                    await channel.send(embed=embed)
+                for channel in moderation_log_channels:
+                    await channel.send(embed=embed)
 
         if before.timed_out and not after.timed_out:
             embed = discord.Embed(color=discord.Color.dark_blue(),
@@ -263,24 +278,31 @@ class Logging(commands.Cog):
                                               f"**{after.guild.name}**")
             embed.set_author(name=after, icon_url=after.display_avatar.url)
             embed.set_footer(text=f"ID: {after.id}")
-            for channel in log_channels:
-                await channel.send(embed=embed)
-            for channel in moderation_log_channels:
-                await channel.send(embed=embed)
+            guild_setting = await self._guild_setting_service.get_guild_setting_value_by_name(after.guild.id, "log_timeouts")
+            if guild_setting.value == "1":
+                for channel in log_channels:
+                    await channel.send(embed=embed)
+                for channel in moderation_log_channels:
+                    await channel.send(embed=embed)
 
 
     async def on_member_warn(self, member: discord.Member, warning: PunishmentEntity):
         """Log warnings given to members"""
 
         log_channels = await self._get_guild_log_channels(member.guild)
+        moderation_log_channels = await self._get_guild_moderation_log_channels(member.guild)
         embed = discord.Embed(color=discord.Color.yellow(),
                               title="Member warned",
                               description=f"{member.mention} was warned in **{member.guild}**")
         embed.set_author(name=member, icon_url=member.display_avatar.url)
         embed.set_footer(text=f"ID: {member.id}")
         embed.add_field(name="Warning", value=warning.reason)
-        for channel in log_channels:
-            await channel.send(embed=embed)
+        guild_setting = await self._guild_setting_service.get_guild_setting_value_by_name(member.guild.id, "log_warnings")
+        if guild_setting.value == "1":
+            for channel in log_channels:
+                await channel.send(embed=embed)
+            for channel in moderation_log_channels:
+                await channel.send(embed=embed)
 
 
     @commands.Cog.listener()
