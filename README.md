@@ -46,7 +46,7 @@ Do note that the bot is in a very very early stage of development currently and 
 ## Updating the database
 If your bot uses an old version of the database, some features may not work correctly, or you may experience bugs that later versions of the database fixed.
 
-To update your database to the latest version, change `DB_ADDR` near the top of [db_updater.py](https://github.com/Veloxization/likahbot/blob/main/database/db_updater.py) to point to your database file and then run this in the root directory: `python3 database/db_updater.py`
+To update your database to the latest version, just run: `python3 database/db_updater.py path/to/your/database`
 
 This will update your database to the latest version.
 

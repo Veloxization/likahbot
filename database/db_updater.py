@@ -1,7 +1,5 @@
 import sqlite3
-
-current_version = 0
-DB_ADDR = "database/database_updater.db"
+import sys
 
 def updater(cursor, current_version):
     if current_version == 1:
@@ -551,8 +549,12 @@ def updater(cursor, current_version):
     return True
 
 def main():
+    # Setup
+    current_version = 0
+    db_addr = str(sys.argv[1])
+
     # Connect to the database
-    conn = sqlite3.connect(DB_ADDR)
+    conn = sqlite3.connect(db_addr)
     cursor = conn.cursor()
 
     # Get the current user_version
