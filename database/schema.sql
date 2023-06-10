@@ -1,9 +1,15 @@
-PRAGMA user_version = 20;
+PRAGMA user_version = 21;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
     user_id INTEGER NOT NULL,
     username TEXT NOT NULL,
+    time DATETIME
+);
+CREATE TABLE IF NOT EXISTS global_names (
+    id INTEGER PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    global_name TEXT NOT NULL,
     time DATETIME
 );
 CREATE TABLE IF NOT EXISTS nicknames (

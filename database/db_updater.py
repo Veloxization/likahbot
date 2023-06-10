@@ -530,6 +530,20 @@ def updater(cursor, current_version):
         # Set the new user_version
         cursor.execute("PRAGMA user_version = 20")
         print("Updated database to version 20")
+        return False
+    elif current_version == 20:
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS global_names (
+            id INTEGER PRIMARY KEY,
+            user_id INTEGER NOT NULL,
+            global_name TEXT NOT NULL,
+            time DATETIME
+        );
+        """)
+
+        # Set the new user_version
+        cursor.execute("PRAGMA user_version = 21")
+        print("Updated database to version 21")
         return True
     else:
         print("No new updates found for your database version")
