@@ -11,6 +11,7 @@ from cogs.guildsettings import GuildSettings
 from cogs.logging import Logging
 from cogs.modcommands import ModCommands
 from cogs.tasks import Tasks
+from services.guild_setting_service import GuildSettingService
 
 intents = discord.Intents.all()
 bot = discord.Bot(intents=intents)
@@ -23,8 +24,10 @@ async def on_ready():
     print(f"Logged on as {bot.user}")
     bot.add_cog(GuildSettings(bot, DB_ADDRESS))
     invites = {}
+    guild_setting_service = GuildSettingService(DB_ADDRESS)
     for guild in bot.guilds:
         invites[guild] = await guild.invites()
+        await guild_setting_service.initialize_guild_settings(guild.id)
     bot.add_cog(Logging(bot, DB_ADDRESS, invites))
     bot.add_cog(ModCommands(bot, DB_ADDRESS))
     bot.add_cog(Tasks(bot, DB_ADDRESS))
