@@ -41,11 +41,6 @@ class GuildSettingsDAO:
               "LEFT JOIN settings AS s ON setting_id=s.id WHERE guild_id=? AND s.name=?"
         await cursor.execute(sql, (guild_id, setting_name))
         row = await cursor.fetchone()
-        if not row:
-            sql = "SELECT NULL as id, ? AS guild_id, s.id AS setting_id, setting_value, s.name "\
-                  "FROM settings AS s WHERE s.name=?"
-            await cursor.execute(sql, (guild_id, setting_name))
-            row = await cursor.fetchone()
         await self.db_connection.close_connection(connection)
         return row
 
@@ -62,13 +57,54 @@ class GuildSettingsDAO:
               "WHERE gs.guild_id=? AND gs.setting_id=?"
         await cursor.execute(sql, (guild_id, setting_id))
         row = await cursor.fetchone()
-        if not row:
-            sql = "SELECT NULL AS id, ? AS guild_id, s.id AS setting_id, setting_value, s.name "\
-                  "FROM settings AS s WHERE s.id=?"
-            await cursor.execute(sql, (guild_id, setting_id))
-            row = await cursor.fetchone()
         await self.db_connection.close_connection(connection)
         return row
+
+    async def get_all_guild_settings(self, guild_id: int):
+        """Get all guild settings of a given guild
+        Args:
+            guild_id: The Discord ID of the guild whose guild settings to get
+        Returns: A list of Row objects containing the guild settings of the given guild"""
+
+        connection, cursor = await self.db_connection.connect_to_db()
+        sql = "SELECT gs.*, s.name FROM guild_settings AS gs "\
+              "LEFT JOIN settings AS s ON gs.setting_id = s.id "\
+              "WHERE gs.guild_id=?"
+        await cursor.execute(sql, (guild_id,))
+        rows = await cursor.fetchall()
+        await self.db_connection.close_connection(connection)
+        return rows
+
+    async def search_guild_settings(self, guild_id: int, keyword: str):
+        """Get a list of guild settings based on a keyword
+        Args:
+            guild_id: The Discord ID of the guild whose settings to get
+            keyword: The keyword to search guild settings with
+        Returns: A list of Row objects containing the found guild settings"""
+
+        connection, cursor = await self.db_connection.connect_to_db()
+        sql = "SELECT gs.*, s.name FROM guild_settings AS gs "\
+              "LEFT JOIN settings AS s ON setting_id=s.id WHERE guild_id=? AND s.name LIKE ?"
+        await cursor.execute(sql, (guild_id, "%"+keyword+"%"))
+        rows = await cursor.fetchall()
+        await self.db_connection.close_connection(connection)
+        return rows
+
+    async def initialize_guild_settings(self, guild_id: int):
+        """Create the guild settings for a given guild
+        Args:
+            guild_id: The Discord ID of the guild whose settings to initialize
+        Returns: A list of Row objects containing the IDs of the newly created guild settings"""
+
+        connection, cursor = await self.db_connection.connect_to_db()
+        sql = "INSERT INTO guild_settings (guild_id, setting_id, setting_value) "\
+              "SELECT (?), id, setting_value FROM settings WHERE id NOT IN "\
+              "(SELECT setting_id FROM guild_settings WHERE guild_id=?) "\
+              "RETURNING id"
+        await cursor.execute(sql, (guild_id, guild_id))
+        rows = await cursor.fetchall()
+        await self.db_connection.commit_and_close(connection)
+        return rows
 
     async def add_guild_setting_by_setting_id(self, guild_id: int, setting_id: int,
                                               setting_value: str):
@@ -144,6 +180,32 @@ class GuildSettingsDAO:
         sql = "UPDATE guild_settings SET setting_value=? WHERE guild_id=? "\
               "AND setting_id=(SELECT id FROM settings WHERE name=?)"
         await cursor.execute(sql, (setting_value, guild_id, setting_name))
+        await self.db_connection.commit_and_close(connection)
+
+    async def reset_guild_setting_to_default_value(self, guild_id: int, guild_setting_id: int):
+        """Return a guild setting back to its default value as defined in the settings table
+        Args:
+            guild_id: The Discord ID of the guild whose setting to reset
+            guild_setting_id: The database ID of the guild setting to reset"""
+
+        connection, cursor = await self.db_connection.connect_to_db()
+        sql = "UPDATE guild_settings SET setting_value=(SELECT setting_value FROM settings "\
+              "WHERE id=(SELECT setting_id FROM guild_settings WHERE guild_id=? AND id=?)) "\
+              "WHERE guild_id=? AND setting_id=?"
+        await cursor.execute(sql, (guild_id, guild_setting_id, guild_id, guild_setting_id))
+        await self.db_connection.commit_and_close(connection)
+
+    async def reset_all_guild_settings_to_default_value(self, guild_id: int):
+        """Reset all guild settings within a guild into their default values as defined in the
+        settings table
+        Args:
+            guild_id: The Discord ID of the guild whose settings to reset"""
+
+        connection, cursor = await self.db_connection.connect_to_db()
+        sql = "UPDATE guild_settings AS gs SET setting_value="\
+              "(SELECT setting_value FROM settings AS s WHERE s.id=gs.setting_id) "\
+              "WHERE guild_id=?"
+        await cursor.execute(sql, (guild_id,))
         await self.db_connection.commit_and_close(connection)
 
     async def delete_guild_setting_by_id(self, guild_setting_id: int):
