@@ -57,6 +57,35 @@ class GuildSettingService:
                                                                                   setting_id)
         return self._convert_to_entity(row)
 
+    async def get_all_guild_settings(self, guild_id: int):
+        """Get all guild settings of a given guild
+        Args:
+            guild_id: The Discord ID of the guild whose guild settings to get
+        Returns: A list of guild setting entities containing the guild settings of the given
+                 guild"""
+
+        rows = await self.guild_settings_dao.get_all_guild_settings(guild_id)
+        return [self._convert_to_entity(row) for row in rows]
+
+    async def search_guild_settings(self, guild_id: int, keyword: str):
+        """Get a list of guild settings based on a keyword
+        Args:
+            guild_id: The Discord ID of the guild whose settings to get
+            keyword: The keyword to search guild settings with
+        Returns: A list of guild setting entities containing the found guild settings"""
+
+        rows = await self.guild_settings_dao.search_guild_settings(guild_id, keyword)
+        return [self._convert_to_entity(row) for row in rows]
+
+    async def initialize_guild_settings(self, guild_id: int):
+        """Create the guild settings for a given guild
+        Args:
+            guild_id: The Discord ID of the guild whose settings to initialize
+        Returns: A list of database IDs of the newly create guild settings"""
+
+        rows = await self.guild_settings_dao.initialize_guild_settings(guild_id)
+        return [row["id"] for row in rows]
+
     async def add_guild_setting_by_setting_id(self, guild_id: int, setting_id: int,
                                               setting_value: str):
         """Add a new guild setting by a setting ID
@@ -118,6 +147,23 @@ class GuildSettingService:
         await self.guild_settings_dao.edit_guild_setting_by_setting_name(guild_id,
                                                                          setting_name,
                                                                          setting_value)
+
+    async def reset_guild_setting_to_default_value(self, guild_id: int, guild_setting_id: int):
+        """Return a guild setting back to its default value as defined in the settings table
+        Args:
+            guild_id: The Discord ID of the guild whose setting to reset
+            guild_setting_id: The database ID of the guild setting to reset"""
+
+        await self.guild_settings_dao.reset_guild_setting_to_default_value(guild_id,
+                                                                           guild_setting_id)
+
+    async def reset_all_guild_settings_to_default_value(self, guild_id: int):
+        """Reset all guild settings within a guild into their default values as defined in the
+        settings table
+        Args:
+            guild_id: The Discord ID of the guild whose settings to reset"""
+
+        await self.guild_settings_dao.reset_all_guild_settings_to_default_value(guild_id)
 
     async def delete_guild_setting_by_id(self, guild_setting_id: int):
         """Delete a guild setting by its ID
