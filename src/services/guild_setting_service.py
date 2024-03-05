@@ -171,6 +171,16 @@ class GuildSettingService:
         await self.guild_settings_dao.reset_guild_setting_to_default_value(guild_id,
                                                                            guild_setting_id)
 
+    async def reset_guild_setting_to_default_value_by_name(self, guild_id: int, setting_name: str):
+        """Return a guild setting back to its default value as defined by the settings table,
+        by the setting's name
+        Args:
+            guild_id: The Discord ID of the guild whose setting to reset
+            setting_name: The name of the setting to reset"""
+
+        await self.guild_settings_dao.reset_guild_setting_to_default_value_by_name(guild_id,
+                                                                                   setting_name)
+
     async def reset_all_guild_settings_to_default_value(self, guild_id: int):
         """Reset all guild settings within a guild into their default values as defined in the
         settings table
