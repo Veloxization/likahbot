@@ -141,3 +141,9 @@ class TestGuildSettingService(unittest.TestCase):
         guild_setting2 = asyncio.run(self.guild_setting_service.get_guild_setting_value_by_id(guild_setting_id2))
         self.assertEqual(guild_setting1.value, "testing")
         self.assertNotEqual(guild_setting2.value, "testing")
+
+    def test_guild_settings_are_reset_correctly_by_name(self):
+        asyncio.run(self.guild_setting_service.add_guild_setting_by_setting_name(1234, "test", "testing1"))
+        asyncio.run(self.guild_setting_service.reset_guild_setting_to_default_value_by_name(1234, "test"))
+        guild_setting = asyncio.run(self.guild_setting_service.get_guild_setting_value_by_name(1234, "test"))
+        self.assertEqual(guild_setting.value, "testing")
