@@ -134,3 +134,9 @@ class TestGuildSettingsDAO(unittest.TestCase):
         self.assertEqual(row1["setting_value"], "test1")
         self.assertEqual(row2["setting_value"], "test3")
         self.assertEqual(row3["setting_value"], "test0")
+
+    def test_guild_settings_are_correctly_reset_to_default_value_by_name(self):
+        asyncio.run(self.guild_settings_dao.add_guild_setting_by_setting_id(1234, self.setting_id1, "test2"))
+        asyncio.run(self.guild_settings_dao.reset_guild_setting_to_default_value_by_name(1234, "test"))
+        row = asyncio.run(self.guild_settings_dao.get_guild_setting_value_by_name(1234, "test"))
+        self.assertEqual(row["setting_value"], "test1")
