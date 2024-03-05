@@ -148,6 +148,20 @@ class GuildSettingService:
                                                                          setting_name,
                                                                          setting_value)
 
+    async def edit_guild_settings_by_setting_name_pattern(self,
+        guild_id: int,
+        setting_name_pattern: str,
+        setting_value: str):
+        """Edit all guild settings with a certain name pattern within a guild to a certain value
+        Args:
+            guild_id: The Discord ID of the guild whose settings to edit
+            setting_name_pattern: The pattern of setting names which need to be changed
+            setting_value: The value to change the settings to"""
+
+        await self.guild_settings_dao.edit_guild_settings_by_setting_name_pattern(guild_id,
+                                                                                  setting_name_pattern,
+                                                                                  setting_value)
+
     async def reset_guild_setting_to_default_value(self, guild_id: int, guild_setting_id: int):
         """Return a guild setting back to its default value as defined in the settings table
         Args:
