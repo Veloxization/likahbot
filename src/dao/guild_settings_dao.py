@@ -182,6 +182,22 @@ class GuildSettingsDAO:
         await cursor.execute(sql, (setting_value, guild_id, setting_name))
         await self.db_connection.commit_and_close(connection)
 
+    async def edit_guild_settings_by_setting_name_pattern(self,
+        guild_id: int,
+        setting_name_pattern: str,
+        setting_value: str):
+        """Edit all guild settings with a certain name pattern within a guild to a certain value
+        Args:
+            guild_id: The Discord ID of the guild whose settings to edit
+            setting_name_pattern: The pattern of setting names which need to be changed
+            setting_value: The value to change the settings to"""
+
+        connection, cursor = await self.db_connection.connect_to_db()
+        sql = "UPDATE guild_settings SET setting_value=? WHERE guild_id=? AND setting_id IN "\
+              "(SELECT id FROM settings WHERE name LIKE ?)"
+        await cursor.execute(sql, (setting_value, guild_id, "%"+setting_name_pattern+"%"))
+        await self.db_connection.commit_and_close(connection)
+
     async def reset_guild_setting_to_default_value(self, guild_id: int, guild_setting_id: int):
         """Return a guild setting back to its default value as defined in the settings table
         Args:
