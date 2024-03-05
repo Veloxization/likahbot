@@ -55,6 +55,14 @@ class TestGuildSettingService(unittest.TestCase):
         guild_setting = asyncio.run(self.guild_setting_service.get_guild_setting_value_by_name(1234, "test"))
         self.assertEqual(guild_setting.value, "testing2")
 
+    def test_guild_setting_is_edited_correctly_by_setting_name_pattern(self):
+        asyncio.run(self.setting_service.add_setting("tester", "testing"))
+        asyncio.run(self.guild_setting_service.add_guild_setting_by_setting_name(1234, "test", "testing1"))
+        asyncio.run(self.guild_setting_service.add_guild_setting_by_setting_name(1234, "tester", "testing2"))
+        asyncio.run(self.guild_setting_service.edit_guild_settings_by_setting_name_pattern(1234, "ste", "testing3"))
+        guild_setting = asyncio.run(self.guild_setting_service.get_guild_setting_value_by_name(1234, "tester"))
+        self.assertEqual(guild_setting.value, "testing3")
+
     def test_editing_guild_setting_of_one_guild_does_not_affect_guild_setting_of_another_guild(self):
         asyncio.run(self.guild_setting_service.add_guild_setting_by_setting_name(1234, "test", "testing1"))
         asyncio.run(self.guild_setting_service.add_guild_setting_by_setting_name(2345, "test", "testing1"))
