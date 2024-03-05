@@ -1,15 +1,15 @@
-"""The classes and functions handling data access objects for the guild_settings table"""
+"""The guild setting service is used to call methods in the guild settings DAO class."""
 from dao.guild_settings_dao import GuildSettingsDAO
 from entities.setting_entity import SettingEntity
 from entities.guild_setting_entity import GuildSettingEntity
 
 class GuildSettingService:
-    """A data access object for guild settings
+    """A service for calling methods from guild settings DAO
     Attributes:
-        db_connection: An object that handles database connections"""
+        guild_settings_dao: The DAO object this service will use"""
 
     def __init__(self, db_address):
-        """Create a new data access object for guild settings
+        """Create a new service for guild settings DAO
         Args:
             db_address: The address for the database file where the guild settings table resides"""
 
