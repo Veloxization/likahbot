@@ -50,6 +50,15 @@ class TestGuildSettingsDAO(unittest.TestCase):
         row = asyncio.run(self.guild_settings_dao.get_guild_setting_value_by_name(1234, "test"))
         self.assertEqual(row["setting_value"], "test3")
 
+    def test_guild_settings_are_edited_correctly_by_setting_name_pattern(self):
+        asyncio.run(self.guild_settings_dao.add_guild_setting_by_setting_name(1234, "test", "test2"))
+        asyncio.run(self.guild_settings_dao.add_guild_setting_by_setting_name(1234, "testing", "test3"))
+        asyncio.run(self.guild_settings_dao.edit_guild_settings_by_setting_name_pattern(1234, "sti", "test4"))
+        row1 = asyncio.run(self.guild_settings_dao.get_guild_setting_value_by_name(1234, "test"))
+        row2 = asyncio.run(self.guild_settings_dao.get_guild_setting_value_by_name(1234, "testing"))
+        self.assertEqual(row1["setting_value"], "test2")
+        self.assertEqual(row2["setting_value"], "test4")
+
     def test_guild_settings_are_deleted_correctly_by_id(self):
         id_row = asyncio.run(self.guild_settings_dao.add_guild_setting_by_setting_id(1234, self.setting_id1, "test2"))
         asyncio.run(self.guild_settings_dao.delete_guild_setting_by_id(id_row["id"]))
