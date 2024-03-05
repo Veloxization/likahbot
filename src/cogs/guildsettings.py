@@ -6,6 +6,7 @@ from discord.ui import View, Button
 from config.constants import DEBUG_GUILDS
 from helpers.embed_pager import EmbedPager
 from services.utility_channel_service import UtilityChannelService
+from services.guild_setting_service import GuildSettingService
 
 class GuildSettings(commands.Cog):
     """This cog handles all commands that are used for editing the bot specific settings for the
@@ -17,6 +18,13 @@ class GuildSettings(commands.Cog):
     settings_group = discord.SlashCommandGroup(name="settings", description="Commands for setting up the bot for the guild.")
     utility_channel_group = settings_group.create_subgroup(name="utilitychannel",
                                                            description="Settings related to guild utility channels")
+    log_setting_group = settings_group.create_subgroup(name="logs",
+                                                       description="Change what is logged.")
+    log_settings = ["log edited messages", "log deleted messages", "log membership changes",
+                    "log bans", "log timeouts", "log warnings", "log name changes",
+                    "log member role changes", "log avatar changes","log channel changes",
+                    "log guild role changes", "log invites", "log message reactions",
+                    "log webhook changes"]
 
     def __init__(self, bot: discord.Bot, db_address):
         """Activate the guild settings cog
@@ -26,6 +34,7 @@ class GuildSettings(commands.Cog):
 
         self.bot = bot
         self.utility_channel_service = UtilityChannelService(db_address)
+        self.guild_setting_service = GuildSettingService(db_address)
 
 
     @utility_channel_group.command(name="add",
@@ -178,3 +187,114 @@ class GuildSettings(commands.Cog):
         embed_pager.embed = embed
         res_embed, res_view = embed_pager.get_embed_and_view()
         await ctx.respond(embed=res_embed, view=res_view, ephemeral=True)
+
+
+    @log_setting_group.command(name="get",
+                               description="Get the current value of a logging setting",
+                               guild_ids=DEBUG_GUILDS)
+    @commands.has_permissions(administrator=True)
+    async def get_log_setting(self,
+        ctx: discord.ApplicationContext,
+        log_setting: discord.Option(str,
+                                    "The logging setting to view",
+                                    choices=log_settings)):
+        """Get the currently set value of a guild logging setting"""
+
+        embed = discord.Embed(title=log_setting)
+        guild_setting = await self.guild_setting_service.get_guild_setting_value_by_name(ctx.guild.id,
+                                                                                         log_setting.replace(" ", "_"))
+        value = "**ON**" if guild_setting.value == "1" else "OFF"
+        embed.add_field(name="Value", value=value)
+        await ctx.respond(embed=embed, ephemeral=True)
+
+
+    @log_setting_group.command(name="getall",
+                               description="Get the current values of all logging settings",
+                               guild_ids=DEBUG_GUILDS)
+    @commands.has_permissions(administrator=True)
+    async def get_all_log_settings(self, ctx: discord.ApplicationContext):
+        """List the current values of all guild logging settings"""
+
+        embed = discord.Embed(title=f"{ctx.guild.name} logging settings")
+        guild_settings = await self.guild_setting_service.get_all_guild_settings(ctx.guild.id)
+        fields = []
+        for guild_setting in guild_settings:
+            value = "**ON**" if guild_setting.value == "1" else "OFF"
+            fields.append(discord.EmbedField(name=guild_setting.setting.name.replace("_", " "),
+                                             value=value))
+        embed_pager = EmbedPager(fields)
+        embed_pager.embed = embed
+        res_embed, res_view = embed_pager.get_embed_and_view()
+        await ctx.respond(embed=res_embed, view=res_view, ephemeral=True)
+
+
+    @log_setting_group.command(name="set",
+                               description="Set the value of a logging setting",
+                               guild_ids=DEBUG_GUILDS)
+    @commands.has_permissions(administrator=True)
+    async def set_log_setting(self,
+        ctx: discord.ApplicationContext,
+        log_setting: discord.Option(str,
+                                    "The logging setting to change",
+                                    choices=log_settings),
+        value: discord.Option(bool,
+                              "Whether this option is turned on")):
+        """Change the value of a guild logging setting"""
+
+        setting_value = "1" if value else "0"
+        await self.guild_setting_service.edit_guild_setting_by_setting_name(ctx.guild.id,
+                                                                            log_setting.replace(" ", "_"),
+                                                                            setting_value)
+        embed = discord.Embed(title="Logging Setting Changed")
+        embed.add_field(name=log_setting, value="**ON**" if value else "OFF")
+        await ctx.respond(embed=embed)
+
+
+    @log_setting_group.command(name="setall",
+                               description="Set all logging settings to a single value",
+                               guild_ids=DEBUG_GUILDS)
+    @commands.has_permissions(administrator=True)
+    async def set_all_log_settings(self,
+        ctx: discord.ApplicationContext,
+        value: discord.Option(bool,
+                              "Whether to set all logging settings on or off")):
+        """Change the value of all guild settings to a single value"""
+
+        setting_value = "1" if value else "0"
+        await self.guild_setting_service.edit_guild_settings_by_setting_name_pattern(ctx.guild.id,
+                                                                                     "log_",
+                                                                                     setting_value)
+        embed = discord.Embed(title="Logging Settings Changed")
+        embed.add_field(name="All logging settings changed to", value="**ON**" if value else "OFF")
+        await ctx.respond(embed=embed)
+
+
+    @log_setting_group.command(name="default",
+                               description="Set a logging setting to its default value",
+                               guild_ids=DEBUG_GUILDS)
+    @commands.has_permissions(administrator=True)
+    async def set_log_setting_to_default(self,
+        ctx: discord.ApplicationContext,
+        log_setting: discord.Option(str,
+                                    "The logging setting to set to default",
+                                    choices=log_settings)):
+        """Change the value of a guild logging setting back to default"""
+
+        await self.guild_setting_service.reset_guild_setting_to_default_value_by_name(ctx.guild.id,
+                                                                                      log_setting.replace(" ", "_"))
+        embed = discord.Embed(title="Logging Setting Reset")
+        embed.add_field(name=log_setting, value="Setting reset to default")
+        await ctx.respond(embed=embed)
+
+
+    @log_setting_group.command(name="reset",
+                               description="Reset logging settings to default",
+                               guild_ids=DEBUG_GUILDS)
+    @commands.has_permissions(administrator=True)
+    async def reset_log_settings(self, ctx: discord.ApplicationContext):
+        """Reset all guild logging settings to default values"""
+
+        await self.guild_setting_service.reset_all_guild_settings_to_default_value(ctx.guild.id)
+        embed = discord.Embed(title="Logging Settings Reset",
+                              description="All logging settings were reset to default values")
+        await ctx.respond(embed=embed)
