@@ -77,19 +77,6 @@ class PunishmentsDAO:
         await self.db_connection.close_connection(connection)
         return punishment
 
-    async def get_censored_punishments(self, guild_id: int):
-        """Get the punishments within a given guild where the user ID has been removed
-        Args:
-            guild_id: The Discord Guild ID of the fuild where the punishments were issued
-        Returns: A list of Rows containing all the found punishments"""
-
-        connection, cursor = await self.db_connection.connect_to_db()
-        sql = "SELECT * FROM punishments WHERE user_id=0 AND guild_id=? ORDER BY time DESC"
-        await cursor.execute(sql, (guild_id,))
-        punishments = await cursor.fetchall()
-        await self.db_connection.close_connection(connection)
-        return punishments
-
     async def add_punishment(self, user_id: int, issuer_id: int, guild_id: int,
                        punishment_type: str = None, reason: str = None, deleted: bool = False):
         """Add a new punishment for a guild member
@@ -142,16 +129,6 @@ class PunishmentsDAO:
         connection, cursor = await self.db_connection.connect_to_db()
         sql = "UPDATE punishments SET reason=? WHERE id=?"
         await cursor.execute(sql, (reason, punishment_id))
-        await self.db_connection.commit_and_close(connection)
-
-    async def delete_user_id_from_punishments(self, user_id: int):
-        """Delete the mention of a given user's ID within punishments
-        Args:
-            user_id: The Discord ID of the user whose ID to delete"""
-
-        connection, cursor = await self.db_connection.connect_to_db()
-        sql = "UPDATE punishments SET user_id=0 WHERE user_id=?"
-        await cursor.execute(sql, (user_id,))
         await self.db_connection.commit_and_close(connection)
 
     async def delete_punishment(self, punishment_id: int):

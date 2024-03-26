@@ -1,5 +1,6 @@
 """The punishment service is used to call methods in the punishments DAO class."""
 
+import hashlib
 from dao.punishments_dao import PunishmentsDAO
 from entities.punishment_entity import PunishmentEntity
 
@@ -15,7 +16,7 @@ class PunishmentService:
 
         self.punishments_dao = PunishmentsDAO(db_address)
 
-    def _convert_to_entity(self, row):
+    def _convert_to_entity(self, row, user_id: int = None):
         """Convert a database row to a punishment entity
         Args:
             row: The database row to convert to a punishment entity
@@ -23,7 +24,7 @@ class PunishmentService:
 
         if not row:
             return None
-        return PunishmentEntity(row["id"], row["user_id"], row["issuer_id"], row["guild_id"],
+        return PunishmentEntity(row["id"], user_id, row["issuer_id"], row["guild_id"],
                                 row["type"], row["time"], row["reason"], row["deleted"])
 
     async def get_user_punishments(self, user_id: int, guild_id: int):
@@ -33,8 +34,10 @@ class PunishmentService:
             guild_id: The ID of the Discord Guild in which the punishments were given
         Returns: A list of Punishment entites containing all the found punishments"""
 
-        rows = await self.punishments_dao.get_user_punishments(user_id, guild_id)
-        return [self._convert_to_entity(row) for row in rows]
+        h = hashlib.new("sha256")
+        h.update(repr(user_id).encode())
+        rows = await self.punishments_dao.get_user_punishments(h.hexdigest(), guild_id)
+        return [self._convert_to_entity(row, user_id) for row in rows]
 
     async def get_all_user_punishments(self, user_id: int, guild_id: int):
         """Get a full list of all punishments a user has within a given guild
@@ -43,8 +46,10 @@ class PunishmentService:
             guild_id: The ID of the Discord Guild in which the punishments were given
         Returns: A list of Punishment entities containing all the found punishments"""
 
-        rows = await self.punishments_dao.get_all_user_punishments(user_id, guild_id)
-        return [self._convert_to_entity(row) for row in rows]
+        h = hashlib.new("sha256")
+        h.update(repr(user_id).encode())
+        rows = await self.punishments_dao.get_all_user_punishments(h.hexdigest(), guild_id)
+        return [self._convert_to_entity(row, user_id) for row in rows]
 
     async def get_punishment_by_id(self, punishment_id: int):
         """Get a punishment by its database ID
@@ -55,15 +60,6 @@ class PunishmentService:
         row = await self.punishments_dao.get_punishment_by_id(punishment_id)
         return self._convert_to_entity(row)
 
-    async def get_censored_punishments(self, guild_id: int):
-        """Get the punishments within a given guild where the user ID has been removed
-        Args:
-            guild_id: The Discord Guild ID of the fuild where the punishments were issued
-        Returns: A list of Rows containing all the found punishments"""
-
-        rows = await self.punishments_dao.get_censored_punishments(guild_id)
-        return [self._convert_to_entity(row) for row in rows]
-
     async def get_deleted_punishments(self, user_id: int, guild_id: int):
         """Get a list of punishments marked deleted a user has within a given guild
         Args:
@@ -71,7 +67,9 @@ class PunishmentService:
             guild_id: The Discord ID of the guild in which the punishments were given
         Returns: A list of Punishment entities containing all the found punishments"""
 
-        rows = await self.punishments_dao.get_deleted_punishments(user_id, guild_id)
+        h = hashlib.new("sha256")
+        h.update(repr(user_id).encode())
+        rows = await self.punishments_dao.get_deleted_punishments(h.hexdigest(), guild_id)
         return [self._convert_to_entity(row) for row in rows]
 
     async def add_punishment(self, user_id: int, issuer_id: int, guild_id: int,
@@ -86,7 +84,9 @@ class PunishmentService:
             deleted: Whether the punishment is deleted
         Returns: The database ID of the newly created punishment"""
 
-        row = await self.punishments_dao.add_punishment(user_id, issuer_id, guild_id,
+        h = hashlib.new("sha256")
+        h.update(repr(user_id).encode())
+        row = await self.punishments_dao.add_punishment(h.hexdigest(), issuer_id, guild_id,
                                                         punishment_type, reason, deleted)
         return row["id"]
 
@@ -111,13 +111,6 @@ class PunishmentService:
             reason: The new reason for the punishment"""
 
         await self.punishments_dao.edit_punishment_reason(punishment_id, reason)
-
-    async def delete_user_id_from_punishments(self, user_id: int):
-        """Delete the mention of a given user's ID within punishments
-        Args:
-            user_id: The Discord ID of the user whose ID to delete"""
-
-        await self.punishments_dao.delete_user_id_from_punishments(user_id)
 
     async def delete_punishment(self, punishment_id: int):
         """Permanently delete a punishment

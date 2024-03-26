@@ -1,5 +1,6 @@
 import sqlite3
 import sys
+import hashlib
 
 def updater(cursor, current_version):
     if current_version == 1:
@@ -542,6 +543,40 @@ def updater(cursor, current_version):
         # Set the new user_version
         cursor.execute("PRAGMA user_version = 21")
         print("Updated database to version 21")
+        return False
+    elif current_version == 21:
+        cursor.execute("ALTER TABLE punishments RENAME TO punishments_backup")
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS punishments (
+            id INTEGER PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            issuer_id INTEGER NOT NULL,
+            guild_id INTEGER NOT NULL,
+            type TEXT, /*BAN, KICK, TIMEOUT, WARN*/
+            reason TEXT,
+            time DATETIME,
+            deleted BOOLEAN
+        );
+        """)
+        cursor.execute("""
+        INSERT INTO punishments (
+            id, user_id, issuer_id, guild_id, type, reason, time, deleted
+        )
+        SELECT id, user_id, issuer_id, guild_id, type, reason, time, deleted
+        FROM punishments_backup
+        """)
+        cursor.execute("DROP TABLE punishments_backup")
+        rows = cursor.execute("SELECT * FROM punishments")
+        for row in rows:
+            user_id = row["user_id"]
+            h = hashlib.new("sha256")
+            h.update(repr(user_id).encode())
+            cursor.execute("UPDATE punishments SET user_id=? WHERE id=?", (h.hexdigest(), row["id"]))
+            conn.commit()
+
+        # Set the new new user_version
+        cursor.execute("PRAGMA user_version = 22")
+        print("Updated database to version 22")
         return True
     else:
         print("No new updates found for your database version")
@@ -555,6 +590,7 @@ def main():
 
     # Connect to the database
     conn = sqlite3.connect(db_addr)
+    conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 
     # Get the current user_version

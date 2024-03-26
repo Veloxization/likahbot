@@ -1,4 +1,4 @@
-PRAGMA user_version = 21;
+PRAGMA user_version = 22;
 
 CREATE TABLE IF NOT EXISTS usernames (
     id INTEGER PRIMARY KEY,
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS nicknames (
 );
 CREATE TABLE IF NOT EXISTS punishments (
     id INTEGER PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id TEXT NOT NULL,
     issuer_id INTEGER NOT NULL,
     guild_id INTEGER NOT NULL,
     type TEXT, /*BAN, KICK, TIMEOUT, WARN*/

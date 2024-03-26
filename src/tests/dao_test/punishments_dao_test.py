@@ -26,13 +26,6 @@ class TestPunishmentsDAO(unittest.TestCase):
         self.assertEqual(punishment["issuer_id"], 2345)
         self.assertEqual(punishment["guild_id"], 9876)
 
-    def test_censored_punishments_are_found_correctly(self):
-        asyncio.run(self.punishments_dao.add_punishment(1234, 2345, 9876))
-        asyncio.run(self.punishments_dao.delete_user_id_from_punishments(1234))
-        punishments = asyncio.run(self.punishments_dao.get_censored_punishments(9876))
-        self.assertEqual(len(punishments), 1)
-        self.assertEqual(punishments[0]["user_id"], 0)
-
     def test_punishments_are_marked_deleted_correctly(self):
         asyncio.run(self.punishments_dao.add_punishment(1234, 2345, 9876))
         punishments = asyncio.run(self.punishments_dao.get_all_user_punishments(1234, 9876))
@@ -79,15 +72,6 @@ class TestPunishmentsDAO(unittest.TestCase):
         self.assertEqual(len(punishments), 1)
         asyncio.run(self.punishments_dao.mark_deleted(punishments[0]["id"]))
         punishments = asyncio.run(self.punishments_dao.get_user_punishments(1234, 9876))
-        self.assertEqual(len(punishments), 0)
-
-    def test_punishments_for_user_are_censored_correctly(self):
-        asyncio.run(self.punishments_dao.add_punishment(1234, 2345, 9876))
-        asyncio.run(self.punishments_dao.add_punishment(1234, 3456, 8765))
-        asyncio.run(self.punishments_dao.delete_user_id_from_punishments(1234))
-        punishments = asyncio.run(self.punishments_dao.get_all_user_punishments(1234, 9876))
-        self.assertEqual(len(punishments), 0)
-        punishments = asyncio.run(self.punishments_dao.get_all_user_punishments(1234, 8765))
         self.assertEqual(len(punishments), 0)
 
     def test_guild_punishments_are_cleared_correctly(self):
