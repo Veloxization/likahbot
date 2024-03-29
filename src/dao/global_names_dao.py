@@ -100,7 +100,7 @@ class GlobalNamesDAO:
     async def clear_global_names_table(self):
         """Delete every single global name from the table"""
 
-        connection, cursor = self.db_connection.connect_to_db()
+        connection, cursor = await self.db_connection.connect_to_db()
         sql = "DELETE FROM global_names"
         await cursor.execute(sql)
         await self.db_connection.commit_and_close(connection)
