@@ -17,7 +17,7 @@ class TimeZonesDAO:
         """Get a user's time zone
         Args:
             user_id: The Discord ID of the user whose time zone to get
-        Returns: A Row object containing the user's time zone. async defaults to UTC if not found."""
+        Returns: A Row object containing the user's time zone. Defaults to UTC if not found."""
 
         connection, cursor = await self.db_connection.connect_to_db()
         sql = "SELECT * FROM time_zones WHERE user_id=?"
@@ -48,7 +48,7 @@ class TimeZonesDAO:
         Args:
             user_id: The Discord ID of the user whose time zone to add
             time_zone: IANA time zone database compatible representation of time zone.
-                       async defaults to UTC.
+                       Defaults to UTC.
         Returns: A Row object containing the database ID of the newly created user time zone"""
 
         connection, cursor = await self.db_connection.connect_to_db()
@@ -63,7 +63,7 @@ class TimeZonesDAO:
         Args:
             user_id: The Discord ID of the user whose time zone to edit
             time_zone: IANA time zone database compatible representation of time zone.
-                       async defaults to UTC."""
+                       Defaults to UTC."""
 
         connection, cursor = await self.db_connection.connect_to_db()
         sql = "UPDATE time_zones SET time_zone=? WHERE user_id=?"
@@ -75,7 +75,7 @@ class TimeZonesDAO:
         Args:
             time_zone_id: The database ID of the time zone to edit
             time_zone: IANA time zone database compatible representation of time zone.
-                       async defaults to UTC."""
+                       Defaults to UTC."""
 
         connection, cursor = await self.db_connection.connect_to_db()
         sql = "UPDATE time_zones SET time_zone=? WHERE id=?"
