@@ -1,4 +1,6 @@
-"""The classes and functions handling data access objects for the user_reminders table"""
+"""The classes and functions handling data access objects for the user_reminders table.
+User reminders are used for opting a user into reminders listed on the reminders table.
+Only public reminders or user's own private reminders can be opted into."""
 from db_connection.db_connector import DBConnection
 
 class UserRemindersDAO:

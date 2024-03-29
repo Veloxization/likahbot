@@ -1,4 +1,6 @@
-"""The classes and functions handling data access objects for the temporary bans table"""
+"""The classes and functions handling data access objects for the temporary bans table.
+Temporary bans function like regular bans but the bot will unban temp-banned users automatically
+once the specified ban time has expired."""
 from datetime import datetime
 from db_connection.db_connector import DBConnection
 

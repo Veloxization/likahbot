@@ -1,4 +1,6 @@
-"""The classes and functions handling data access objects for the time zones table."""
+"""The classes and functions handling data access objects for the time zones table.
+Time zones are used to automatically adjust reminders and birthday announcements to the associated
+user's time zone."""
 from db_connection.db_connector import DBConnection
 
 class TimeZonesDAO:

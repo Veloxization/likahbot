@@ -1,4 +1,6 @@
-"""The classes and functions handling data access objects for the guild_settings table"""
+"""The classes and functions handling data access objects for the guild_settings table.
+Guild settings are the guild-specific values of the defaults set in the settings table.
+They contain values such as what the bot will log on the guild."""
 from db_connection.db_connector import DBConnection
 from dao.settings_dao import SettingsDAO
 

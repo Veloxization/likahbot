@@ -1,4 +1,7 @@
-"""The classes and functions handling data access objects for the raffles_and_polls table"""
+"""The classes and functions handling data access objects for the raffles_and_polls table.
+Raffles are something users can opt into, usually to win something. Winners are randomly selected
+from opted-in users.
+Polls are used to gauge user opinions from multiple options."""
 from datetime import datetime
 from db_connection.db_connector import DBConnection
 from time_handler.time import TimeStringConverter

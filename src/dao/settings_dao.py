@@ -1,4 +1,6 @@
-"""The classes and functions handling data access objects for the settings table"""
+"""The classes and functions handling data access objects for the settings table.
+The settings table contains the default values for the settings that can be adjusted
+guild-specifically through the guild_settings table."""
 from db_connection.db_connector import DBConnection
 
 class SettingsDAO:

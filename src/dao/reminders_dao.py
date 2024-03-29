@@ -1,4 +1,5 @@
-"""The classes and functions handling data access objects for the reminders table"""
+"""The classes and functions handling data access objects for the reminders table.
+Reminders are messages sent to opted in users at specified times or intervals."""
 from db_connection.db_connector import DBConnection
 from datetime import datetime
 

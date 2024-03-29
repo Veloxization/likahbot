@@ -1,4 +1,5 @@
-"""The classes and functions handling data access objects for the experience table"""
+"""The classes and functions handling data access objects for the experience table.
+The experience is used for leveling up on a server and advancing in the associated leaderboard."""
 from datetime import datetime
 from db_connection.db_connector import DBConnection
 from time_handler.time import TimeStringConverter, TimeDifference
